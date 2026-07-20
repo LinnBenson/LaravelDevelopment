@@ -42,9 +42,9 @@ if ( !function_exists( 'echoJson' ) ) {
      * @param mixed $data 响应数据
      * @param int|null $code HTTP 状态码，为 null 时根据响应状态自动生成
      * @param array<string, string> $headers HTTP 响应头
-     * @return \Illuminate\Http\JsonResponse JSON 响应对象
+     * @return \Illuminate\Http\JsonResponse|string JSON 响应对象或字符串
      */
-    function echoJson( bool|int $status, mixed $data, ?int $code = null, array $headers = [] ): \Illuminate\Http\JsonResponse {
+    function echoJson( bool|int $status, mixed $data, ?int $code = null, array $headers = [] ): \Illuminate\Http\JsonResponse|string {
         if ( is_bool( $status ) ) {
             if ( is_array( $data ) && count( $data ) === 1 && isset( $data[0] ) && is_string( $data[0] ) && Lang::has( $data[0] ) ) {
                 $dataStatus = $status ? 'base.true' : 'base.false';
@@ -78,6 +78,8 @@ if ( !function_exists( 'echoJson' ) ) {
             'time' => time(),
             'data' => $data,
         ];
-        return response()->json( $data, $code, $headers, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES|JSON_INVALID_UTF8_SUBSTITUTE );
+        $response = response()->json( $data, $code, $headers, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES |JSON_INVALID_UTF8_SUBSTITUTE );
+        if ( PHP_SAPI === 'cli' ) { return (string) $response->getContent(); }
+        return $response;
     }
 }

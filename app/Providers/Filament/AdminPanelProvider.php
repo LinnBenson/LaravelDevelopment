@@ -9,6 +9,7 @@ use App\Filament\Resources\DeveloperCenter\LogInformation\LogInformation;
 use App\Filament\Resources\DeveloperCenter\Readme\Readme;
 use App\Filament\Resources\DeveloperCenter\FilamentIcons\FilamentIcons;
 use App\Filament\Resources\SystemSettings\SystemConfig\SystemConfigPage;
+use App\Filament\Resources\SystemSettings\ServiceManagement\ServiceManagement;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -53,6 +54,7 @@ class AdminPanelProvider extends PanelProvider {
                 LogInformation::class,
                 Readme::class,
                 SystemConfigPage::class,
+                ServiceManagement::class,
             ] )
             ->navigationGroups( [
                 '管理员控制',
