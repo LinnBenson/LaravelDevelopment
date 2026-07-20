@@ -2,10 +2,12 @@
 .DS_Store
 .env
 .env.backup
+.user.ini
 .phpunit.result.cache
 /.phpunit.cache
 /.vscode
 /public/storage
 /public/.htaccess
+/public/.user.ini
 /storage/*.key
 /vendor
