@@ -4,11 +4,13 @@ namespace App\Filament\Resources\Dashboard\Home;
 
 use App\Filament\Resources\AdminControl\AdminUsers\AdminUserResource;
 use App\Filament\Resources\DeveloperCenter\FilamentIcons\FilamentIcons;
-use App\Filament\Resources\DeveloperCenter\LogInformation\LogInformation;
 use App\Filament\Resources\DeveloperCenter\Readme\Readme;
+use App\Filament\Resources\SystemSettings\ServiceManagement\ServiceManagement;
+use App\Filament\Resources\SystemSettings\SystemConfig\SystemConfigPage;
 use App\Filament\Resources\UserManagement\Users\UserResource;
 use App\Models\AdminUser;
 use App\Models\User;
+use App\Workerman\Server;
 use Composer\InstalledVersions;
 use Filament\Facades\Filament;
 use Filament\Pages\Dashboard;
@@ -106,6 +108,25 @@ class HomeDashboard extends Dashboard {
     }
 
     /**
+     * 获取服务项汇总。
+     * 根据 Workerman 配置和服务心跳统计服务总数、运行数及停止数。
+     * @return array{total: int, running: int, stopped: int} 服务项汇总
+     */
+    public function getServiceSummary(): array {
+        $configs = config( 'workerman', [] );
+        if ( !is_array( $configs ) ) { return ['total' => 0, 'running' => 0, 'stopped' => 0]; }
+        $names = array_keys( array_filter( $configs, fn ( mixed $config, string|int $name ): bool =>
+            is_string( $name ) && preg_match( '/^[A-Za-z0-9_-]+$/', $name ) === 1 && is_array( $config ), ARRAY_FILTER_USE_BOTH
+        ) );
+        $running = count( array_filter( $names, fn ( string $name ): bool => Server::status( $name ) ) );
+        return [
+            'total' => count( $names ),
+            'running' => $running,
+            'stopped' => count( $names ) - $running,
+        ];
+    }
+
+    /**
      * 获取快捷入口。
      * 返回后台常用页面链接。
      * @return array<int, array{label: string, description: string, url: string, icon: string}>
@@ -113,10 +134,10 @@ class HomeDashboard extends Dashboard {
     public function getQuickLinks(): array {
         return [
             [
-                'label' => '新增用户',
-                'description' => '创建新的前台用户',
-                'url' => UserResource::getUrl( 'create' ),
-                'icon' => 'heroicon-o-user-plus',
+                'label' => '管理员列表',
+                'description' => '管理后台账号',
+                'url' => AdminUserResource::getUrl( 'index' ),
+                'icon' => 'heroicon-o-shield-check',
             ],
             [
                 'label' => '用户列表',
@@ -125,16 +146,16 @@ class HomeDashboard extends Dashboard {
                 'icon' => 'heroicon-o-users',
             ],
             [
-                'label' => '管理员列表',
-                'description' => '管理后台账号',
-                'url' => AdminUserResource::getUrl( 'index' ),
-                'icon' => 'heroicon-o-shield-check',
+                'label' => '系统配置',
+                'description' => '维护应用配置',
+                'url' => SystemConfigPage::getUrl(),
+                'icon' => 'heroicon-o-cog-6-tooth',
             ],
             [
-                'label' => '日志信息',
-                'description' => '检查应用运行日志',
-                'url' => LogInformation::getUrl(),
-                'icon' => 'heroicon-o-document-magnifying-glass',
+                'label' => '服务项管理',
+                'description' => '查看 Workerman 服务',
+                'url' => ServiceManagement::getUrl(),
+                'icon' => 'heroicon-o-server-stack',
             ],
         ];
     }

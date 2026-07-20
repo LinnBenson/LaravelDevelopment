@@ -40,57 +40,88 @@
         </section>
 
         <div class="home-dashboard-content-grid">
-            {{-- 最近用户 --}}
-            <section class="home-dashboard-panel home-dashboard-recent-users">
-                <header class="home-dashboard-panel-header">
-                    <div>
-                        <h3>最近用户</h3>
-                        <p>最近创建的用户账号</p>
-                    </div>
-                    <a href="{{ \App\Filament\Resources\UserManagement\Users\UserResource::getUrl( 'index' ) }}">
-                        查看全部
-                        <x-filament::icon icon="heroicon-o-arrow-right" />
-                    </a>
-                </header>
-
-                <div class="home-dashboard-user-list">
-                    @forelse ( $this->getRecentUsers() as $user )
-                        @php
-                            $avatarUrl = filled( $user->avatar ) && Storage::disk( 'public' )->exists( $user->avatar )
-                                ? Storage::disk( 'public' )->url( $user->avatar )
-                                : null;
-                        @endphp
-                        <a
-                            class="home-dashboard-user-row"
-                            href="{{ \App\Filament\Resources\UserManagement\Users\UserResource::getUrl( 'edit', ['record' => $user] ) }}"
-                        >
-                            <div class="home-dashboard-user-avatar">
-                                @if ( $avatarUrl )
-                                    <img src="{{ $avatarUrl }}" alt="{{ $user->name ?: '用户头像' }}">
-                                @else
-                                    <span>{{ mb_strtoupper( mb_substr( $user->name ?: $user->nickname ?: 'U', 0, 1 ) ) }}</span>
-                                @endif
-                            </div>
-                            <div class="home-dashboard-user-main">
-                                <strong>{{ $user->name ?: $user->nickname ?: '未命名用户' }}</strong>
-                                <span>{{ $user->email ?: \App\Models\User::formatPhoneForDisplay( $user->phone ) ?: '暂无联系方式' }}</span>
-                            </div>
-                            <span class="home-dashboard-user-level">{{ $user->level }} · {{ \App\Models\User::getLevel( $user->level ) }}</span>
-                            <span class="home-dashboard-user-status {{ $user->status ? 'is-active' : '' }}">
-                                {{ $user->status ? '启用' : '停用' }}
-                            </span>
-                            <time>{{ $user->created_at?->format( 'm.d H:i' ) }}</time>
-                            <x-filament::icon icon="heroicon-o-chevron-right" />
-                        </a>
-                    @empty
-                        <div class="home-dashboard-empty">
-                            <x-filament::icon icon="heroicon-o-user-plus" />
-                            <strong>还没有用户</strong>
-                            <span>创建第一个用户后会显示在这里。</span>
+            <div class="home-dashboard-main-column">
+                {{-- 服务项汇总 --}}
+                @php $serviceSummary = $this->getServiceSummary(); @endphp
+                <section class="home-dashboard-panel home-dashboard-service-panel">
+                    <header class="home-dashboard-panel-header">
+                        <div>
+                            <h3>服务项汇总</h3>
+                            <p>当前 Workerman 服务运行概况</p>
                         </div>
-                    @endforelse
-                </div>
-            </section>
+                        <a href="{{ \App\Filament\Resources\SystemSettings\ServiceManagement\ServiceManagement::getUrl() }}">
+                            查看服务
+                            <x-filament::icon icon="heroicon-o-arrow-right" />
+                        </a>
+                    </header>
+                    <dl class="home-dashboard-service-summary">
+                        <div>
+                            <dt>服务总数</dt>
+                            <dd>{{ $serviceSummary['total'] }}</dd>
+                        </div>
+                        <div class="is-running">
+                            <dt>运行中</dt>
+                            <dd>{{ $serviceSummary['running'] }}</dd>
+                        </div>
+                        <div class="is-stopped">
+                            <dt>已停止</dt>
+                            <dd>{{ $serviceSummary['stopped'] }}</dd>
+                        </div>
+                    </dl>
+                </section>
+
+                {{-- 最近用户 --}}
+                <section class="home-dashboard-panel home-dashboard-recent-users" style="min-height: 435px;">
+                    <header class="home-dashboard-panel-header">
+                        <div>
+                            <h3>最近用户</h3>
+                            <p>最近创建的用户账号</p>
+                        </div>
+                        <a href="{{ \App\Filament\Resources\UserManagement\Users\UserResource::getUrl( 'index' ) }}">
+                            查看全部
+                            <x-filament::icon icon="heroicon-o-arrow-right" />
+                        </a>
+                    </header>
+
+                    <div class="home-dashboard-user-list">
+                        @forelse ( $this->getRecentUsers() as $user )
+                            @php
+                                $avatarUrl = filled( $user->avatar ) && Storage::disk( 'public' )->exists( $user->avatar )
+                                    ? Storage::disk( 'public' )->url( $user->avatar )
+                                    : null;
+                            @endphp
+                            <a
+                                class="home-dashboard-user-row"
+                                href="{{ \App\Filament\Resources\UserManagement\Users\UserResource::getUrl( 'edit', ['record' => $user] ) }}"
+                            >
+                                <div class="home-dashboard-user-avatar">
+                                    @if ( $avatarUrl )
+                                        <img src="{{ $avatarUrl }}" alt="{{ $user->name ?: '用户头像' }}">
+                                    @else
+                                        <span>{{ mb_strtoupper( mb_substr( $user->name ?: $user->nickname ?: 'U', 0, 1 ) ) }}</span>
+                                    @endif
+                                </div>
+                                <div class="home-dashboard-user-main">
+                                    <strong>{{ $user->name ?: $user->nickname ?: '未命名用户' }}</strong>
+                                    <span>{{ $user->email ?: \App\Models\User::formatPhoneForDisplay( $user->phone ) ?: '暂无联系方式' }}</span>
+                                </div>
+                                <span class="home-dashboard-user-level">{{ $user->level }} · {{ \App\Models\User::getLevel( $user->level ) }}</span>
+                                <span class="home-dashboard-user-status {{ $user->status ? 'is-active' : '' }}">
+                                    {{ $user->status ? '启用' : '停用' }}
+                                </span>
+                                <time>{{ $user->created_at?->format( 'm.d H:i' ) }}</time>
+                                <x-filament::icon icon="heroicon-o-chevron-right" />
+                            </a>
+                        @empty
+                            <div class="home-dashboard-empty">
+                                <x-filament::icon icon="heroicon-o-user-plus" />
+                                <strong>还没有用户</strong>
+                                <span>创建第一个用户后会显示在这里。</span>
+                            </div>
+                        @endforelse
+                    </div>
+                </section>
+            </div>
 
             <aside class="home-dashboard-side-column">
                 {{-- 快捷入口 --}}
@@ -168,18 +199,23 @@
             min-height: 10rem;
             padding: 2rem;
             overflow: hidden;
-            border: 1px solid rgba(245, 158, 11, 0.2);
+            border: 1px solid color-mix(in srgb, var(--primary-500) 20%, transparent);
             border-radius: 1.25rem;
-            background: linear-gradient(120deg, #fff7ed 0%, #fffbeb 50%, #fef3c7 100%);
-            box-shadow: 0 1rem 2.5rem rgba(217, 119, 6, 0.08);
+            background: linear-gradient(120deg, var(--primary-50) 0%, var(--primary-50) 50%, var(--primary-100) 100%);
+            box-shadow: 0 1rem 2.5rem color-mix(in srgb, var(--primary-600) 8%, transparent);
             align-items: center;
             justify-content: space-between;
             gap: 2rem;
             position: relative;
         }
         .dark .home-dashboard-hero {
-            border-color: rgba(245, 158, 11, 0.18);
-            background: linear-gradient(120deg, #292017 0%, #252015 55%, #312713 100%);
+            border-color: color-mix(in srgb, var(--primary-500) 18%, transparent);
+            background: linear-gradient(
+                120deg,
+                color-mix(in srgb, var(--primary-500) 12%, var(--home-card)) 0%,
+                color-mix(in srgb, var(--primary-500) 8%, var(--home-card)) 55%,
+                color-mix(in srgb, var(--primary-500) 16%, var(--home-card)) 100%
+            );
         }
         .home-dashboard-hero-content {
             display: flex;
@@ -195,8 +231,8 @@
             overflow: hidden;
             border: 0.25rem solid rgba(255, 255, 255, 0.8);
             border-radius: 1.25rem;
-            background: linear-gradient(135deg, #f59e0b, #d97706);
-            box-shadow: 0 0.75rem 1.5rem rgba(217, 119, 6, 0.18);
+            background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+            box-shadow: 0 0.75rem 1.5rem color-mix(in srgb, var(--primary-600) 18%, transparent);
             color: #ffffff;
             font-size: 1.5rem;
             font-weight: 700;
@@ -209,7 +245,7 @@
         }
         .home-dashboard-eyebrow {
             margin: 0 0 0.35rem;
-            color: #b45309;
+            color: var(--primary-700);
             font-size: 0.75rem;
             font-weight: 700;
             letter-spacing: 0.08em;
@@ -230,8 +266,8 @@
             display: inline-flex;
             padding: 0.8rem 1.1rem;
             border-radius: 0.75rem;
-            background: #d97706;
-            box-shadow: 0 0.5rem 1rem rgba(217, 119, 6, 0.2);
+            background: var(--primary-600);
+            box-shadow: 0 0.5rem 1rem color-mix(in srgb, var(--primary-600) 20%, transparent);
             color: #ffffff;
             font-size: 0.875rem;
             font-weight: 700;
@@ -242,7 +278,7 @@
             z-index: 1;
         }
         .home-dashboard-primary-action:hover {
-            background: #b45309;
+            background: var(--primary-700);
         }
         .home-dashboard-primary-action svg {
             width: 1.1rem;
@@ -251,7 +287,7 @@
         .home-dashboard-hero-decoration {
             width: 13rem;
             height: 13rem;
-            border: 2.5rem solid rgba(245, 158, 11, 0.08);
+            border: 2.5rem solid color-mix(in srgb, var(--primary-500) 8%, transparent);
             border-radius: 50%;
             right: -3rem;
             bottom: -7rem;
@@ -280,12 +316,12 @@
             height: 3rem;
             flex: 0 0 3rem;
             border-radius: 0.875rem;
-            background: #fff7ed;
-            color: #d97706;
+            background: var(--primary-50);
+            color: var(--primary-600);
             place-items: center;
         }
         .dark .home-dashboard-stat-icon {
-            background: rgba(245, 158, 11, 0.12);
+            background: color-mix(in srgb, var(--primary-500) 12%, transparent);
         }
         .home-dashboard-stat-card:nth-child(2) .home-dashboard-stat-icon {
             background: #ecfdf5;
@@ -345,6 +381,10 @@
             display: grid;
             gap: 1.25rem;
         }
+        .home-dashboard-main-column {
+            display: grid;
+            gap: 1.25rem;
+        }
         .home-dashboard-panel {
             overflow: hidden;
             border: 1px solid var(--home-border);
@@ -373,7 +413,7 @@
         }
         .home-dashboard-panel-header > a {
             display: inline-flex;
-            color: #d97706;
+            color: var(--primary-600);
             font-size: 0.78rem;
             font-weight: 650;
             text-decoration: none;
@@ -383,6 +423,40 @@
         .home-dashboard-panel-header > a svg {
             width: 0.9rem;
             height: 0.9rem;
+        }
+        .home-dashboard-service-summary {
+            display: grid;
+            margin: 0;
+            padding: 1rem 1.25rem;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 0.75rem;
+        }
+        .home-dashboard-service-summary div {
+            display: flex;
+            min-height: 3.5rem;
+            padding: 0.7rem 0.85rem;
+            border: 1px solid var(--home-border);
+            border-radius: 0.65rem;
+            background: color-mix(in srgb, var(--primary-500) 4%, var(--home-card));
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.6rem;
+        }
+        .home-dashboard-service-summary dt {
+            color: var(--home-muted);
+            font-size: 0.68rem;
+        }
+        .home-dashboard-service-summary dd {
+            margin: 0;
+            color: var(--home-text);
+            font-size: 0.85rem;
+            font-weight: 750;
+        }
+        .home-dashboard-service-summary .is-running dd {
+            color: #059669;
+        }
+        .home-dashboard-service-summary .is-stopped dd {
+            color: #dc2626;
         }
 
         /* 最近用户列表 */
@@ -404,7 +478,7 @@
             border-bottom: 0;
         }
         .home-dashboard-user-row:hover {
-            background: rgba(245, 158, 11, 0.045);
+            background: color-mix(in srgb, var(--primary-500) 4.5%, transparent);
         }
         .home-dashboard-user-avatar {
             display: grid;
@@ -412,8 +486,8 @@
             height: 2.5rem;
             overflow: hidden;
             border-radius: 0.75rem;
-            background: linear-gradient(135deg, #fef3c7, #fed7aa);
-            color: #b45309;
+            background: linear-gradient(135deg, var(--primary-100), var(--primary-200));
+            color: var(--primary-700);
             font-size: 0.85rem;
             font-weight: 700;
             place-items: center;
@@ -483,7 +557,7 @@
             width: 2rem;
             height: 2rem;
             margin-bottom: 0.35rem;
-            color: #d97706;
+            color: var(--primary-600);
         }
         .home-dashboard-empty strong {
             color: var(--home-text);
@@ -512,8 +586,8 @@
             gap: 0.65rem;
         }
         .home-dashboard-quick-links > a:hover {
-            border-color: rgba(217, 119, 6, 0.5);
-            background: rgba(245, 158, 11, 0.04);
+            border-color: color-mix(in srgb, var(--primary-600) 50%, transparent);
+            background: color-mix(in srgb, var(--primary-500) 4%, transparent);
             transform: translateY(-1px);
         }
         .home-dashboard-quick-icon {
@@ -521,12 +595,12 @@
             width: 2.3rem;
             height: 2.3rem;
             border-radius: 0.65rem;
-            background: #fff7ed;
-            color: #d97706;
+            background: var(--primary-50);
+            color: var(--primary-600);
             place-items: center;
         }
         .dark .home-dashboard-quick-icon {
-            background: rgba(245, 158, 11, 0.12);
+            background: color-mix(in srgb, var(--primary-500) 12%, transparent);
         }
         .home-dashboard-quick-icon svg {
             width: 1.2rem;
@@ -602,7 +676,7 @@
             gap: 1rem;
         }
         .home-dashboard-developer-links a {
-            color: #d97706;
+            color: var(--primary-600);
             font-size: 0.72rem;
             font-weight: 650;
             text-decoration: none;
@@ -641,6 +715,9 @@
             }
             .home-dashboard-user-row {
                 grid-template-columns: auto minmax(0, 1fr) auto auto;
+            }
+            .home-dashboard-service-summary {
+                grid-template-columns: 1fr;
             }
         }
         @media (max-width: 32rem) {

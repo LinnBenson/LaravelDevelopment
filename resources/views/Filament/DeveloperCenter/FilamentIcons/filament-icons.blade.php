@@ -126,8 +126,8 @@
             flex: 1;
         }
         .filament-icons-toolbar-search:focus-within {
-            border-color: rgb(245, 158, 11);
-            box-shadow: 0 0 0 1px rgb(245, 158, 11);
+            border-color: var(--primary-500);
+            box-shadow: 0 0 0 1px var(--primary-500);
         }
         .filament-icons-toolbar-search svg {
             width: 1.25rem;
@@ -154,8 +154,8 @@
             cursor: pointer;
         }
         .filament-icons-toolbar-filter.is-active {
-            background: rgb(245, 158, 11);
-            color: #111827;
+            background: var(--primary-500);
+            color: #fff;
             font-weight: 600;
         }
         .filament-icons-toolbar-count {
@@ -181,7 +181,7 @@
             transition: border-color 0.15s ease, box-shadow 0.15s ease;
         }
         .filament-icons-grid-item:hover {
-            border-color: rgb(245, 158, 11);
+            border-color: var(--primary-500);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         }
         .filament-icons-grid-item-preview {
@@ -189,8 +189,8 @@
             width: 3.5rem;
             height: 3.5rem;
             border-radius: 0.75rem;
-            background: rgba(245, 158, 11, 0.12);
-            color: rgb(217, 119, 6);
+            background: color-mix(in srgb, var(--primary-500) 12%, transparent);
+            color: var(--primary-600);
             align-items: center;
             justify-content: center;
         }
@@ -221,7 +221,7 @@
         }
         .filament-icons-grid-item-code:hover,
         .filament-icons-grid-item-value:hover {
-            color: rgb(217, 119, 6);
+            color: var(--primary-600);
         }
         .filament-icons-grid-item-code code,
         .filament-icons-grid-item-value code {

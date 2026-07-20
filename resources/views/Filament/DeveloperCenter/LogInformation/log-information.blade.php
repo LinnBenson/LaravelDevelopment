@@ -102,8 +102,8 @@
             background: rgba(107, 114, 128, 0.08);
         }
         .log-information-layout-list-item.is-active {
-            border-color: rgb(245, 158, 11);
-            background: rgba(245, 158, 11, 0.1);
+            border-color: var(--primary-500);
+            background: color-mix(in srgb, var(--primary-500) 10%, transparent);
         }
         .log-information-layout-list-item-select {
             display: flex;

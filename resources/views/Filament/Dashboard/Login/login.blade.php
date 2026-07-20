@@ -58,8 +58,8 @@
             overflow: hidden;
             min-height: 100vh;
             background:
-                radial-gradient(circle at 10% 10%, rgba(245, 158, 11, 0.12), transparent 30rem),
-                radial-gradient(circle at 90% 90%, rgba(251, 191, 36, 0.1), transparent 28rem),
+                radial-gradient(circle at 10% 10%, color-mix(in srgb, var(--primary-500) 12%, transparent), transparent 30rem),
+                radial-gradient(circle at 90% 90%, color-mix(in srgb, var(--primary-400) 10%, transparent), transparent 28rem),
                 #f8f8f6;
         }
         .fi-simple-layout:has(.admin-login-shell)::before {
@@ -121,7 +121,7 @@
             height: 340px;
             border-radius: 999px;
             filter: blur(18px);
-            background: rgba(245, 158, 11, 0.3);
+            background: color-mix(in srgb, var(--primary-500) 30%, transparent);
         }
         .admin-login-brand-glow-top {
             top: -190px;
@@ -147,8 +147,8 @@
             height: 52px;
             border-radius: 16px;
             color: #1c1917;
-            background: linear-gradient(145deg, #fbbf24, #f59e0b);
-            box-shadow: 0 12px 30px rgba(245, 158, 11, 0.25);
+            background: linear-gradient(145deg, var(--primary-400), var(--primary-500));
+            box-shadow: 0 12px 30px color-mix(in srgb, var(--primary-500) 25%, transparent);
         }
         .admin-login-brand-mark svg,
         .admin-login-mobile-mark svg {
@@ -168,7 +168,7 @@
         .admin-login-form-heading > span {
             display: block;
             margin-bottom: 14px;
-            color: #fbbf24;
+            color: var(--primary-400);
             font-size: 12px;
             font-weight: 700;
             letter-spacing: 0.2em;
@@ -221,7 +221,7 @@
         }
         .admin-login-form-heading > span {
             margin-bottom: 10px;
-            color: #d97706;
+            color: var(--primary-600);
             letter-spacing: 0.12em;
         }
         .admin-login-form-heading h2 {
@@ -272,18 +272,18 @@
         }
         .admin-login-form-panel .fi-input-wrp:focus-within {
             background: #fff;
-            box-shadow: inset 0 0 0 2px #f59e0b, 0 0 0 4px rgba(245, 158, 11, 0.1);
+            box-shadow: inset 0 0 0 2px var(--primary-500), 0 0 0 4px color-mix(in srgb, var(--primary-500) 10%, transparent);
         }
         .admin-login-form-panel .fi-btn {
             min-height: 48px;
             border-radius: 12px;
             font-weight: 700;
-            box-shadow: 0 10px 24px rgba(245, 158, 11, 0.2);
+            box-shadow: 0 10px 24px color-mix(in srgb, var(--primary-500) 20%, transparent);
             transition: transform 160ms ease, box-shadow 160ms ease;
         }
         .admin-login-form-panel .fi-btn:hover {
             transform: translateY(-1px);
-            box-shadow: 0 14px 28px rgba(245, 158, 11, 0.26);
+            box-shadow: 0 14px 28px color-mix(in srgb, var(--primary-500) 26%, transparent);
         }
         .admin-login-security-note {
             display: flex;
@@ -331,7 +331,7 @@
         }
         .dark .admin-login-form-panel .fi-input-wrp:focus-within {
             background: #292524;
-            box-shadow: inset 0 0 0 2px #f59e0b, 0 0 0 4px rgba(245, 158, 11, 0.12);
+            box-shadow: inset 0 0 0 2px var(--primary-500), 0 0 0 4px color-mix(in srgb, var(--primary-500) 12%, transparent);
         }
         .dark .admin-login-form-panel .fi-input:-webkit-autofill,
         .dark .admin-login-form-panel .fi-input:-webkit-autofill:hover,

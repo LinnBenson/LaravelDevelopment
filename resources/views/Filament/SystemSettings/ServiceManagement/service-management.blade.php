@@ -160,7 +160,7 @@
             gap: 0.875rem;
         }
         .dark .service-management-summary-item {
-            background: rgba(17, 24, 39, 0.65);
+            background: var(--gray-900);
         }
         .service-management-summary-icon {
             display: inline-flex;

@@ -81,7 +81,7 @@
             margin: 0.25rem 0;
         }
         .readme-document-content a {
-            color: rgb(217, 119, 6);
+            color: var(--primary-600);
             text-decoration: underline;
             text-underline-offset: 0.2rem;
         }
@@ -108,8 +108,8 @@
         .readme-document-content blockquote {
             margin: 1rem 0;
             padding: 0.5rem 1rem;
-            border-left: 0.25rem solid rgb(245, 158, 11);
-            background: rgba(245, 158, 11, 0.08);
+            border-left: 0.25rem solid var(--primary-500);
+            background: color-mix(in srgb, var(--primary-500) 8%, transparent);
             color: #6b7280;
         }
         .readme-document-content table {

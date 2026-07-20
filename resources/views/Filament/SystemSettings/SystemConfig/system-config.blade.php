@@ -505,23 +505,27 @@
         .system-config-page input:focus,
         .system-config-page select:focus,
         .system-config-page textarea:focus {
-            border-color: #f59e0b;
-            box-shadow: 0 0 0 0.2rem rgba(245, 158, 11, 0.12);
+            border-color: var(--primary-500);
+            box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--primary-500) 12%, transparent);
         }
 
         /* 页面顶部操作栏 */
         .system-config-toolbar {
             display: flex;
             padding: 1.25rem 1.4rem;
-            border: 1px solid rgba(245, 158, 11, 0.22);
+            border: 1px solid color-mix(in srgb, var(--primary-500) 22%, transparent);
             border-radius: 1rem;
-            background: linear-gradient(120deg, #fff7ed, #fffbeb);
+            background: linear-gradient(120deg, var(--primary-50), var(--primary-50));
             align-items: center;
             justify-content: space-between;
             gap: 1rem;
         }
         .dark .system-config-toolbar {
-            background: linear-gradient(120deg, #292017, #252015);
+            background: linear-gradient(
+                120deg,
+                color-mix(in srgb, var(--primary-500) 12%, var(--config-card)),
+                color-mix(in srgb, var(--primary-500) 8%, var(--config-card))
+            );
         }
         .system-config-toolbar h2,
         .system-config-toolbar p {
@@ -542,8 +546,8 @@
             display: inline-flex;
             padding: 0.7rem 0.95rem;
             border-radius: 0.65rem;
-            background: #d97706;
-            box-shadow: 0 0.35rem 0.8rem rgba(217, 119, 6, 0.16);
+            background: var(--primary-600);
+            box-shadow: 0 0.35rem 0.8rem color-mix(in srgb, var(--primary-600) 16%, transparent);
             color: #ffffff;
             font-size: 0.78rem;
             font-weight: 700;
@@ -555,7 +559,7 @@
         .system-config-primary-button:hover,
         .system-config-save-button:hover,
         .system-config-create-panel footer button:hover {
-            background: #b45309;
+            background: var(--primary-700);
         }
         .system-config-primary-button:disabled,
         .system-config-save-button:disabled,
@@ -687,16 +691,16 @@
             color: var(--config-text);
         }
         .system-config-category-tab.is-active {
-            background: #fff7ed;
-            box-shadow: inset 0 0 0 1px rgba(245, 158, 11, 0.28);
-            color: #b45309;
+            background: var(--primary-50);
+            box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--primary-500) 28%, transparent);
+            color: var(--primary-700);
         }
         .dark .system-config-category-tab:hover {
             background: #27272a;
         }
         .dark .system-config-category-tab.is-active {
-            background: rgba(245, 158, 11, 0.12);
-            color: #fbbf24;
+            background: color-mix(in srgb, var(--primary-500) 12%, transparent);
+            color: var(--primary-400);
         }
         .system-config-category-tab-icon {
             display: grid;
@@ -710,7 +714,7 @@
         }
         .system-config-category-tab.is-active .system-config-category-tab-icon {
             background: #ffffff;
-            color: #d97706;
+            color: var(--primary-600);
         }
         .dark .system-config-category-tab-icon,
         .dark .system-config-category-tab.is-active .system-config-category-tab-icon {
@@ -750,12 +754,12 @@
             height: 2.5rem;
             flex: 0 0 2.5rem;
             border-radius: 0.7rem;
-            background: #fff7ed;
-            color: #d97706;
+            background: var(--primary-50);
+            color: var(--primary-600);
             place-items: center;
         }
         .dark .system-config-section-icon {
-            background: rgba(245, 158, 11, 0.12);
+            background: color-mix(in srgb, var(--primary-500) 12%, transparent);
         }
         .system-config-section-icon svg {
             width: 1.25rem;
@@ -795,7 +799,7 @@
             transition: color 0.15s ease;
         }
         .system-config-meta-copy:hover {
-            color: rgb(217, 119, 6);
+            color: var(--primary-600);
         }
         .system-config-control {
             display: grid;
@@ -867,7 +871,7 @@
             flex: 0 0 2.65rem;
             border: 1px solid var(--config-border);
             border-radius: 0.65rem;
-            color: #d97706;
+            color: var(--primary-600);
             place-items: center;
         }
         .system-config-input-action a svg {
@@ -908,7 +912,7 @@
             transition: transform 0.15s ease;
         }
         .system-config-boolean-control input:checked + .system-config-toggle {
-            background: #d97706;
+            background: var(--primary-600);
         }
         .system-config-boolean-control input:checked + .system-config-toggle i {
             transform: translateX(1.2rem);
@@ -1017,8 +1021,8 @@
             background: #18181b;
         }
         .system-config-upload-button {
-            border: 1px dashed #d97706;
-            color: #b45309;
+            border: 1px dashed var(--primary-600);
+            color: var(--primary-700);
         }
         .system-config-remove-button {
             border: 1px solid #fecaca;
@@ -1086,9 +1090,9 @@
             display: inline-flex;
             min-height: 2.5rem;
             padding: 0.55rem 0.75rem;
-            border: 1px dashed #d97706;
+            border: 1px dashed var(--primary-600);
             border-radius: 0.6rem;
-            color: #b45309;
+            color: var(--primary-700);
             font-size: 0.72rem;
             font-weight: 650;
             align-items: center;
