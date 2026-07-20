@@ -1,0 +1,15 @@
+*.log
+.DS_Store
+.env
+.env.backup
+.phpunit.result.cache
+/.phpunit.cache
+/.vscode
+/public/storage
+/public/.htaccess
+/storage/*.key
+/storage/pail
+/vendor
+Homestead.json
+Homestead.yaml
+Thumbs.db
