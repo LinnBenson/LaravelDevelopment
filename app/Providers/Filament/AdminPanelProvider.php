@@ -39,7 +39,7 @@ class AdminPanelProvider extends PanelProvider {
         return $panel
             ->default()
             ->id( 'admin' )
-            ->path( 'admin' )
+            ->path( env( 'APP_ADMIN_PREFIX', 'admin' ) )
             ->authGuard( 'admin' )
             ->login( Login::class )
             ->colors( [
