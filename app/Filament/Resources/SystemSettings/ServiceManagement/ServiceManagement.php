@@ -204,7 +204,7 @@ class ServiceManagement extends Page {
     private function runServerCommand( string $name, string $action ): void {
         $php = escapeshellarg( PHP_BINDIR.'/php' );
         $artisan = escapeshellarg( base_path( 'artisan' ) );
-        shell_exec( "{$php} {$artisan} server {$name} {$action} > /dev/null 2>&1" );
+        shell_exec( "{$php} {$artisan} server {$name} {$action} -d > /dev/null 2>&1" );
     }
 
     /**

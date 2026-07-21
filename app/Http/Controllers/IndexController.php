@@ -35,7 +35,8 @@ class IndexController extends Controller {
      * @return any
      */
     public function debug() {
-        dd( setting( 'app.title' ) );
+        print_r( plugin( 'Test' ) );
+        exit();
         return '';
     }
 }

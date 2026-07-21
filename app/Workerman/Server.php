@@ -225,7 +225,7 @@ class Server {
         self::$business->secretKey = $secretKey;
         self::$business->eventHandler = self::$config['event'];
         self::$business->onWorkerStart = function() { self::setServerStatusTimer(); };
-        self::$event = new self::$config['event']( self::$worker );
+        self::$event = new self::$config['event']( self::$register, self::$gateway, self::$business );
         // 运行服务
         Worker::runAll();
     }

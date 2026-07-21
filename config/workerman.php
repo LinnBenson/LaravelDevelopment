@@ -4,16 +4,6 @@
  * type: workerman|gateway
  */
 return [
-    'async' => [
-        'name' => 'Async Server',
-        'type' => 'workerman',
-        'protocol' => 'text',
-        'host' => '0.0.0.0',
-        'port' => 10001,
-        'user' => 'root',
-        'threads' => 1,
-        'event' => \App\Workerman\Events\AsyncEvent::class,
-    ],
     /*
     示例配置
     'workerman' => [

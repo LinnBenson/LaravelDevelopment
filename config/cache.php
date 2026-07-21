@@ -77,4 +77,8 @@ return [
      * 使用 APC、database、memcached、Redis 和 DynamoDB 缓存存储时，可能有其他应用共用同一缓存。因此可以给每个缓存键添加前缀以避免冲突。
      */
     'prefix' => env( 'CACHE_PREFIX', Str::slug( (string) env( 'APP_NAME', 'laravel' ) ) . '-cache-' ),
+    /**
+     * 调试日志文件
+     */
+    'debug' => storage_path( "logs/debug_echo.log" )
 ];

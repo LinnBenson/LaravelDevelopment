@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Lang;
+use \App\Providers\PluginProvider;
 
 if ( !function_exists( 'setting' ) ) {
     /**
@@ -81,5 +82,15 @@ if ( !function_exists( 'echoJson' ) ) {
         $response = response()->json( $data, $code, $headers, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES |JSON_INVALID_UTF8_SUBSTITUTE );
         if ( PHP_SAPI === 'cli' ) { return (string) $response->getContent(); }
         return $response;
+    }
+}
+if ( !function_exists( 'plugin' ) ) {
+    /**
+     * 获取插件实例
+     * @param string $id 插件标识符
+     * @return object|null 插件实例或 null
+     */
+    function plugin( string $id ): ?object {
+        return PluginProvider::load( $id );
     }
 }

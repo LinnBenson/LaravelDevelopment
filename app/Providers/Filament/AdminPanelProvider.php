@@ -44,7 +44,7 @@ class AdminPanelProvider extends PanelProvider {
             ->authGuard( 'admin' )
             ->login( Login::class )
             ->colors( [
-                'primary' => Color::Taupe,
+                'primary' => Color::Amber,
             ] )
             ->discoverResources( in: app_path( 'Filament/Resources' ), for: 'App\Filament\Resources' )
             ->pages( [

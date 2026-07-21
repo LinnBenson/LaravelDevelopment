@@ -10,10 +10,10 @@ location / {
 
 ## 预设命令集
 - 启动服务
-  - `php artisan server [服务标识] start`
+  - `php artisan server [服务标识] start [-d]`
   - 以守护进程模式启动 `config/workerman.php` 中指定的服务
 - 重启服务
-  - `php artisan server [服务标识] restart`
+  - `php artisan server [服务标识] restart [-d]`
   - 以守护进程模式重启 `config/workerman.php` 中指定的服务
 - 停止服务
   - `php artisan server [服务标识] stop`
@@ -21,6 +21,9 @@ location / {
 - 查看服务状态
   - `php artisan server [服务标识] status`
   - 输出 `config/workerman.php` 中指定服务的 Workerman 进程状态
+- 调试服务
+  - `php artisan server [服务标识] debug`
+  - 以循环重启的方式调试 `config/workerman.php` 中指定的服务，使用 `exit` 停止调试任务
 
 ## 自定义参数
 - RID 请求唯一标识符
@@ -47,6 +50,15 @@ location / {
   - `randomString( [int]字符串长度, [0|1|2]字符串类型 = 2 )`
   - 字符串类型: 0 仅数字，1 仅大小写字母，2 大小写字母加数字
   - return [string]随机字符串
+- 格式化时间戳为日期字符串
+  - `toDate( [int|null]时间戳 = null )`
+  - 时间戳为 null 时使用当前时间
+  - return [string]`Y-m-d H:i:s` 格式的日期时间字符串
+- 将任意值转换为字符串
+  - `toString( [mixed]待转换的值 )`
+  - 字符串原样返回；纯字符串数组使用换行符连接，其它数组使用 `var_export()` 转换
+  - 布尔值、null 和对象转换为对应的类型标记，数值直接转换为字符串，其它类型使用 `var_export()` 转换
+  - return [string]转换后的字符串
 
 ## 系统函数 [app/Helpers/System.php]
 - 读取系统配置
@@ -60,6 +72,35 @@ location / {
   - Web 环境返回包含 `status`、`code`、`time` 和 `data` 的 JSON 响应对象
   - CLI、Artisan 和 Workerman 环境返回不包含 HTTP 响应头的纯 JSON 字符串
   - return [\Illuminate\Http\JsonResponse|string]JSON 响应对象或 JSON 字符串
+- 获取插件实例
+  - `plugin( [string]插件标识 )`
+  - 通过 `PluginProvider::load()` 加载插件，同一进程内重复调用时返回缓存实例
+  - 插件不存在或标识无效时返回 null，依赖不满足或插件结构无效时抛出 `LogicException`
+  - return [object|null]插件实例或 null
+
+## 插件提供器 [app/Providers/PluginProvider.php]
+- 插件标识: String|null `$plugin->id`
+- 插件目录: String|null `$plugin->path`
+- 插件名称: String|null `$plugin->name`
+- 插件版本: String|null `$plugin->version`
+- 插件作者: String|null `$plugin->author`
+- 插件描述: String|null `$plugin->description`
+- Composer 依赖: Array `$plugin->relyComposer`
+  - 数组键为 Composer 包名，数组值为 Composer 版本约束
+- 插件依赖: Array `$plugin->relyPlugin`
+  - 数组键为插件标识，数组值为 Composer Semver 版本约束
+- 加载插件
+  - `PluginProvider::load( [string]插件标识 )`
+  - 校验插件标识、目录、Composer 依赖、插件依赖及循环依赖，通过后启用并缓存插件实例
+  - 插件不存在或标识无效时返回 null，依赖不满足或插件结构无效时抛出 `LogicException`
+  - return [PluginProvider|null]插件实例
+- 启用插件
+  - `$plugin->enable( [string]插件标识, [string]插件目录 )`
+  - 设置插件标识和目录并执行插件启动入口，每个插件实例只能调用一次
+  - return [void]
+- 判断插件是否已启用
+  - `$plugin->isEnabled()`
+  - return [bool]插件是否已经启用
 
 ## 视图服务 [app/Services/ViewService.php]
 - 获取框架视图数据

@@ -13,7 +13,8 @@ class ServerCommand extends Command {
      */
     protected $signature = 'server
         {name : config/workerman.php 中的服务标识}
-        {action : start、restart、stop 或 status}';
+        {action : start、restart、stop、status、debug}
+        {--d|daemon : 以守护进程方式启动或重启服务}';
 
     /**
      * 命令描述内容
@@ -30,21 +31,44 @@ class ServerCommand extends Command {
 
         $name = (string) $this->argument( 'name' );
         $action = (string) $this->argument( 'action' );
-        if ( !in_array( $action, ['start', 'restart', 'stop', 'status'], true ) ) {
-            $this->error( '服务操作只能是 start、restart、stop 或 status。' );
+        if ( !in_array( $action, ['start', 'restart', 'stop', 'status', 'debug' ], true ) ) {
+            $this->error( "[{$action}] Allow actions: start, restart, stop, status, debug." );
             return self::FAILURE;
         }
-        if ( preg_match( '/^[A-Za-z0-9_-]+$/', $name ) !== 1 ) {
-            $this->error( '服务标识只能包含字母、数字、下划线和连字符。' );
+        if ( preg_match( '/^[A-Za-z0-9_]+$/', $name ) !== 1 ) {
+            $this->error( "[{$name}] Incorrect service identifier." );
             return self::FAILURE;
         }
         $config = config( "workerman.{$name}" );
         if ( !is_array( $config ) ) {
-            $this->error( "Workerman 服务配置不存在：{$name}" );
+            $this->error( "[{$name}] Workerman service configuration does not exist." );
             return self::FAILURE;
         }
+        // 调试命令
+        if ( $action === 'debug' ) {
+            $max = 9999;
+            $cacheFile = config( 'cache.debug' );
+            for(  $i = 0; $i < $max; $i++ ) {
+                shell_exec( "php artisan server {$name} restart -d > {$cacheFile} 2>&1" );
+                $cache = file_exists( $cacheFile ) ? file_get_contents( $cacheFile ) : '';
+                $this->line( $cache );
+                $this->line( "<fg=green>Use 'stop' to stop this debugging task; other operations will refresh it.</>" );
+                $this->output->write( "<fg=green>[".( $i + 1 )."/{$max}] ></> " );
+                $input = trim( (string) fgets( STDIN ) );
+                if ( $input === 'stop' ) {
+                    shell_exec( "php artisan server {$name} stop > {$cacheFile} 2>&1" );
+                    if ( file_exists( $cacheFile ) ) {
+                        $this->line( file_get_contents( $cacheFile ) );
+                        unlink( $cacheFile );
+                    }
+                    return self::SUCCESS;
+                }
+            }
+            return self::SUCCESS;
+        }
+        // 其它命令
         $argv = ["server_{$name}", $action];
-        if ( in_array( $action, ['start', 'restart'], true ) ) { $argv[] = '-d'; }
+        if ( $this->option( 'daemon' ) && in_array( $action, ['start', 'restart'], true ) ) { $argv[] = '-d'; }
         try {
             Server::build( $name, $config );
         }catch ( Throwable $exception ) {

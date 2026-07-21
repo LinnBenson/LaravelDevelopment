@@ -95,3 +95,40 @@ if ( !function_exists( 'randomString' ) ) {
         return random_string( $length, $type );
     }
 }
+if ( !function_exists( 'toDate' ) ) {
+    /**
+     * 格式化时间戳为日期字符串
+     * 将传入的时间戳格式化为标准日期时间字符串，默认为当前时间戳。
+     * @param int|null $timestamp 时间戳，为 null 时使用当前时间戳
+     * @return string 格式化后的日期时间字符串
+     */
+    function toDate( ?int $timestamp = null ): string {
+        $format = 'Y-m-d H:i:s';
+        if ( $timestamp === null ) { $timestamp = time(); }
+        return date( $format, $timestamp );
+    }
+}
+if ( !function_exists( 'toString' ) ) {
+    /**
+     * 将任意值转换为字符串
+     * 将传入的任意类型值转换为字符串表示形式。
+     * @param mixed $value 待转换的值
+     * @return string 转换后的字符串
+     */
+    function toString( mixed $value ): string {
+        if ( is_string( $value ) ) { return $value; }
+        if ( is_array( $value ) ) {
+            $text = true;
+            foreach( $value as $arrayKey => $arrayValue ) {
+                if ( !is_numeric( $arrayKey ) || !is_string( $arrayValue ) ) { $text = false; break; }
+            }
+            return $text ? implode( "\n", $value ) : var_export( $value, true );
+        }
+        if ( is_bool( $value ) ) { return $value ? '[:true:]' : '[:false:]'; }
+        if ( is_null( $value ) ) { return '[:null:]'; }
+        if ( is_numeric( $value ) ) { return (string)$value; }
+        if ( is_object( $value ) ) { return '[:object:'.get_class( $value ).':]'; }
+        if ( is_callable( $value ) ) { return '[:function:]'; }
+        return var_export( $value, true );
+    }
+}
