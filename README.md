@@ -1,3 +1,17 @@
+# 开始使用
+1. 克隆项目到本地
+   - `git clone https://github.com/LinnBenson/LaravelDevelopment.git`
+2. 安装依赖
+   - `composer install`
+3. 复制 .env.example 为 .env 并修改配置
+   - `cp .env.example .env`
+4. 生成应用密钥
+   - `php artisan key:generate`
+5. 清除可能存在的缓存
+   - `php artisan optimize:clear`
+6. 运行数据库迁移和数据填充
+   - `php artisan migrate --seed`
+
 # 伪静态部署
 ```
 location ^~ /livewire- {

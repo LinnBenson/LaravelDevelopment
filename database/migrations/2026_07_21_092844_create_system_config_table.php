@@ -40,7 +40,7 @@ return new class extends Migration
                 'type' => 'url',
                 'name' => '应用域名',
                 'key' => 'app.host',
-                'value' => config( 'app.url' ),
+                'value' => explode( '//', config( 'app.url' ) )[1] ?? '',
                 'description' => '应用接口默认 HOST'
             ],
             [
