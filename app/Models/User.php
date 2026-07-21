@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -23,6 +24,7 @@ class User extends Authenticatable {
      */
     public const FIELD_COMMENTS = [
         'id' => '用户ID',
+        'agent' => '上级代理管理员ID',
         'name' => '用户名',
         'email' => '邮箱',
         'phone' => '电话',
@@ -55,6 +57,7 @@ class User extends Authenticatable {
      * @var list<string>
      */
     protected $fillable = [
+        'agent',
         'name',
         'email',
         'phone',
@@ -82,10 +85,20 @@ class User extends Authenticatable {
      */
     protected function casts(): array {
         return [
+            'agent' => 'integer',
             'status' => 'boolean',
             'level' => 'integer',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * 获取上级代理管理员。
+     * 根据 agent 字段关联后台管理员。
+     * @return BelongsTo<AdminUser, $this> 上级代理管理员关系
+     */
+    public function agentAdmin(): BelongsTo {
+        return $this->belongsTo( AdminUser::class, 'agent', 'id' );
     }
 
     /**

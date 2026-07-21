@@ -27,8 +27,7 @@ class AdminUsersTable {
         return $table
             ->columns( [
                 TextColumn::make( 'id' )
-                    ->label( 'ID' )
-                    ->numeric()
+                    ->label( 'UID' )
                     ->sortable()
                     ->searchable(),
                 ViewColumn::make( 'name' )

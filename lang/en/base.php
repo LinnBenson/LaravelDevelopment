@@ -39,25 +39,5 @@ return [
         'close' => 'The current channel is closed',
         'limit' => 'Access is restricted',
         'data' => 'Invalid response data',
-    ],
-    'permissions' => [
-        'SYSTEM_STARTUP_COMPLETE' => 'System startup completed event',
-        'SYSTEM_STARTUP_RESULTS' => 'Listen for or modify system startup results',
-        'LANGUAGE_PACK_LOADING' => 'Modify system language packs',
-        'CONFIGURATION_INFORMATION_QUERY' => 'Modify system configuration information',
-        'USER_REQUEST_INITIALIZATION' => 'User request initialization completed event',
-        'DATA_VERIFICATION_COMPLETED' => 'Data verification completed event',
-        'RETURN_INTERFACE_DATA' => 'Listen for or modify interface response data',
-        'LOAD_ROUTE_LIST' => 'Load route list',
-        'ROUTING_RESPONSE_RESULTS' => 'Listen for or modify route response results',
-    ],
-    'server' => [
-        'start' => 'Start the server',
-        'stop' => 'Stop the server',
-        'restart' => 'Restart the server',
-        'status' => 'Server status',
-        'debug' => 'Debug the server',
-        'maintain' => 'Keep the server running',
-        'continue' => 'Debugging is in progress. Available commands: [stop] stop the server | [exit] end debugging. Press any other key to continue restarting the debug session.',
-    ],
+    ]
 ];

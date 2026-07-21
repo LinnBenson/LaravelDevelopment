@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\UserManagement\Users;
 
+use App\Models\AdminUser;
 use App\Models\User;
 use Closure;
 use Filament\Forms\Components\FileUpload;
@@ -33,6 +34,21 @@ class UserForm {
                     ->icon( Heroicon::OutlinedUserCircle )
                     ->columns( 1 )
                     ->schema( [
+                        Select::make( 'agent' )
+                            ->label( '代理' )
+                            ->prefixIcon( Heroicon::OutlinedUserGroup )
+                            ->options( fn (): array => [0 => '0 · System'] + AdminUser::query()
+                                ->orderBy( 'name' )
+                                ->get()
+                                ->mapWithKeys( fn ( AdminUser $adminUser ): array => [
+                                    $adminUser->getKey() => "{$adminUser->id} · {$adminUser->name}",
+                                ] )
+                                ->all() )
+                            ->default( 0 )
+                            ->searchable()
+                            ->preload()
+                            ->native( false )
+                            ->required(),
                         TextInput::make( 'nickname' )
                             ->label( '昵称' )
                             ->prefixIcon( Heroicon::OutlinedIdentification )

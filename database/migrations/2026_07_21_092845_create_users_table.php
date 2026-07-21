@@ -3,16 +3,19 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 return new class extends Migration
 {
     /**
-     * 执行迁移。
+     * Run the migrations.
      */
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->id();
+            $table->bigIncrements('id')->comment('UID');
+            $table->unsignedBigInteger('agent')->default(0)->index()->comment('上级代理管理员ID');
             $table->string('name')->nullable()->unique()->comment('用户名');
             $table->string('email')->nullable()->unique()->comment('邮箱');
             $table->string('phone')->nullable()->unique()->comment('电话');
@@ -21,33 +24,29 @@ return new class extends Migration
             $table->string('nickname')->nullable()->comment('昵称');
             $table->string('password')->comment('密码');
             $table->string('avatar')->nullable()->comment('头像');
-            $table->rememberToken();
-            $table->timestamps();
+            $table->rememberToken()->comment('登录记忆令牌');
+            $table->timestamp('created_at')->nullable()->comment('创建时间');
+            $table->timestamp('updated_at')->nullable()->comment('更新时间');
         });
-
-        Schema::create('password_reset_tokens', function (Blueprint $table) {
-            $table->string('email')->primary();
-            $table->string('token');
-            $table->timestamp('created_at')->nullable();
-        });
-
-        Schema::create('sessions', function (Blueprint $table) {
-            $table->string('id')->primary();
-            $table->foreignId('user_id')->nullable()->index();
-            $table->string('ip_address', 45)->nullable();
-            $table->text('user_agent')->nullable();
-            $table->longText('payload');
-            $table->integer('last_activity')->index();
-        });
+        DB::statement('ALTER TABLE `'.DB::getTablePrefix().'users` AUTO_INCREMENT = 2088;');
+        DB::table('users')->insert([
+            'name' => 'test',
+            'email' => 'test@test.com',
+            'phone' => '1 1234567890',
+            'status' => true,
+            'level' => 10,
+            'nickname' => '测试用户',
+            'password' => Hash::make('testuser'),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
     }
 
     /**
-     * 回滚迁移。
+     * Reverse the migrations.
      */
     public function down(): void
     {
         Schema::dropIfExists('users');
-        Schema::dropIfExists('password_reset_tokens');
-        Schema::dropIfExists('sessions');
     }
 };

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\UserManagement\Users;
 
+use App\Models\AdminUser;
 use App\Models\User;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -30,10 +31,18 @@ class UsersTable {
         return $table
             ->columns( [
                 TextColumn::make( 'id' )
-                    ->label( 'ID' )
-                    ->numeric()
+                    ->label( 'UID' )
                     ->sortable()
                     ->searchable(),
+                TextColumn::make( 'agent' )
+                    ->label( '代理' )
+                    ->formatStateUsing( function ( int|string|null $state, User $record ): ?string {
+                        if ( $state === null ) { return null; }
+                        if ( (int) $state === 0 ) { return '0 · System'; }
+                        return "{$state} · ".( $record->agentAdmin?->name ?? 'Unknown' );
+                    } )
+                    ->badge()
+                    ->placeholder( '-' ),
                 TextColumn::make( 'nickname' )
                     ->label( '昵称' )
                     ->searchable()
@@ -63,7 +72,7 @@ class UsersTable {
                     } ),
                 TextColumn::make( 'level' )
                     ->label( '级别' )
-                    ->formatStateUsing( fn ( int $state ): string => "{$state} · " . User::getLevel( $state ) )
+                    ->formatStateUsing( fn ( int $state ): string => User::getLevel( $state ) )
                     ->badge()
                     ->sortable(),
                 TextColumn::make( 'created_at' )
@@ -77,12 +86,24 @@ class UsersTable {
                     ->toggleable( isToggledHiddenByDefault: true ),
             ] )
             ->filters( [
+                SelectFilter::make( 'agent' )
+                    ->label( '代理' )
+                    ->options( fn (): array => [0 => '0 · System'] + AdminUser::query()
+                        ->orderBy( 'name' )
+                        ->get()
+                        ->mapWithKeys( fn ( AdminUser $adminUser ): array => [
+                            $adminUser->getKey() => "{$adminUser->id} · {$adminUser->name}",
+                        ] )
+                        ->all() )
+                    ->searchable()
+                    ->preload()
+                    ->native( false ),
                 TernaryFilter::make( 'status' )
                     ->label( '状态' ),
                 SelectFilter::make( 'level' )
                     ->label( '级别' )
                     ->options( collect( User::getLevel() )
-                        ->mapWithKeys( fn ( string $name, int $level ): array => [$level => "{$level} · {$name}"] )
+                        ->mapWithKeys( fn ( string $name, int $level ): array => [$level => $name] )
                         ->all() )
                     ->native( false ),
             ] )

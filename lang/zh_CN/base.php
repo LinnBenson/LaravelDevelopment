@@ -38,25 +38,5 @@ return [
         'close' => '当前通道已关闭',
         'limit' => '访问受到限制',
         'data' => '响应数据异常'
-    ],
-    'permissions' => [
-        'SYSTEM_STARTUP_COMPLETE' => '系统启动完成事件',
-        'SYSTEM_STARTUP_RESULTS' => '监听或修改系统启动结果',
-        'LANGUAGE_PACK_LOADING' => '修改系统语言包',
-        'CONFIGURATION_INFORMATION_QUERY' => '修改系统配置信息',
-        'USER_REQUEST_INITIALIZATION' => '用户请求初始化完成事件',
-        'DATA_VERIFICATION_COMPLETED' => '数据验证完成事件',
-        'RETURN_INTERFACE_DATA' => '监听或修改接口返回数据',
-        'LOAD_ROUTE_LIST' => '加载路由列表',
-        'ROUTING_RESPONSE_RESULTS' => '监听或修改路由响应结果'
-    ],
-    'server' => [
-        'start' => '启动服务器',
-        'stop' => '停止服务器',
-        'restart' => '重启服务器',
-        'status' => '服务器状态',
-        'debug' => '调试服务器',
-        'maintain' => '维持服务器运行',
-        'continue' => '调试进行中，您可以执行以下命令：[stop]停止服务器 | [exit]结束调试，其他任意键继续重启调试。',
     ]
 ];

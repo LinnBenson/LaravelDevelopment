@@ -102,7 +102,7 @@
                                     @endif
                                 </div>
                                 <div class="home-dashboard-user-main">
-                                    <strong>{{ $user->name ?: $user->nickname ?: '未命名用户' }}</strong>
+                                    <strong>{{ $user->nickname ?: $user->name ?: '未命名用户' }}</strong>
                                     <span>{{ $user->email ?: \App\Models\User::formatPhoneForDisplay( $user->phone ) ?: '暂无联系方式' }}</span>
                                 </div>
                                 <span class="home-dashboard-user-level">{{ $user->level }} · {{ \App\Models\User::getLevel( $user->level ) }}</span>
