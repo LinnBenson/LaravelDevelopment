@@ -95,6 +95,7 @@ location / {
 ## 插件提供器 [app/Providers/PluginProvider.php]
 - 插件标识: String|null `$plugin->id`
 - 插件目录: String|null `$plugin->path`
+- 插件类型: String `$plugin->type`
 - 插件名称: String|null `$plugin->name`
 - 插件版本: String|null `$plugin->version`
 - 插件作者: String|null `$plugin->author`
@@ -112,6 +113,26 @@ location / {
   - `$plugin->enable( [string]插件标识, [string]插件目录 )`
   - 设置插件标识和目录并执行插件启动入口，每个插件实例只能调用一次
   - return [void]
+- 运行插件钩子
+  - `PluginProvider::runHook( [string]钩子名称, [mixed]...钩子回调参数 )`
+  - 按 `config/plugin.php` 中的 `enabled` 顺序调用所有插件注册的同名钩子；钩子未在系统配置中注册时抛出 `LogicException`
+  - return [bool]钩子执行完成返回 true
+- 注册插件钩子
+  - `$plugin->hook( [string]钩子名称, [callable|string]钩子回调函数或方法名 )`
+  - 钩子名称必须在系统钩子配置中存在，且不能与当前插件已注册钩子重复；传入方法名时，该方法必须是插件实例的公开方法
+  - return [bool]注册成功返回 true，失败返回 false
+- 获取插件钩子
+  - `$plugin->getHook()`
+  - return [array]当前插件已注册的钩子回调
+- 获取插件配置
+  - `$plugin->config( [string]配置名称, [mixed]默认值 = null )`
+  - 合并插件目录 `config.php` 与 `config/plugin/{插件标识}.php`，用户配置递归覆盖插件默认配置，并支持 `database.host` 点号读取
+  - 配置名称为空字符串时返回全部插件配置
+  - return [mixed]配置值或全部配置，配置不存在时返回默认值
+- 设置插件类型
+  - `$plugin->setType( [int]插件类型索引 )`
+  - 插件类型索引: 0 依赖插件 `rely`，1 功能插件 `plugin`
+  - return [bool]设置成功返回 true，索引无效时返回 false
 - 判断插件是否已启用
   - `$plugin->isEnabled()`
   - return [bool]插件是否已经启用

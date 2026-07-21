@@ -16,11 +16,20 @@ class PluginProvider {
     /** @var array<string, bool> */
     private static array $loading = [];
 
+    /** @var array<string, callable> */
+    private array $hooks = [];
+
+    /** @var array<string, mixed>|null */
+    private ?array $configs = null;
+
     private bool $enabled = false;
 
     public ?string $id = null;
 
     public ?string $path = null;
+
+    private array $types = [ 'rely', 'plugin' ];
+    public string $type = 'rely';
 
     public ?string $name = null;
 
@@ -101,6 +110,30 @@ class PluginProvider {
     }
 
     /**
+     * 运行插件钩子。
+     * @param string $name 钩子名称
+     * @param mixed ...$args 钩子回调参数
+     * @return mixed 钩子回调返回值
+     */
+    public static function runHook( string $name, ...$args ): mixed {
+        if ( !array_key_exists( $name, config( 'plugin.hooks', [] ) ) ) {
+            throw new LogicException( "Hook {$name} is not registered." );
+        }
+        // 检查插件钩子
+        $plugins = config( 'plugin.enabled', [] );
+        $plugins = is_array( $plugins ) ? $plugins : [];
+        foreach ( $plugins as $pluginId ) {
+            if ( !is_string( $pluginId ) ) { continue; }
+            $plugin = plugin( $pluginId );
+            if ( $plugin === null ) { continue; }
+            if ( array_key_exists( $name, $plugin->hooks ) ) {
+                call_user_func_array( $plugin->hooks[$name], $args );
+            }
+        }
+        return true;
+    }
+
+    /**
      * 判断插件是否已经启用。
      * @return bool 是否启用
      */
@@ -118,14 +151,74 @@ class PluginProvider {
      * 子插件可以覆盖此方法执行安装逻辑，如创建数据库表、写入配置等。
      * @return bool 安装成功返回 true，失败返回 false
      */
-    protected function install(): bool { return true; }
+    final function install(): bool { return true; }
 
     /**
      * 插件卸载入口。
      * 子插件可以覆盖此方法执行卸载逻辑，如删除数据库表、清理配置等。
      * @return bool 卸载成功返回 true，失败返回 false
      */
-    protected function uninstall(): bool { return true; }
+    final function uninstall(): bool { return true; }
+
+    /**
+     * 注册插件钩子。
+     * @param string $name 钩子名称
+     * @param callable|string $callback 钩子回调函数或方法名
+     * @return bool 注册成功返回 true，失败返回 false
+     */
+    public function hook( string $name, callable|string $callback ): bool {
+        if ( !array_key_exists( $name, config( 'plugin.hooks', [] ) ) || array_key_exists( $name, $this->hooks ) ) {
+            return false;
+        }
+        // 注册钩子回调函数或方法
+        if ( is_callable( $callback ) ) {
+            $this->hooks[$name] = $callback;
+        }else if ( is_string( $callback ) && is_public( $this, $callback ) ) {
+            $this->hooks[$name] = function( ...$args ) use ( $callback ) {
+                return $this->{$callback}( ...$args );
+            };
+        }
+        return isset( $this->hooks[$name] );
+    }
+
+    /**
+     * 获取插件钩子。
+     * @return array<string, callable> 插件钩子
+     */
+    public function getHook(): array { return $this->hooks; }
+
+    /**
+     * 获取插件配置。
+     * @param string $name 配置名称
+     * @param mixed $default 默认值
+     * @return mixed 配置值
+     */
+    public function config( string $name, mixed $default = null ): mixed {
+        if ( $this->configs === null ) {
+            $loadConfig = function( string $file ): array {
+                if ( !is_file( $file ) || !is_readable( $file ) ) { return []; }
+                $config = include $file;
+                return is_array( $config ) ? $config : [];
+            };
+            $this->configs = array_replace_recursive(
+                $loadConfig( "{$this->path}config.php" ),
+                $loadConfig( config_path( "plugin/{$this->id}.php" ) ),
+            );
+        }
+        if ( $name === '' ) { return $this->configs; }
+        return data_get( $this->configs, $name, $default );
+    }
+
+    /**
+     * 设置插件类型。
+     * @param int $type 插件类型索引
+     * @return bool 设置成功返回 true，失败返回 false
+     */
+    public function setType( int $type ): bool {
+        if ( !array_key_exists( $type, $this->types ) ) { return false; }
+        $this->type = $this->types[$type];
+        return true;
+    }
 
     /**
      * 解析插件目录。

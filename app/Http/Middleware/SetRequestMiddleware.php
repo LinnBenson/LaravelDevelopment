@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Providers\PluginProvider;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,6 +26,7 @@ class SetRequestMiddleware {
         $this->setRid( $request );
         $this->setLocale( $request );
         // 继续处理请求
+        PluginProvider::runHook( 'SET_REQUEST_MIDDLEWARE_HANDLE', $request );
         return $next( $request );
     }
     /**

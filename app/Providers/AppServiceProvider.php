@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Providers\PluginProvider;
 use App\Filament\Resources\AdminControl\AdminUsers\AdminUserPolicy;
 use App\Filament\Resources\UserManagement\Users\UserPolicy;
 use App\Models\AdminUser;
@@ -15,6 +16,8 @@ class AppServiceProvider extends ServiceProvider {
      */
     public function register(): void {
         $this->mergeConfigFrom( app_path( 'Filament/Config/system_uploads.php' ), 'system_uploads' );
+
+        PluginProvider::runHook( 'APP_SERVICE_PROVIDER_REGISTER' );
     }
 
     /**
@@ -23,5 +26,7 @@ class AppServiceProvider extends ServiceProvider {
     public function boot(): void {
         Gate::policy( AdminUser::class, AdminUserPolicy::class );
         Gate::policy( User::class, UserPolicy::class );
+
+        PluginProvider::runHook( 'APP_SERVICE_PROVIDER_BOOT' );
     }
 }

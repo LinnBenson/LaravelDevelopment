@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Resources\AdminControl\PluginManagement\PluginManagement;
 use App\Filament\Resources\Dashboard\Login\Login;
 use App\Filament\Resources\Dashboard\Home\HomeDashboard;
 use App\Filament\Resources\DeveloperCenter\BootstrapIcons\BootstrapIcons;
@@ -23,6 +24,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use App\Providers\PluginProvider;
 
 /**
  * AdminPanelProvider
@@ -37,7 +39,7 @@ class AdminPanelProvider extends PanelProvider {
      * @return Panel Filament 面板
      */
     public function panel( Panel $panel ): Panel {
-        return $panel
+        $panel
             ->default()
             ->id( 'admin' )
             ->path( env( 'APP_ADMIN_PREFIX', 'admin' ) )
@@ -49,6 +51,7 @@ class AdminPanelProvider extends PanelProvider {
             ->discoverResources( in: app_path( 'Filament/Resources' ), for: 'App\Filament\Resources' )
             ->pages( [
                 HomeDashboard::class,
+                PluginManagement::class,
                 BootstrapIcons::class,
                 FilamentIcons::class,
                 LogInformation::class,
@@ -77,5 +80,7 @@ class AdminPanelProvider extends PanelProvider {
             ->authMiddleware( [
                 Authenticate::class,
             ] );
+        PluginProvider::runHook( 'ADMIN_PANEL_PROVIDER_PANEL', $panel );
+        return $panel;
     }
 }
