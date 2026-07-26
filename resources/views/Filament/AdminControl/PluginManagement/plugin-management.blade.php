@@ -9,6 +9,7 @@
     {{-- 插件分类管理区域 --}}
     <div class="plugin-management-layout">
         <section class="plugin-management-main">
+            <!--
             <div class="plugin-management-heading">
                 <div>
                     <h2>功能插件</h2>
@@ -16,6 +17,7 @@
                 </div>
                 <span>{{ count( $featurePlugins ) }} 个</span>
             </div>
+            -->
             <div class="plugin-management-card-grid">
                 @forelse ( $featurePlugins as $plugin )
                     <article class="plugin-management-card" wire:key="plugin-card-{{ $plugin['id'] }}">
@@ -106,7 +108,7 @@
             <div class="plugin-management-heading">
                 <div>
                     <h2>依赖插件</h2>
-                    <p>为其他插件提供基础能力。</p>
+                    <p>为系统或其他插件提供支持。</p>
                 </div>
                 <span>{{ count( $relyPlugins ) }} 个</span>
             </div>
@@ -143,37 +145,34 @@
                 @endforelse
             </div>
 
-            <div class="plugin-management-failed-heading">
-                <div>
-                    <h2>加载失败</h2>
-                    <p>未能正常初始化的插件。</p>
-                </div>
-                <span>{{ count( $failedPlugins ) }} 个</span>
-            </div>
-            <div class="plugin-management-failed-list">
-                @forelse ( $failedPlugins as $plugin )
-                    <article class="plugin-management-failed-row" wire:key="plugin-failed-{{ $plugin['id'] }}">
-                        <span class="plugin-management-failed-icon">
-                            <x-filament::icon icon="heroicon-o-exclamation-triangle" />
-                        </span>
-                        <span class="plugin-management-failed-content">
-                            <strong>{{ $plugin['name'] }}</strong>
-                            <small>{{ $plugin['description'] }}</small>
-                        </span>
-                        <x-filament::icon-button
-                            icon="heroicon-o-trash"
-                            color="danger"
-                            :label="'删除 '.$plugin['name']"
-                            wire:click="mountAction('deletePlugin', {{ \Illuminate\Support\Js::from(['pluginId' => $plugin['id']]) }})"
-                        />
-                    </article>
-                @empty
-                    <div class="plugin-management-empty is-compact">
-                        <x-filament::icon icon="heroicon-o-check-circle" />
-                        <strong>没有加载失败的插件</strong>
+            @if ( !empty( $failedPlugins ) )
+                <div class="plugin-management-failed-heading">
+                    <div>
+                        <h2>加载失败</h2>
+                        <p>未能正常初始化的插件。</p>
                     </div>
-                @endforelse
-            </div>
+                    <span>{{ count( $failedPlugins ) }} 个</span>
+                </div>
+                <div class="plugin-management-failed-list">
+                    @foreach ( $failedPlugins as $plugin )
+                        <article class="plugin-management-failed-row" wire:key="plugin-failed-{{ $plugin['id'] }}">
+                            <span class="plugin-management-failed-icon">
+                                <x-filament::icon icon="heroicon-o-exclamation-triangle" />
+                            </span>
+                            <span class="plugin-management-failed-content">
+                                <strong>{{ $plugin['name'] }}</strong>
+                                <small>{{ $plugin['description'] }}</small>
+                            </span>
+                            <x-filament::icon-button
+                                icon="heroicon-o-trash"
+                                color="danger"
+                                :label="'删除 '.$plugin['name']"
+                                wire:click="mountAction('deletePlugin', {{ \Illuminate\Support\Js::from(['pluginId' => $plugin['id']]) }})"
+                            />
+                        </article>
+                    @endforeach
+                </div>
+            @endif
         </aside>
     </div>
 
@@ -188,13 +187,14 @@
         .plugin-management-main,
         .plugin-management-side {
             min-width: 0;
+        }
+        .plugin-management-side {
             padding: 1.25rem;
             border: 1px solid rgba(107, 114, 128, 0.2);
             border-radius: 0.75rem;
             background: rgba(255, 255, 255, 0.72);
             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
         }
-        .dark .plugin-management-main,
         .dark .plugin-management-side {
             background: var(--gray-900);
         }
@@ -240,7 +240,7 @@
             gap: 1rem;
         }
         .dark .plugin-management-card {
-            background: rgba(17, 24, 39, 0.7);
+            background: var(--gray-900);
         }
         .plugin-management-card-top {
             display: flex;

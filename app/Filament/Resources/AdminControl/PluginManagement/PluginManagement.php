@@ -38,6 +38,20 @@ class PluginManagement extends Page {
     protected string $view = 'Filament.AdminControl.PluginManagement.plugin-management';
 
     /**
+     * 获取头部操作。
+     * 提供重新加载当前插件管理页面的刷新按钮。
+     * @return array<int, Action> 头部操作按钮
+     */
+    protected function getHeaderActions(): array {
+        return [
+            Action::make( 'refresh' )
+                ->label( '刷新' )
+                ->icon( Heroicon::OutlinedArrowPath )
+                ->url( static::getUrl() ),
+        ];
+    }
+
+    /**
      * 获取已安装插件列表。
      * 扫描 app/Plugins 一级目录并读取可正常加载的插件信息。
      * @return array<int, array<string, mixed>> 插件列表
@@ -112,7 +126,7 @@ class PluginManagement extends Page {
      */
     public function deletePlugin( string $id ): void {
         try {
-            if ( is_public( plugin( $id ), 'uninstall' ) ){ plugin( $id )->uninstall(); }
+            if ( !is_null( plugin( $id ) ) && is_public( plugin( $id ), 'uninstall' ) ){ plugin( $id )->uninstall(); }
             $pluginPath = $this->resolvePluginDirectory( $id );
             $pluginConfig = $this->readConfigFile( config_path( 'plugin.php' ) );
             $enabled = $pluginConfig['enabled'] ?? [];
