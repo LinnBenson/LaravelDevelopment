@@ -217,8 +217,8 @@
         .plugin-management-heading > span {
             padding: 0.25rem 0.625rem;
             border-radius: 9999px;
-            background: rgba(245, 158, 11, 0.12);
-            color: #d97706;
+            background: color-mix(in srgb, var(--primary-500) 12%, transparent);
+            color: var(--primary-600);
             font-size: 0.75rem;
             font-weight: 600;
             white-space: nowrap;
@@ -251,8 +251,8 @@
         .plugin-management-rely-icon {
             display: inline-flex;
             border-radius: 0.625rem;
-            background: rgba(245, 158, 11, 0.12);
-            color: #d97706;
+            background: color-mix(in srgb, var(--primary-500) 12%, transparent);
+            color: var(--primary-600);
             align-items: center;
             justify-content: center;
         }
@@ -273,7 +273,7 @@
         }
         .plugin-management-card-content:hover,
         .plugin-management-card-content:focus-visible {
-            background: rgba(245, 158, 11, 0.08);
+            background: color-mix(in srgb, var(--primary-500) 8%, transparent);
             outline: none;
         }
         .plugin-management-card-content h3 {
@@ -360,8 +360,8 @@
         }
         .plugin-management-rely-select:hover,
         .plugin-management-rely-select:focus-visible {
-            background: rgba(245, 158, 11, 0.08);
-            outline: 0.25rem solid rgba(245, 158, 11, 0.08);
+            background: color-mix(in srgb, var(--primary-500) 8%, transparent);
+            outline: 0.25rem solid color-mix(in srgb, var(--primary-500) 8%, transparent);
         }
         .plugin-management-rely-content strong,
         .plugin-management-rely-content small {

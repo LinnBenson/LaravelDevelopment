@@ -5,7 +5,6 @@ namespace App\Providers\Filament;
 use App\Filament\Resources\AdminControl\PluginManagement\PluginManagement;
 use App\Filament\Resources\Dashboard\Login\Login;
 use App\Filament\Resources\Dashboard\Home\HomeDashboard;
-use App\Filament\Resources\DeveloperCenter\BootstrapIcons\BootstrapIcons;
 use App\Filament\Resources\DeveloperCenter\LogInformation\LogInformation;
 use App\Filament\Resources\DeveloperCenter\Readme\Readme;
 use App\Filament\Resources\DeveloperCenter\FilamentIcons\FilamentIcons;
@@ -46,13 +45,12 @@ class AdminPanelProvider extends PanelProvider {
             ->authGuard( 'admin' )
             ->login( Login::class )
             ->colors( [
-                'primary' => Color::Amber,
+                'primary' => Color::Blue,
             ] )
             ->discoverResources( in: app_path( 'Filament/Resources' ), for: 'App\Filament\Resources' )
             ->pages( [
                 HomeDashboard::class,
                 PluginManagement::class,
-                BootstrapIcons::class,
                 FilamentIcons::class,
                 LogInformation::class,
                 Readme::class,

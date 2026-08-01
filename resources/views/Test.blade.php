@@ -1,4 +1,4 @@
-@extends( 'Frame' )
+@extends( 'View::Frame' )
 @section( 'title', '登录' )
 
 @push( 'head' )
