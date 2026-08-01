@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\AdminControl\PluginManagement;
 
+use App\Filament\Concerns\HasNavigationLevel;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Textarea;
@@ -23,6 +24,10 @@ use UnitEnum;
  * @package App\Filament\Resources\AdminControl\PluginManagement
  */
 class PluginManagement extends Page {
+    use HasNavigationLevel;
+
+    protected static string $navigationPermission = 'plugin_management';
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPuzzlePiece;
 
     protected static string|UnitEnum|null $navigationGroup = '管理员控制';
@@ -120,34 +125,80 @@ class PluginManagement extends Page {
 
     /**
      * 删除插件。
-     * 依次取消 Hook 信任、删除用户配置和插件目录。
+     * 执行卸载入口后隔离插件目录，并在删除失败时恢复系统配置和文件。
      * @param string $id 插件标识
      * @return void
      */
     public function deletePlugin( string $id ): void {
+        $pluginPath = null;
+        $quarantinePath = null;
+        $pluginConfigFile = config_path( 'plugin.php' );
+        $pluginConfig = [];
+        $pluginConfigChanged = false;
+        $userConfigFile = config_path( "plugin/{$id}.php" );
+        $userConfig = [];
+        $userConfigDeleted = false;
         try {
-            if ( !is_null( plugin( $id ) ) && is_public( plugin( $id ), 'uninstall' ) ){ plugin( $id )->uninstall(); }
             $pluginPath = $this->resolvePluginDirectory( $id );
-            $pluginConfig = $this->readConfigFile( config_path( 'plugin.php' ) );
+            $plugin = $this->resolvePlugin( $id );
+            if ( is_public( $plugin, 'uninstall' ) && $plugin->uninstall() !== true ) {
+                throw new RuntimeException( '插件卸载入口执行失败。' );
+            }
+            $quarantinePath = dirname( $pluginPath ).'/.deleting-'.$id.'-'.uuid();
+            if ( !rename( $pluginPath, $quarantinePath ) ) {
+                throw new RuntimeException( '插件目录隔离失败。' );
+            }
+            $pluginConfig = $this->readConfigFile( $pluginConfigFile );
             $enabled = $pluginConfig['enabled'] ?? [];
             $enabled = is_array( $enabled ) ? $enabled : [];
             if ( in_array( $id, $enabled, true ) ) {
-                $pluginConfig['enabled'] = array_values( array_filter(
+                $updatedPluginConfig = $pluginConfig;
+                $updatedPluginConfig['enabled'] = array_values( array_filter(
                     $enabled,
                     fn ( mixed $pluginId ): bool => $pluginId !== $id,
                 ) );
-                $this->writeConfigFile( config_path( 'plugin.php' ), $pluginConfig );
-                config()->set( 'plugin.enabled', $pluginConfig['enabled'] );
+                $this->writeConfigFile( $pluginConfigFile, $updatedPluginConfig );
+                $pluginConfigChanged = true;
+                config()->set( 'plugin.enabled', $updatedPluginConfig['enabled'] );
             }
-            $userConfigFile = config_path( "plugin/{$id}.php" );
-            if ( ( is_file( $userConfigFile ) || is_link( $userConfigFile ) ) && !unlink( $userConfigFile ) ) {
-                throw new RuntimeException( '插件用户配置删除失败。' );
+            if ( is_file( $userConfigFile ) || is_link( $userConfigFile ) ) {
+                $userConfig = $this->readConfigFile( $userConfigFile );
+                if ( !unlink( $userConfigFile ) ) {
+                    throw new RuntimeException( '插件用户配置删除失败。' );
+                }
+                $userConfigDeleted = true;
             }
-            File::deleteDirectory( $pluginPath );
-            if ( is_dir( $pluginPath ) ) { throw new RuntimeException( '插件目录删除失败。' ); }
+            if ( !File::deleteDirectory( $quarantinePath ) || is_dir( $quarantinePath ) ) {
+                throw new RuntimeException( '插件目录删除失败。' );
+            }
             Notification::make()->title( "{$id} 插件已删除" )->success()->send();
         }catch ( Throwable $throwable ) {
-            Notification::make()->title( '插件删除失败' )->body( $throwable->getMessage() )->danger()->send();
+            $rollbackErrors = [];
+            try {
+                if ( is_string( $quarantinePath ) && is_dir( $quarantinePath ) && is_string( $pluginPath ) && !file_exists( $pluginPath ) ) {
+                    if ( !rename( $quarantinePath, $pluginPath ) ) {
+                        throw new RuntimeException( '插件目录恢复失败。' );
+                    }
+                }
+            }catch ( Throwable $rollbackThrowable ) {
+                $rollbackErrors[] = $rollbackThrowable->getMessage();
+            }
+            try {
+                if ( $userConfigDeleted ) { $this->writeConfigFile( $userConfigFile, $userConfig ); }
+            }catch ( Throwable $rollbackThrowable ) {
+                $rollbackErrors[] = '插件用户配置恢复失败：'.$rollbackThrowable->getMessage();
+            }
+            try {
+                if ( $pluginConfigChanged ) {
+                    $this->writeConfigFile( $pluginConfigFile, $pluginConfig );
+                    config()->set( 'plugin.enabled', $pluginConfig['enabled'] ?? [] );
+                }
+            }catch ( Throwable $rollbackThrowable ) {
+                $rollbackErrors[] = '插件启用配置恢复失败：'.$rollbackThrowable->getMessage();
+            }
+            $message = $throwable->getMessage();
+            if ( $rollbackErrors !== [] ) { $message .= ' '.implode( ' ', $rollbackErrors ); }
+            Notification::make()->title( '插件删除失败' )->body( $message )->danger()->send();
         }
     }
 

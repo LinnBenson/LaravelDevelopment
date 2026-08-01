@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Dashboard\Home;
 
+use App\Filament\Concerns\HasNavigationLevel;
 use App\Filament\Resources\AdminControl\AdminUsers\AdminUserResource;
 use App\Filament\Resources\DeveloperCenter\FilamentIcons\FilamentIcons;
 use App\Filament\Resources\DeveloperCenter\Readme\Readme;
@@ -25,6 +26,10 @@ use Throwable;
  * @package App\Filament\Resources\Dashboard\Home
  */
 class HomeDashboard extends Dashboard {
+    use HasNavigationLevel;
+
+    protected static string $navigationPermission = 'dashboard';
+
     protected static ?string $title = '仪表板';
 
     protected static ?string $navigationLabel = '仪表板';

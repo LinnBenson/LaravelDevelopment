@@ -9,6 +9,7 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Facades\Filament;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
@@ -37,14 +38,29 @@ class UserForm {
                         Select::make( 'agent' )
                             ->label( '代理' )
                             ->prefixIcon( Heroicon::OutlinedUserGroup )
-                            ->options( fn (): array => [0 => '0 · System'] + AdminUser::query()
-                                ->orderBy( 'name' )
-                                ->get()
-                                ->mapWithKeys( fn ( AdminUser $adminUser ): array => [
-                                    $adminUser->getKey() => "{$adminUser->id} · {$adminUser->name}",
-                                ] )
-                                ->all() )
-                            ->default( 0 )
+                            ->options( function(): array {
+                                $currentAdmin = Filament::auth()->user();
+                                if ( $currentAdmin instanceof AdminUser && $currentAdmin->level < 100 ) {
+                                    return [$currentAdmin->getKey() => "{$currentAdmin->id} · {$currentAdmin->name}"];
+                                }
+                                return [0 => '0 · System'] + AdminUser::query()
+                                    ->orderBy( 'name' )
+                                    ->get()
+                                    ->mapWithKeys( fn ( AdminUser $adminUser ): array => [
+                                        $adminUser->getKey() => "{$adminUser->id} · {$adminUser->name}",
+                                    ] )
+                                    ->all();
+                            } )
+                            ->default( function(): int {
+                                $currentAdmin = Filament::auth()->user();
+                                return $currentAdmin instanceof AdminUser && $currentAdmin->level < 100
+                                    ? (int) $currentAdmin->getKey()
+                                    : 0;
+                            } )
+                            ->disabled( fn ( string $operation ): bool =>
+                                $operation === 'edit' || (int) Filament::auth()->user()?->level < 100
+                            )
+                            ->dehydrated()
                             ->searchable()
                             ->preload()
                             ->native( false )

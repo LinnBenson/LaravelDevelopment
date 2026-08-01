@@ -2,7 +2,9 @@
 
 namespace App\Filament\Resources\UserManagement\Users;
 
+use App\Models\AdminUser;
 use App\Models\User;
+use Filament\Facades\Filament;
 use Filament\Resources\Pages\CreateRecord;
 
 /**
@@ -20,6 +22,10 @@ class CreateUser extends CreateRecord {
      * @return array<string, mixed> 处理后的表单数据
      */
     protected function mutateFormDataBeforeCreate( array $data ): array {
+        $adminUser = Filament::auth()->user();
+        if ( $adminUser instanceof AdminUser && $adminUser->level < 100 ) {
+            $data['agent'] = $adminUser->getKey();
+        }
         $data['phone'] = User::formatPhoneForStorage(
             isset( $data['phone_area_code'] ) ? (string) $data['phone_area_code'] : null,
             isset( $data['phone'] ) ? (string) $data['phone'] : null,

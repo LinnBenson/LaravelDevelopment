@@ -31,7 +31,11 @@ return new class extends PluginProvider {
      * @return void
      */
     public function register(): void {
+        // 注册视图命名空间
         app( 'view' )->addNamespace( 'View', "{$this->path}Views" );
+        // 注册配置
+        config()->set( "filament.navigation_levels.bootstrap_icons", 9000 );
+        // 注册路由
         Route::middleware( ['web'] )
             ->prefix( 'plugin_toview' )
             ->name( 'plugin.toview.' )

@@ -94,3 +94,19 @@ if ( !function_exists( 'plugin' ) ) {
         return PluginProvider::load( $id );
     }
 }
+if ( !function_exists( 'runShell' ) ) {
+    /**
+     * 执行 Shell 命令
+     * @param string $command Shell 命令
+     * @return string|null 命令输出
+     */
+    function runShell( string $command ): ?string {
+        $cacheFile = config( 'cache.debug' ).'_'.md5( uuid() ).'.tmp';
+        $escapedCacheFile = escapeshellarg( $cacheFile );
+        shell_exec( "{$command} > {$escapedCacheFile} 2>&1" );
+        if ( !file_exists( $cacheFile ) ) { return null; }
+        $output = file_get_contents( $cacheFile );
+        unlink( $cacheFile );
+        return is_string( $output ) ? $output : null;
+    }
+}

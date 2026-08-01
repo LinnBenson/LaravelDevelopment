@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\DeveloperCenter\FilamentIcons;
 
+use App\Filament\Concerns\HasNavigationLevel;
 use BackedEnum;
 use Filament\Pages\Page;
 use Filament\Support\Enums\IconSize;
@@ -14,6 +15,10 @@ use UnitEnum;
  * @package App\Filament\Resources\DeveloperCenter\FilamentIcons
  */
 class FilamentIcons extends Page {
+    use HasNavigationLevel;
+
+    protected static string $navigationPermission = 'filament_icons';
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedSquares2x2;
 
     protected static string|UnitEnum|null $navigationGroup = '开发者中心';

@@ -47,20 +47,15 @@ class ServerCommand extends Command {
         // 调试命令
         if ( $action === 'debug' ) {
             $max = 9999;
-            $cacheFile = config( 'cache.debug' );
             for(  $i = 0; $i < $max; $i++ ) {
-                shell_exec( "php artisan server {$name} restart -d > {$cacheFile} 2>&1" );
-                $cache = file_exists( $cacheFile ) ? file_get_contents( $cacheFile ) : '';
+                $cache = runShell( "php artisan server {$name} restart -d" );
                 $this->line( $cache );
                 $this->line( "<fg=green>Use 'stop' to stop this debugging task; other operations will refresh it.</>" );
                 $this->output->write( "<fg=green>[".( $i + 1 )."/{$max}] ></> " );
                 $input = trim( (string) fgets( STDIN ) );
                 if ( $input === 'stop' ) {
-                    shell_exec( "php artisan server {$name} stop > {$cacheFile} 2>&1" );
-                    if ( file_exists( $cacheFile ) ) {
-                        $this->line( file_get_contents( $cacheFile ) );
-                        unlink( $cacheFile );
-                    }
+                    $cache = runShell( "php artisan server {$name} stop" );
+                    $this->line( $cache );
                     return self::SUCCESS;
                 }
             }

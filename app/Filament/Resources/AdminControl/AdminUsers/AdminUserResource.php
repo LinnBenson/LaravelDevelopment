@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\AdminControl\AdminUsers;
 
+use App\Filament\Concerns\HasNavigationLevel;
 use App\Models\AdminUser;
 use BackedEnum;
 use Filament\Facades\Filament;
@@ -18,6 +19,10 @@ use UnitEnum;
  * @package App\Filament\Resources\AdminControl\AdminUsers
  */
 class AdminUserResource extends Resource {
+    use HasNavigationLevel;
+
+    protected static string $navigationPermission = 'admin_users';
+
     protected static ?string $model = AdminUser::class;
 
     protected static ?string $slug = 'admin-users';
@@ -52,6 +57,16 @@ class AdminUserResource extends Resource {
      */
     public static function table( Table $table ): Table {
         return AdminUsersTable::configure( $table );
+    }
+
+    /**
+     * 判断是否可以在后台新增管理员。
+     * 只允许等级大于等于 100 的管理员进入新增页面。
+     * @return bool 是否允许新增
+     */
+    public static function canCreate(): bool {
+        $user = Filament::auth()->user();
+        return parent::canCreate() && $user instanceof AdminUser && $user->level > 100;
     }
 
     /**

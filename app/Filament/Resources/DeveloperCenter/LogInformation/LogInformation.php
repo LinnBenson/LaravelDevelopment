@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\DeveloperCenter\LogInformation;
 
+use App\Filament\Concerns\HasNavigationLevel;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
@@ -18,6 +19,10 @@ use UnitEnum;
  * @package App\Filament\Resources\DeveloperCenter\LogInformation
  */
 class LogInformation extends Page {
+    use HasNavigationLevel;
+
+    protected static string $navigationPermission = 'log_information';
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentText;
 
     protected static string|UnitEnum|null $navigationGroup = '开发者中心';

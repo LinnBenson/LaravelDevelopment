@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\DeveloperCenter\Readme;
 
+use App\Filament\Concerns\HasNavigationLevel;
 use BackedEnum;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
@@ -17,6 +18,10 @@ use UnitEnum;
  * @package App\Filament\Resources\DeveloperCenter\Readme
  */
 class Readme extends Page {
+    use HasNavigationLevel;
+
+    protected static string $navigationPermission = 'readme';
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBookOpen;
 
     protected static string|UnitEnum|null $navigationGroup = '开发者中心';

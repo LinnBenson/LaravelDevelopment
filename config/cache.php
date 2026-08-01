@@ -80,5 +80,5 @@ return [
     /**
      * 调试日志文件
      */
-    'debug' => storage_path( "logs/debug_echo.log" )
+    'debug' => storage_path( "logs/debug_echo" )
 ];

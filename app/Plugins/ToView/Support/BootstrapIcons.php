@@ -2,6 +2,7 @@
 
 namespace App\Plugins\ToView\Support;
 
+use App\Filament\Concerns\HasNavigationLevel;
 use BackedEnum;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
@@ -13,6 +14,10 @@ use UnitEnum;
  * @package App\Plugins\ToView\Support\BootstrapIcons
  */
 class BootstrapIcons extends Page {
+    use HasNavigationLevel;
+
+    protected static string $navigationPermission = 'bootstrap_icons';
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedSquares2x2;
 
     protected static string|UnitEnum|null $navigationGroup = '开发者中心';

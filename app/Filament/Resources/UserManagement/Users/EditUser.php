@@ -34,6 +34,7 @@ class EditUser extends EditRecord {
      * @return array<string, mixed> 处理后的表单数据
      */
     protected function mutateFormDataBeforeSave( array $data ): array {
+        $data['agent'] = $this->record->agent;
         $data['phone'] = User::formatPhoneForStorage(
             isset( $data['phone_area_code'] ) ? (string) $data['phone_area_code'] : null,
             isset( $data['phone'] ) ? (string) $data['phone'] : null,

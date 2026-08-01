@@ -44,6 +44,12 @@ location / {
   - 通过 `SetRequestMiddleware` 中间件设置，优先使用请求头中的 `RID` 参数，其次使用 Cookie 中的 `rid` 参数，若都不存在则自动生成一个 UUID 作为 RID
   - 可通过 `$request->attributes->get('rid')` 获取当前请求的 RID
 
+## 后台菜单等级权限
+- 菜单等级统一配置在 `config/filament.php` 的 `navigation_levels` 中
+- 配置值为显示菜单和访问页面所需的最低管理员等级，设置为 `0` 时不额外限制等级
+- 后台页面或资源使用 `HasNavigationLevel`，并通过 `$navigationPermission` 指定对应的配置键
+- 权限判断同时控制菜单显示和直接页面访问，未达到要求等级时页面返回 403
+
 ## 公共函数 [app/Helpers/Common.php]
 - 判断字符串是否为 JSON
   - `is_json( [string]待判断的字符串 )`
@@ -91,6 +97,10 @@ location / {
   - 通过 `PluginProvider::load()` 加载插件，同一进程内重复调用时返回缓存实例
   - 插件不存在或标识无效时返回 null，依赖不满足或插件结构无效时抛出 `LogicException`
   - return [object|null]插件实例或 null
+- 执行 Shell 命令
+  - `runShell( [string]Shell 命令 )`
+  - 执行 Shell 命令并合并返回标准输出和错误输出
+  - return [string|null]命令输出，无法获取输出时返回 null
 
 ## 插件提供器 [app/Providers/PluginProvider.php]
 - 插件标识: String|null `$plugin->id`

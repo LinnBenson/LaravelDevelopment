@@ -2,12 +2,16 @@
 
 namespace App\Filament\Resources\UserManagement\Users;
 
+use App\Filament\Concerns\HasNavigationLevel;
+use App\Models\AdminUser;
 use App\Models\User;
 use BackedEnum;
+use Filament\Facades\Filament;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use UnitEnum;
 
 /**
@@ -16,6 +20,10 @@ use UnitEnum;
  * @package App\Filament\Resources\UserManagement\Users
  */
 class UserResource extends Resource {
+    use HasNavigationLevel;
+
+    protected static string $navigationPermission = 'users';
+
     protected static ?string $model = User::class;
 
     protected static ?string $slug = 'users';
@@ -50,6 +58,19 @@ class UserResource extends Resource {
      */
     public static function table( Table $table ): Table {
         return UsersTable::configure( $table );
+    }
+
+    /**
+     * 获取用户列表查询。
+     * 等级小于 100 的管理员只能查询自己名下的用户。
+     * @return Builder 用户查询
+     */
+    public static function getEloquentQuery(): Builder {
+        $query = parent::getEloquentQuery();
+        $adminUser = Filament::auth()->user();
+        if ( !$adminUser instanceof AdminUser ) { return $query->whereRaw( '1 = 0' ); }
+        if ( $adminUser->level < 100 ) { $query->where( 'agent', $adminUser->getKey() ); }
+        return $query;
     }
 
     /**

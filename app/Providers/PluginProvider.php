@@ -151,14 +151,14 @@ class PluginProvider {
      * 子插件可以覆盖此方法执行安装逻辑，如创建数据库表、写入配置等。
      * @return bool 安装成功返回 true，失败返回 false
      */
-    final function install(): bool { return true; }
+    public function install(): bool { return true; }
 
     /**
      * 插件卸载入口。
      * 子插件可以覆盖此方法执行卸载逻辑，如删除数据库表、清理配置等。
      * @return bool 卸载成功返回 true，失败返回 false
      */
-    final function uninstall(): bool { return true; }
+    public function uninstall(): bool { return true; }
 
     /**
      * 注册插件钩子。

@@ -33,12 +33,12 @@ class AdminUserPolicy {
 
     /**
      * 新增管理员。
-     * 等级大于零的管理员可以新增更低级管理员。
+     * 等级大于 100 的管理员可以新增更低级管理员。
      * @param AdminUser $user 当前管理员
      * @return bool 是否允许
      */
     public function create( AdminUser $user ): bool {
-        return $user->level > 0;
+        return $user->level > 100;
     }
 
     /**

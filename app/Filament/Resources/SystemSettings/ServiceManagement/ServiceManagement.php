@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\SystemSettings\ServiceManagement;
 
+use App\Filament\Concerns\HasNavigationLevel;
 use App\Workerman\Server;
 use BackedEnum;
 use Filament\Actions\Action;
@@ -18,6 +19,10 @@ use UnitEnum;
  * @package App\Filament\Resources\SystemSettings\ServiceManagement
  */
 class ServiceManagement extends Page {
+    use HasNavigationLevel;
+
+    protected static string $navigationPermission = 'service_management';
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedServerStack;
 
     protected static string|UnitEnum|null $navigationGroup = '系统设置';
@@ -204,7 +209,7 @@ class ServiceManagement extends Page {
     private function runServerCommand( string $name, string $action ): void {
         $php = escapeshellarg( PHP_BINDIR.'/php' );
         $artisan = escapeshellarg( base_path( 'artisan' ) );
-        shell_exec( "{$php} {$artisan} server {$name} {$action} -d > /dev/null 2>&1" );
+        runShell( "{$php} {$artisan} server {$name} {$action} -d" );
     }
 
     /**
@@ -216,7 +221,7 @@ class ServiceManagement extends Page {
     private function runServerStatusCommand( string $name ): string {
         $php = escapeshellarg( PHP_BINDIR.'/php' );
         $artisan = escapeshellarg( base_path( 'artisan' ) );
-        $output = shell_exec( "{$php} {$artisan} server {$name} status 2>&1" );
+        $output = runShell( "{$php} {$artisan} server {$name} status" );
         if ( $output === null || trim( $output ) === '' ) { return '命令未返回状态信息。'; }
         $output = preg_replace( '/\e\[[0-?]*[ -\/]*[@-~]/', '', $output );
         return trim( $output ?? '命令状态解析失败。' );

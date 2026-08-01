@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\SystemSettings\SystemConfig;
 
+use App\Filament\Concerns\HasNavigationLevel;
 use App\Models\SystemConfig;
 use BackedEnum;
 use Filament\Notifications\Notification;
@@ -23,7 +24,10 @@ use UnitEnum;
  * @package App\Filament\Resources\SystemSettings\SystemConfig
  */
 class SystemConfigPage extends Page {
-    use WithFileUploads;
+    use HasNavigationLevel, WithFileUploads;
+
+    protected static string $navigationPermission = 'system_config';
+
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCog6Tooth;
 
