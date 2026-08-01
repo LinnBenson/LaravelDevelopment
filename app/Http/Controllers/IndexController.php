@@ -11,6 +11,9 @@ class IndexController extends Controller {
      * @return \Illuminate\Http\JsonResponse JSON 响应
      */
     public function index(): \Illuminate\Http\JsonResponse {
+        // 检查用户
+        $user = null;
+        // 返回应用信息
         return echoJson( 0, [
             'app' => [
                 'title' => setting( 'app.title' ),
@@ -18,7 +21,8 @@ class IndexController extends Controller {
                 'host' => setting( 'app.host' ),
                 'icon' => setting( 'app.icon' ),
                 'copyright' => setting( 'app.copyright' ),
-            ]
+            ],
+            'user' => $user,
         ]);
     }
     /**

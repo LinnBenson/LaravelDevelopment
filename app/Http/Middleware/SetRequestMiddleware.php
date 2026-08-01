@@ -36,17 +36,20 @@ class SetRequestMiddleware {
      * @return bool 是否成功设置 RID
      */
     private function setRid( Request $request ): bool {
+        // 使用请求头中的 RID 参数设置 RID
         $headerRid = $request->header( 'rid', '' );
         if ( is_string( $headerRid ) && is_uuid( $headerRid ) ) {
             Cookie::queue( Cookie::forever( 'rid', $headerRid ) );
             $request->attributes->set( 'rid', $headerRid );
             return true;
         }
+        // 使用 Cookie 中的 RID 参数设置 RID
         $cookieRid = $request->cookie( 'rid', '' );
         if ( is_string( $cookieRid ) && is_uuid( $cookieRid ) ) {
             $request->attributes->set( 'rid', $cookieRid );
             return true;
         }
+        // 生成新的 RID 并设置
         $rid = uuid();
         Cookie::queue( Cookie::forever( 'rid', $rid ) );
         $request->attributes->set( 'rid', $rid );

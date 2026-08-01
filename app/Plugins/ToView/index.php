@@ -13,7 +13,7 @@ return new class extends PluginProvider {
      */
     public function __construct() {
         $this->name = 'To View';
-        $this->description = '视图渲染组件';
+        $this->description = 'System default view rendering component.';
         $this->version = '1.0.0';
         $this->author = 'System';
         $this->setType( 1 );

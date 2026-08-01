@@ -11,7 +11,12 @@ return [
         'image_max_size' => 2048,
         'file_max_size' => 10240,
         'image_extensions' => ['png', 'jpeg', 'jpg', 'gif', 'webp'],
-        'image_mime_types' => ['image/png', 'image/jpeg', 'image/gif', 'image/webp'],
+        'image_mime_types' => [
+            'image/png',
+            'image/jpeg',
+            'image/gif',
+            'image/webp'
+        ],
         'file_extensions' => ['txt', 'md', 'pdf', 'png', 'jpeg', 'jpg', 'gif', 'svg'],
         'file_mime_types' => [
             'text/plain',

@@ -74,8 +74,8 @@ return new class extends Migration
                 'key' => 'app.theme',
                 'value' => json_encode([
                     'Default' => [
-                        'logo' => '/icons/logo_dark.png',
-                        'img' => '/assets/Default.jpg',
+                        'logo' => '/assets/icons/logo_dark.png',
+                        'img' => '/assets/images/Default.jpg',
                         'style' => '',
                         '--r0' => '237, 236, 231',
                         '--r1' => '70, 70, 70',
