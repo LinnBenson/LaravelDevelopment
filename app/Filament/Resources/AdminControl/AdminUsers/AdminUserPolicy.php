@@ -33,12 +33,12 @@ class AdminUserPolicy {
 
     /**
      * 新增管理员。
-     * 等级大于 100 的管理员可以新增更低级管理员。
+     * 超过代理管理等级的管理员可以新增更低级管理员。
      * @param AdminUser $user 当前管理员
      * @return bool 是否允许
      */
     public function create( AdminUser $user ): bool {
-        return $user->level > 100;
+        return $user->level > (int) config( 'filament.agent', 100 );
     }
 
     /**

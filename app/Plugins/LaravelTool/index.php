@@ -1,6 +1,7 @@
 <?php
 
 use App\Plugins\LaravelTool\Controllers\AdminController;
+use App\Plugins\LaravelTool\Middleware\EnsureAdminLevel;
 use App\Providers\PluginProvider;
 use Filament\Http\Middleware\Authenticate;
 use Illuminate\Support\Facades\Route;
@@ -32,7 +33,7 @@ return new class extends PluginProvider {
      */
     public function register(): void {
         Route::post( '/admin/plugins/laravel-tool/run-command', [AdminController::class, 'runCommand'] )
-            ->middleware( ['web', Authenticate::class] )
+            ->middleware( ['web', Authenticate::class, EnsureAdminLevel::class.':9000'] )
             ->name( 'plugins.laravel-tool.run-command' );
     }
 };

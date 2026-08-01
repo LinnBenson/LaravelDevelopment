@@ -62,14 +62,16 @@ class UserResource extends Resource {
 
     /**
      * 获取用户列表查询。
-     * 等级小于 100 的管理员只能查询自己名下的用户。
+     * 未达到代理管理等级的管理员只能查询自己名下的用户。
      * @return Builder 用户查询
      */
     public static function getEloquentQuery(): Builder {
         $query = parent::getEloquentQuery();
         $adminUser = Filament::auth()->user();
         if ( !$adminUser instanceof AdminUser ) { return $query->whereRaw( '1 = 0' ); }
-        if ( $adminUser->level < 100 ) { $query->where( 'agent', $adminUser->getKey() ); }
+        if ( $adminUser->level < (int) config( 'filament.agent', 100 ) ) {
+            $query->where( 'agent', $adminUser->getKey() );
+        }
         return $query;
     }
 

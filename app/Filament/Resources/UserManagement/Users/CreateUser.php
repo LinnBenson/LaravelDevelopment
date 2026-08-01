@@ -23,7 +23,7 @@ class CreateUser extends CreateRecord {
      */
     protected function mutateFormDataBeforeCreate( array $data ): array {
         $adminUser = Filament::auth()->user();
-        if ( $adminUser instanceof AdminUser && $adminUser->level < 100 ) {
+        if ( $adminUser instanceof AdminUser && $adminUser->level < (int) config( 'filament.agent', 100 ) ) {
             $data['agent'] = $adminUser->getKey();
         }
         $data['phone'] = User::formatPhoneForStorage(

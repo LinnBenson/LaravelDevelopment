@@ -4,7 +4,11 @@
  * @package config
  */
 return [
+    // 后台资源路径
     'assets_path' => 'filament',
+    // 代理管理等级
+    'agent' => 100,
+    // 后台菜单等级权限
     'navigation_levels' => [
         'dashboard' => 0,
         'admin_users' => 0,

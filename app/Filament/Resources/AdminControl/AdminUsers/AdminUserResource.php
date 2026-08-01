@@ -61,12 +61,14 @@ class AdminUserResource extends Resource {
 
     /**
      * 判断是否可以在后台新增管理员。
-     * 只允许等级大于等于 100 的管理员进入新增页面。
+     * 只允许超过代理管理等级的管理员进入新增页面。
      * @return bool 是否允许新增
      */
     public static function canCreate(): bool {
         $user = Filament::auth()->user();
-        return parent::canCreate() && $user instanceof AdminUser && $user->level > 100;
+        return parent::canCreate() &&
+            $user instanceof AdminUser &&
+            $user->level > (int) config( 'filament.agent', 100 );
     }
 
     /**

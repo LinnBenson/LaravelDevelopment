@@ -40,7 +40,10 @@ class UserForm {
                             ->prefixIcon( Heroicon::OutlinedUserGroup )
                             ->options( function(): array {
                                 $currentAdmin = Filament::auth()->user();
-                                if ( $currentAdmin instanceof AdminUser && $currentAdmin->level < 100 ) {
+                                if (
+                                    $currentAdmin instanceof AdminUser &&
+                                    $currentAdmin->level < (int) config( 'filament.agent', 100 )
+                                ) {
                                     return [$currentAdmin->getKey() => "{$currentAdmin->id} · {$currentAdmin->name}"];
                                 }
                                 return [0 => '0 · System'] + AdminUser::query()
@@ -53,12 +56,14 @@ class UserForm {
                             } )
                             ->default( function(): int {
                                 $currentAdmin = Filament::auth()->user();
-                                return $currentAdmin instanceof AdminUser && $currentAdmin->level < 100
+                                return $currentAdmin instanceof AdminUser &&
+                                    $currentAdmin->level < (int) config( 'filament.agent', 100 )
                                     ? (int) $currentAdmin->getKey()
                                     : 0;
                             } )
                             ->disabled( fn ( string $operation ): bool =>
-                                $operation === 'edit' || (int) Filament::auth()->user()?->level < 100
+                                $operation === 'edit' ||
+                                (int) Filament::auth()->user()?->level < (int) config( 'filament.agent', 100 )
                             )
                             ->dehydrated()
                             ->searchable()

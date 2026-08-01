@@ -7,6 +7,8 @@ use App\Models\User;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Notifications\Notification;
+use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Columns\ViewColumn;
@@ -14,6 +16,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\ValidationException;
 
 /**
  * UsersTable
@@ -34,15 +37,52 @@ class UsersTable {
                     ->label( 'UID' )
                     ->sortable()
                     ->searchable(),
-                TextColumn::make( 'agent' )
+                SelectColumn::make( 'agent' )
                     ->label( '代理' )
-                    ->formatStateUsing( function ( int|string|null $state, User $record ): ?string {
-                        if ( $state === null ) { return null; }
-                        if ( (int) $state === 0 ) { return '0 · System'; }
-                        return "{$state} · ".( $record->agentAdmin?->name ?? 'Unknown' );
+                    ->visible( fn (): bool =>
+                        (int) auth( 'admin' )->user()?->level >= (int) config( 'filament.agent', 100 )
+                    )
+                    ->options( fn (): array => [0 => '0 · System'] + AdminUser::query()
+                        ->orderBy( 'name' )
+                        ->get()
+                        ->mapWithKeys( fn ( AdminUser $adminUser ): array => [
+                            $adminUser->getKey() => "{$adminUser->id} · {$adminUser->name}",
+                        ] )
+                        ->all() )
+                    ->disabled( function ( User $record ): bool {
+                        $adminUser = auth( 'admin' )->user();
+                        return !$adminUser instanceof AdminUser ||
+                            $adminUser->level < (int) config( 'filament.agent', 100 ) ||
+                            Gate::forUser( $adminUser )->denies( 'update', $record );
                     } )
-                    ->badge()
-                    ->placeholder( '-' ),
+                    ->updateStateUsing( function ( int|string|null $state, User $record ): int {
+                        $adminUser = auth( 'admin' )->user();
+                        abort_unless(
+                            $adminUser instanceof AdminUser &&
+                            $adminUser->level >= (int) config( 'filament.agent', 100 ) &&
+                            Gate::forUser( $adminUser )->allows( 'update', $record ),
+                            403,
+                        );
+                        $agent = (int) $state;
+                        $agentAdmin = $agent === 0 ? null : AdminUser::query()->find( $agent );
+                        if ( $agent !== 0 && !$agentAdmin instanceof AdminUser ) {
+                            throw ValidationException::withMessages( ['agent' => '选择的代理不存在。'] );
+                        }
+                        $record->agent = $agent;
+                        $record->save();
+                        $agentName = $agent === 0
+                            ? '0 · System'
+                            : "{$agent} · {$agentAdmin->name}";
+                        Notification::make()
+                            ->title( '代理修改成功' )
+                            ->body( "用户 {$record->id} 的代理已修改为 {$agentName}。" )
+                            ->success()
+                            ->send();
+                        return $agent;
+                    } )
+                    ->searchableOptions()
+                    ->preloadOptions()
+                    ->native( false ),
                 TextColumn::make( 'nickname' )
                     ->label( '昵称' )
                     ->searchable()
@@ -88,6 +128,9 @@ class UsersTable {
             ->filters( [
                 SelectFilter::make( 'agent' )
                     ->label( '代理' )
+                    ->visible( fn (): bool =>
+                        (int) auth( 'admin' )->user()?->level >= (int) config( 'filament.agent', 100 )
+                    )
                     ->options( fn (): array => [0 => '0 · System'] + AdminUser::query()
                         ->orderBy( 'name' )
                         ->get()
