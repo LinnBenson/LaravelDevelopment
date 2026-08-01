@@ -14,6 +14,9 @@
 
 # 伪静态部署
 ```
+location ^~ /internal- {
+    try_files $uri $uri/ /index.php?$query_string;
+}
 location ^~ /livewire- {
     try_files $uri $uri/ /index.php?$query_string;
 }

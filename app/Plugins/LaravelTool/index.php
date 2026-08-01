@@ -31,7 +31,7 @@ return new class extends PluginProvider {
      * @return void
      */
     public function register(): void {
-        Route::post( '/admin/plugins/laravel-tool/run-command', [AdminController::class, 'runCommand'] )
+        Route::post( '/'.config( 'app.admin_path' ).'/plugins/laravel-tool/run-command', [AdminController::class, 'runCommand'] )
             ->middleware( AdminLevel::class )
             ->name( 'plugins.laravel-tool.run-command' );
     }

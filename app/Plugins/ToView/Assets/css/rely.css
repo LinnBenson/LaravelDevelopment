@@ -111,7 +111,7 @@ i.block {
  */
 @font-face {
     font-family: 'code';
-    src: url( '/plugin_toview/assets/fonts/Consolas-Regular.ttf' );
+    src: url( '/internal-plugins-to-view/assets/fonts/Consolas-Regular.ttf' );
     font-weight: normal;
     font-style: normal;
 }

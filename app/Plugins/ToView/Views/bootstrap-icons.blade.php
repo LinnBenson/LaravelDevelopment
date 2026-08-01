@@ -3,7 +3,7 @@
         $iconData = $this->getIconData();
     @endphp
 
-    <link rel="stylesheet" href="{{route( 'plugin.toview.asset', [ 'path' => 'css/BootstrapIcons.css' ])}}">
+    <link rel="stylesheet" href="{{route( 'plugins.to-view.asset', [ 'path' => 'css/BootstrapIcons.css' ])}}">
 
     {{-- 图标搜索和分类 --}}
     <x-filament::section

@@ -24,11 +24,12 @@
         <meta name="browsermode" content="application">
         <meta name="x5-fullscreen" content="true">
         <meta name="x5-page-mode" content="app">
-        <link rel="stylesheet" href="{{route( 'plugin.toview.asset', [ 'path' => 'css/rely.css' ])}}">
+        <link rel="stylesheet" href="{{route( 'plugins.to-view.asset', [ 'path' => 'css/rely.css' ])}}">
+        <link rel="stylesheet" href="{{route( 'plugins.to-view.asset', [ 'path' => 'css/BootstrapIcons.css' ])}}">
         @if( isset( $frame->theme['css'] ) && is_string( $frame->theme['css'] ) )
             <link rel="stylesheet" href="{{$frame->theme['css']}}">
         @endif
-        <script src="{{route( 'plugin.toview.asset', [ 'path' => 'js/jquery-4.0.0.min.js' ])}}"></script>
+        <script src="{{route( 'plugins.to-view.asset', [ 'path' => 'js/jquery-4.0.0.min.js' ])}}"></script>
         <title>@hasSection( 'title' )@yield( 'title' ) - @endif{{ setting( 'app.title' ) }}</title>
         <style>
             :root { {{$themeStyle}} }

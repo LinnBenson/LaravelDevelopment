@@ -191,6 +191,7 @@
                             >
                         @endif
                         @if ( $item['copy'] ?? false )
+                            {{--
                             <button
                                 type="button"
                                 class="fi-copyable"
@@ -203,6 +204,7 @@
                                     } )
                                 "
                             >复制</button>
+                            --}}
                         @else
                             <button
                                 type="button"

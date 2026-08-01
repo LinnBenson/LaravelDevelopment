@@ -36,8 +36,8 @@ return new class extends PluginProvider {
         config()->set( "filament.navigation_levels.bootstrap_icons", 9000 );
         // 注册路由
         Route::middleware( ['web'] )
-            ->prefix( 'plugin_toview' )
-            ->name( 'plugin.toview.' )
+            ->prefix( 'internal-plugins-to-view' )
+            ->name( 'plugins.to-view.' )
             ->group( function(): void {
                 Route::get( '/assets/{path}', [AssetController::class, 'show'] )
                     ->where( 'path', '.*' )
