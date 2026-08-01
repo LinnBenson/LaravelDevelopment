@@ -6,20 +6,16 @@ use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class DatabaseSeeder extends Seeder
-{
+/**
+ * 数据库填充器
+ */
+class DatabaseSeeder extends Seeder {
     use WithoutModelEvents;
 
     /**
      * 填充应用数据库。
      */
-    public function run(): void
-    {
-        // User::factory(10)->create();
+    public function run(): void {
 
-        User::factory()->create([
-            'name' => '测试用户',
-            'email' => 'test@example.com',
-        ]);
     }
 }

@@ -4,6 +4,8 @@
  * @package config
  */
 return [
+    // 后台面板路径
+    'path' => env( 'APP_ADMIN_PREFIX', 'admin' ),
     // 后台资源路径
     'assets_path' => 'filament',
     // 代理管理等级

@@ -41,7 +41,7 @@ class AdminPanelProvider extends PanelProvider {
         $panel
             ->default()
             ->id( 'admin' )
-            ->path( env( 'APP_ADMIN_PREFIX', 'admin' ) )
+            ->path( config( 'filament.path', 'admin' ) )
             ->authGuard( 'admin' )
             ->login( Login::class )
             ->colors( [

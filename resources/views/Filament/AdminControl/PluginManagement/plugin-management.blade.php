@@ -54,7 +54,7 @@
                                         <x-filament::button
                                             size="sm"
                                             color="danger"
-                                            icon="heroicon-o-shield-exclamation"
+                                            icon="heroicon-o-shield-check"
                                             wire:click="mountAction('cancelHooks', {{ \Illuminate\Support\Js::from(['pluginId' => $plugin['id']]) }})"
                                         >
                                             取消 Hook
@@ -63,7 +63,7 @@
                                         <x-filament::button
                                             size="sm"
                                             color="warning"
-                                            icon="heroicon-o-shield-check"
+                                            icon="heroicon-o-shield-exclamation"
                                             wire:click="mountAction('trustHooks', {{ \Illuminate\Support\Js::from(['pluginId' => $plugin['id']]) }})"
                                         >
                                             信任 Hook
@@ -130,6 +130,14 @@
                                 <small>{{ $plugin['id'] }} · {{ $plugin['version'] }}</small>
                             </span>
                         </span>
+                        @if ( $plugin['has_hooks'] )
+                            <x-filament::icon-button
+                                :icon="$plugin['hooks_trusted'] ? 'heroicon-o-shield-check' : 'heroicon-o-shield-exclamation'"
+                                :color="$plugin['hooks_trusted'] ? 'danger' : 'warning'"
+                                :label="($plugin['hooks_trusted'] ? '取消 Hook：' : '信任 Hook：').$plugin['name']"
+                                wire:click="mountAction('{{ $plugin['hooks_trusted'] ? 'cancelHooks' : 'trustHooks' }}', {{ \Illuminate\Support\Js::from(['pluginId' => $plugin['id']]) }})"
+                            />
+                        @endif
                         <x-filament::icon-button
                             icon="heroicon-o-trash"
                             color="danger"

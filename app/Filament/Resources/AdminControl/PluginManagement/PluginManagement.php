@@ -298,7 +298,7 @@ class PluginManagement extends Page {
             ->modalHeading( fn ( array $arguments ): string => "信任 {$arguments['pluginId']} 申请的 Hook？" )
             ->modalDescription( '确认后，系统会允许该插件响应下列 Hook。' )
             ->modalContent( function( array $arguments ) {
-                $plugin = $this->resolveFeaturePlugin( (string) ( $arguments['pluginId'] ?? '' ) );
+                $plugin = $this->resolvePlugin( (string) ( $arguments['pluginId'] ?? '' ) );
                 $hookConfigs = config( 'plugin.hooks', [] );
                 $hookConfigs = is_array( $hookConfigs ) ? $hookConfigs : [];
                 $hooks = [];
@@ -375,7 +375,7 @@ class PluginManagement extends Page {
      */
     private function trustPluginHooks( string $id ): void {
         try {
-            $plugin = $this->resolveFeaturePlugin( $id );
+            $plugin = $this->resolvePlugin( $id );
             if ( $plugin->getHook() === [] ) { throw new RuntimeException( '该插件没有申请 Hook。' ); }
             $pluginConfig = $this->readConfigFile( config_path( 'plugin.php' ) );
             $enabled = $pluginConfig['enabled'] ?? [];
@@ -397,7 +397,7 @@ class PluginManagement extends Page {
      */
     private function cancelPluginHooks( string $id ): void {
         try {
-            $plugin = $this->resolveFeaturePlugin( $id );
+            $plugin = $this->resolvePlugin( $id );
             if ( $plugin->getHook() === [] ) { throw new RuntimeException( '该插件没有申请 Hook。' ); }
             $pluginConfig = $this->readConfigFile( config_path( 'plugin.php' ) );
             $enabled = $pluginConfig['enabled'] ?? [];
