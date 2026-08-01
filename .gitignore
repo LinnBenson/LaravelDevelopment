@@ -2,6 +2,7 @@
 .DS_Store
 .env
 .env.backup
+.htaccess
 .user.ini
 .phpunit.result.cache
 /.phpunit.cache
@@ -9,5 +10,6 @@
 /public/storage
 /public/.htaccess
 /public/.user.ini
+/public/robots.txt
 /storage/*.key
 /vendor
