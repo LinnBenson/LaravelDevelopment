@@ -44,22 +44,6 @@
             },
         }"
     >
-        {{-- 页面操作栏 --}}
-        <section class="system-config-toolbar">
-            <div>
-                <h2>配置中心</h2>
-                <p>按类别集中维护应用配置，不同类型会自动使用对应的编辑控件。</p>
-            </div>
-            <button
-                type="button"
-                class="system-config-primary-button"
-                wire:click="$toggle('showCreateForm')"
-            >
-                <x-filament::icon :icon="$showCreateForm ? 'heroicon-o-x-mark' : 'heroicon-o-plus'" />
-                <span>{{ $showCreateForm ? '取消新增' : '添加配置键' }}</span>
-            </button>
-        </section>
-
         {{-- 新增配置键 --}}
         @if ( $showCreateForm )
             <form class="system-config-create-panel" wire:submit="createConfig">
@@ -509,38 +493,6 @@
             box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--primary-500) 12%, transparent);
         }
 
-        /* 页面顶部操作栏 */
-        .system-config-toolbar {
-            display: flex;
-            padding: 1.25rem 1.4rem;
-            border: 1px solid color-mix(in srgb, var(--primary-500) 22%, transparent);
-            border-radius: 1rem;
-            background: linear-gradient(120deg, var(--primary-50), var(--primary-50));
-            align-items: center;
-            justify-content: space-between;
-            gap: 1rem;
-        }
-        .dark .system-config-toolbar {
-            background: linear-gradient(
-                120deg,
-                color-mix(in srgb, var(--primary-500) 12%, var(--config-card)),
-                color-mix(in srgb, var(--primary-500) 8%, var(--config-card))
-            );
-        }
-        .system-config-toolbar h2,
-        .system-config-toolbar p {
-            margin: 0;
-        }
-        .system-config-toolbar h2 {
-            font-size: 1.1rem;
-            font-weight: 750;
-        }
-        .system-config-toolbar p {
-            margin-top: 0.25rem;
-            color: var(--config-muted);
-            font-size: 0.78rem;
-        }
-        .system-config-primary-button,
         .system-config-save-button,
         .system-config-create-panel footer button {
             display: inline-flex;
@@ -556,18 +508,15 @@
             gap: 0.4rem;
             cursor: pointer;
         }
-        .system-config-primary-button:hover,
         .system-config-save-button:hover,
         .system-config-create-panel footer button:hover {
             background: var(--primary-700);
         }
-        .system-config-primary-button:disabled,
         .system-config-save-button:disabled,
         .system-config-create-panel footer button:disabled {
             opacity: 0.55;
             cursor: wait;
         }
-        .system-config-primary-button svg,
         .system-config-save-button svg,
         .system-config-create-panel footer button svg {
             width: 1rem;
@@ -1178,7 +1127,6 @@
                 overflow-x: auto;
                 grid-template-columns: repeat(3, minmax(9rem, 1fr));
             }
-            .system-config-toolbar,
             .system-config-category-header {
                 align-items: stretch;
                 flex-direction: column;
@@ -1190,7 +1138,6 @@
             .system-config-create-description {
                 grid-column: auto;
             }
-            .system-config-primary-button,
             .system-config-save-button {
                 width: 100%;
             }

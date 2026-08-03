@@ -48,6 +48,20 @@ class ServiceManagement extends Page {
     public string $statusOutput = '';
 
     /**
+     * 获取头部操作。
+     * 提供重新加载服务状态的刷新按钮。
+     * @return array<int, Action> 头部操作按钮
+     */
+    protected function getHeaderActions(): array {
+        return [
+            Action::make( 'refresh' )
+                ->label( '刷新' )
+                ->icon( Heroicon::OutlinedArrowPath )
+                ->url( static::getUrl() ),
+        ];
+    }
+
+    /**
      * 获取服务项列表。
      * 根据 Workerman 配置、状态心跳和 PID 文件生成页面数据。
      * @return array<int, array<string, bool|int|string|null>> 服务项列表

@@ -24,6 +24,8 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use App\Providers\PluginProvider;
+use Filament\View\PanelsRenderHook;
+use Illuminate\Support\HtmlString;
 
 /**
  * AdminPanelProvider
@@ -77,7 +79,13 @@ class AdminPanelProvider extends PanelProvider {
             ] )
             ->authMiddleware( [
                 Authenticate::class,
-            ] );
+            ] )
+            ->renderHook(
+                PanelsRenderHook::HEAD_END,
+                fn (): HtmlString => new HtmlString(
+                    '<link rel="stylesheet" href="'.asset( config( 'filament.assets_path' ).'/css/filament/filament/global.css' ).'">'
+                )
+            );
         PluginProvider::runHook( 'ADMIN_PANEL_PROVIDER_PANEL', $panel );
         return $panel;
     }

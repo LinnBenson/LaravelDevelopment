@@ -1,383 +1,436 @@
 <x-filament-panels::page.simple>
-    {{-- 后台登录主体 --}}
-    <div class="admin-login-shell">
-        <section class="admin-login-brand" aria-label="后台管理系统介绍">
-            <div class="admin-login-brand-glow admin-login-brand-glow-top"></div>
-            <div class="admin-login-brand-glow admin-login-brand-glow-bottom"></div>
+    {{-- 管理员登录页面 --}}
+    <main class="admin-login">
+        <section class="admin-login-visual" aria-label="后台管理系统介绍">
+            <div class="admin-login-grid"></div>
+            <div class="admin-login-orb admin-login-orb-top"></div>
+            <div class="admin-login-orb admin-login-orb-bottom"></div>
 
-            <div class="admin-login-brand-content">
-                <div class="admin-login-brand-mark">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M12 3 4.5 7.2v9.6L12 21l7.5-4.2V7.2L12 3Z" />
-                        <path d="m8.5 12 2.2 2.2 4.8-5" />
-                    </svg>
+            <div class="admin-login-visual-content">
+                <header class="admin-login-brand">
+                    <span class="admin-login-logo">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M4 7.5 12 3l8 4.5v9L12 21l-8-4.5v-9Z" />
+                            <path d="M8.5 12.2 11 14.7l4.8-5.2" />
+                        </svg>
+                    </span>
+                    <span>{{ config( 'app.name' ) }}</span>
+                </header>
+
+                <div class="admin-login-intro">
+                    <span class="admin-login-eyebrow">ADMINISTRATION</span>
+                    <h1>让管理工作<br>清晰而高效</h1>
+                    <p>统一、安全的后台管理中心，帮助你专注于每一项重要工作。</p>
                 </div>
 
-                <div class="admin-login-brand-copy">
-                    <span>ADMIN CONSOLE</span>
-                    <h1>{{ config( 'app.name' ) }}</h1>
-                    <p>专注、可靠的管理工作台，让每一次操作都清晰高效。</p>
-                </div>
-
-                <div class="admin-login-brand-meta">
-                    <span><i></i> 系统运行正常</span>
-                    <span>安全管理中心</span>
-                </div>
+                <footer class="admin-login-status">
+                    <span><i></i> 系统服务正常</span>
+                    <span>Secure Console</span>
+                </footer>
             </div>
         </section>
 
-        <section class="admin-login-form-panel">
-            <div class="admin-login-form-heading">
-                <div class="admin-login-mobile-mark">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M12 3 4.5 7.2v9.6L12 21l7.5-4.2V7.2L12 3Z" />
-                        <path d="m8.5 12 2.2 2.2 4.8-5" />
-                    </svg>
+        <section class="admin-login-panel">
+            <div class="admin-login-form">
+                <div class="admin-login-mobile-brand">
+                    <span class="admin-login-logo">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M4 7.5 12 3l8 4.5v9L12 21l-8-4.5v-9Z" />
+                            <path d="M8.5 12.2 11 14.7l4.8-5.2" />
+                        </svg>
+                    </span>
+                    <strong>{{ config( 'app.name' ) }}</strong>
                 </div>
-                <span>欢迎回来</span>
-                <h2>登录管理后台</h2>
-                <p>请输入管理员账号信息以继续</p>
+
+                <header class="admin-login-heading">
+                    <span>欢迎回来</span>
+                    <h2>登录管理后台</h2>
+                    <p>请输入管理员账号和密码继续访问</p>
+                </header>
+
+                {{ $this->content }}
+
+                <div class="admin-login-safe">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 3 5 6v5c0 4.7 2.9 8.1 7 10 4.1-1.9 7-5.3 7-10V6l-7-3Z" />
+                        <path d="m9.5 12 1.7 1.7 3.5-4" />
+                    </svg>
+                    <span>你的登录信息已加密传输</span>
+                </div>
             </div>
 
-            {{ $this->content }}
-
-            <div class="admin-login-security-note">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M12 3 5 6v5c0 4.7 2.9 8.1 7 10 4.1-1.9 7-5.3 7-10V6l-7-3Z" />
-                    <path d="m9.5 12 1.7 1.7 3.7-4" />
-                </svg>
-                <span>登录过程受安全保护</span>
-            </div>
+            <p class="admin-login-copyright">© {{ date( 'Y' ) }} {{ config( 'app.name' ) }}</p>
         </section>
-    </div>
+    </main>
 
     <style>
-        /* 登录页整体布局 */
-        .fi-simple-layout:has(.admin-login-shell) {
-            position: relative;
-            overflow: hidden;
+        /* 登录页框架 */
+        .fi-simple-layout:has(.admin-login) {
             min-height: 100vh;
-            background:
-                radial-gradient(circle at 10% 10%, color-mix(in srgb, var(--primary-500) 12%, transparent), transparent 30rem),
-                radial-gradient(circle at 90% 90%, color-mix(in srgb, var(--primary-400) 10%, transparent), transparent 28rem),
-                #f8f8f6;
+            background: #eef3fb;
         }
-        .fi-simple-layout:has(.admin-login-shell)::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            opacity: 0.28;
-            pointer-events: none;
-            background-image: radial-gradient(rgba(120, 113, 108, 0.35) 0.7px, transparent 0.7px);
-            background-size: 22px 22px;
-            mask-image: linear-gradient(to bottom right, black, transparent 65%);
+        .fi-simple-layout:has(.admin-login) .fi-simple-main-ctn {
+            padding: 2rem;
         }
-        .fi-simple-layout:has(.admin-login-shell) .fi-simple-main-ctn {
-            position: relative;
-            z-index: 1;
-            padding: 32px;
-        }
-        .fi-simple-layout:has(.admin-login-shell) .fi-simple-main {
-            width: min(100%, 1040px);
-            max-width: 1040px;
+        .fi-simple-layout:has(.admin-login) .fi-simple-main {
+            width: min(100%, 70rem);
+            max-width: 70rem;
             padding: 0;
+            background: transparent;
+            border-radius: 0;
+            box-shadow: none;
         }
-        .fi-simple-layout:has(.admin-login-shell) .fi-simple-page-content {
+        .fi-simple-layout:has(.admin-login) .fi-simple-page-content {
             margin-top: 0;
         }
-        .admin-login-shell {
+        .admin-login {
             display: grid;
-            grid-template-columns: minmax(0, 1.05fr) minmax(400px, 0.95fr);
+            grid-template-columns: minmax(0, 1.08fr) minmax(24rem, 0.92fr);
+            min-height: 42rem;
             overflow: hidden;
-            min-height: 640px;
-            border: 1px solid rgba(231, 229, 228, 0.9);
-            border-radius: 28px;
-            background: rgba(255, 255, 255, 0.94);
-            box-shadow: 0 32px 80px rgba(28, 25, 23, 0.12), 0 4px 16px rgba(28, 25, 23, 0.05);
+            background: #ffffff;
+            border: 1px solid rgba(148, 163, 184, 0.22);
+            border-radius: 1.75rem;
+            box-shadow: 0 2rem 5rem rgba(15, 23, 42, 0.13), 0 0.25rem 1rem rgba(15, 23, 42, 0.05);
         }
 
-        /* 左侧品牌区域 */
-        .admin-login-brand {
-            position: relative;
+        /* 左侧品牌区 */
+        .admin-login-visual {
+            padding: 3.5rem;
             overflow: hidden;
-            padding: 64px;
-            color: #fff;
-            background: linear-gradient(145deg, #1c1917 0%, #29211b 52%, #3b2411 100%);
+            background: linear-gradient(145deg, #07152e 0%, #0d2654 52%, #123d85 100%);
+            color: #ffffff;
+            position: relative;
         }
-        .admin-login-brand::before {
-            content: '';
+        .admin-login-grid {
+            opacity: 0.12;
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.24) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.24) 1px, transparent 1px);
+            background-size: 3rem 3rem;
+            mask-image: linear-gradient(145deg, #000000, transparent 78%);
+            pointer-events: none;
             position: absolute;
             inset: 0;
-            opacity: 0.18;
-            background-image:
-                linear-gradient(rgba(255, 255, 255, 0.12) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 255, 255, 0.12) 1px, transparent 1px);
-            background-size: 48px 48px;
-            mask-image: linear-gradient(to bottom, black, transparent 82%);
         }
-        .admin-login-brand-glow {
+        .admin-login-orb {
+            width: 20rem;
+            height: 20rem;
+            background: rgba(59, 130, 246, 0.38);
+            border-radius: 50%;
+            filter: blur(1.25rem);
+            pointer-events: none;
             position: absolute;
-            width: 340px;
-            height: 340px;
-            border-radius: 999px;
-            filter: blur(18px);
-            background: color-mix(in srgb, var(--primary-500) 30%, transparent);
         }
-        .admin-login-brand-glow-top {
-            top: -190px;
-            right: -150px;
+        .admin-login-orb-top {
+            top: -12rem;
+            right: -8rem;
         }
-        .admin-login-brand-glow-bottom {
-            bottom: -220px;
-            left: -180px;
+        .admin-login-orb-bottom {
+            bottom: -14rem;
+            left: -10rem;
+            background: rgba(37, 99, 235, 0.3);
         }
-        .admin-login-brand-content {
-            position: relative;
-            z-index: 1;
+        .admin-login-visual-content {
             display: flex;
             flex-direction: column;
             min-height: 100%;
+            position: relative;
+            z-index: 1;
         }
-        .admin-login-brand-mark,
-        .admin-login-mobile-mark {
+        .admin-login-brand,
+        .admin-login-mobile-brand {
             display: flex;
+            color: #ffffff;
+            font-size: 1.05rem;
+            font-weight: 750;
+            letter-spacing: -0.02em;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        .admin-login-logo {
+            display: inline-flex;
+            width: 2.65rem;
+            height: 2.65rem;
+            flex: 0 0 auto;
+            background: linear-gradient(145deg, #ffffff, #dbeafe);
+            border: 1px solid rgba(255, 255, 255, 0.65);
+            border-radius: 0.8rem;
+            box-shadow: 0 0.65rem 1.6rem rgba(0, 0, 0, 0.18);
+            color: #1d4ed8;
             align-items: center;
             justify-content: center;
-            width: 52px;
-            height: 52px;
-            border-radius: 16px;
-            color: #1c1917;
-            background: linear-gradient(145deg, var(--primary-400), var(--primary-500));
-            box-shadow: 0 12px 30px color-mix(in srgb, var(--primary-500) 25%, transparent);
         }
-        .admin-login-brand-mark svg,
-        .admin-login-mobile-mark svg {
-            width: 28px;
-            height: 28px;
+        .admin-login-logo svg {
+            width: 1.45rem;
+            height: 1.45rem;
             fill: none;
             stroke: currentColor;
-            stroke-width: 1.8;
             stroke-linecap: round;
             stroke-linejoin: round;
+            stroke-width: 1.8;
         }
-        .admin-login-brand-copy {
+        .admin-login-intro {
             margin: auto 0;
-            padding: 72px 0;
+            padding: 4rem 0;
         }
-        .admin-login-brand-copy > span,
-        .admin-login-form-heading > span {
-            display: block;
-            margin-bottom: 14px;
-            color: var(--primary-400);
-            font-size: 12px;
+        .admin-login-eyebrow {
+            display: inline-flex;
+            padding: 0.4rem 0.65rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            border-radius: 999px;
+            color: #93c5fd;
+            font-size: 0.68rem;
             font-weight: 700;
-            letter-spacing: 0.2em;
+            letter-spacing: 0.18em;
         }
-        .admin-login-brand-copy h1 {
-            margin: 0;
-            color: #fff;
-            font-size: clamp(38px, 4vw, 56px);
+        .admin-login-intro h1 {
+            margin: 1.35rem 0 0;
+            color: #ffffff;
+            font-size: clamp(2.5rem, 4vw, 3.7rem);
             font-weight: 750;
-            line-height: 1.08;
-            letter-spacing: -0.045em;
+            line-height: 1.12;
+            letter-spacing: -0.055em;
         }
-        .admin-login-brand-copy p {
-            max-width: 380px;
-            margin: 24px 0 0;
-            color: rgba(255, 255, 255, 0.62);
-            font-size: 16px;
-            line-height: 1.8;
+        .admin-login-intro p {
+            max-width: 24rem;
+            margin: 1.4rem 0 0;
+            color: rgba(219, 234, 254, 0.7);
+            font-size: 0.95rem;
+            line-height: 1.85;
         }
-        .admin-login-brand-meta {
+        .admin-login-status {
             display: flex;
+            color: rgba(219, 234, 254, 0.55);
+            font-size: 0.7rem;
             align-items: center;
             justify-content: space-between;
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 12px;
         }
-        .admin-login-brand-meta span:first-child {
+        .admin-login-status span:first-child {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 0.55rem;
         }
-        .admin-login-brand-meta i {
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
+        .admin-login-status i {
+            width: 0.45rem;
+            height: 0.45rem;
             background: #34d399;
-            box-shadow: 0 0 0 4px rgba(52, 211, 153, 0.12);
+            border-radius: 50%;
+            box-shadow: 0 0 0 0.25rem rgba(52, 211, 153, 0.12);
         }
 
-        /* 右侧登录表单 */
-        .admin-login-form-panel {
+        /* 右侧表单区 */
+        .admin-login-panel {
             display: flex;
+            padding: 3.5rem 4rem 1.5rem;
+            background: #ffffff;
             flex-direction: column;
             justify-content: center;
-            padding: 64px;
-            background: rgba(255, 255, 255, 0.96);
         }
-        .admin-login-form-heading {
-            margin-bottom: 34px;
+        .admin-login-form {
+            width: 100%;
+            max-width: 23rem;
+            margin: auto;
         }
-        .admin-login-form-heading > span {
-            margin-bottom: 10px;
-            color: var(--primary-600);
-            letter-spacing: 0.12em;
-        }
-        .admin-login-form-heading h2 {
-            margin: 0;
-            color: #1c1917;
-            font-size: 30px;
-            font-weight: 750;
-            line-height: 1.25;
-            letter-spacing: -0.035em;
-        }
-        .admin-login-form-heading p {
-            margin: 10px 0 0;
-            color: #78716c;
-            font-size: 14px;
-        }
-        .admin-login-mobile-mark {
+        .admin-login-mobile-brand {
             display: none;
-            margin-bottom: 28px;
+            margin-bottom: 2.25rem;
+            color: #0f172a;
         }
-        .admin-login-form-panel .fi-fo-field-label-content {
-            color: #44403c;
+        .admin-login-heading {
+            margin-bottom: 2rem;
+        }
+        .admin-login-heading > span {
+            display: block;
+            margin-bottom: 0.45rem;
+            color: var(--primary-600);
+            font-size: 0.72rem;
+            font-weight: 750;
+            letter-spacing: 0.08em;
+        }
+        .admin-login-heading h2 {
+            margin: 0;
+            color: #0f172a;
+            font-size: 1.85rem;
+            font-weight: 760;
+            line-height: 1.25;
+            letter-spacing: -0.04em;
+        }
+        .admin-login-heading p {
+            margin: 0.65rem 0 0;
+            color: #64748b;
+            font-size: 0.82rem;
+        }
+        .admin-login-panel .fi-fo-field-label-content {
+            color: #334155;
             font-weight: 650;
         }
-        .admin-login-form-panel .fi-input-wrp {
-            border-radius: 12px;
-            background: #fafaf9;
-            box-shadow: inset 0 0 0 1px #e7e5e4;
-            transition: background 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+        .admin-login-panel .fi-input-wrp {
+            overflow: hidden;
+            background: #f8fafc;
+            border-radius: 0.75rem;
+            box-shadow: inset 0 0 0 1px #dbe2ea;
+            transition: background-color 0.16s ease, box-shadow 0.16s ease;
         }
-        .admin-login-form-panel .fi-input-wrp-content-ctn {
-            align-items: stretch;
+        .admin-login-panel .fi-input-wrp:focus-within {
+            background: #ffffff;
+            box-shadow: inset 0 0 0 2px var(--primary-500), 0 0 0 0.25rem color-mix(in srgb, var(--primary-500) 11%, transparent);
         }
-        .admin-login-form-panel .fi-input {
-            min-height: 48px;
-            padding-top: 13px;
-            padding-bottom: 13px;
-            line-height: 22px;
+        .admin-login-panel .fi-input {
+            min-height: 3rem;
         }
-        .admin-login-form-panel .fi-input:-webkit-autofill,
-        .admin-login-form-panel .fi-input:-webkit-autofill:hover,
-        .admin-login-form-panel .fi-input:-webkit-autofill:focus {
-            -webkit-text-fill-color: #1c1917;
-            box-shadow: 0 0 0 1000px #fafaf9 inset;
-            transition: background-color 9999s ease-out;
+        .admin-login-panel .fi-input:-webkit-autofill,
+        .admin-login-panel .fi-input:-webkit-autofill:hover,
+        .admin-login-panel .fi-input:-webkit-autofill:focus {
+            -webkit-text-fill-color: #0f172a;
+            box-shadow: 0 0 0 1000px #f8fafc inset;
         }
-        .admin-login-form-panel .fi-input-wrp-suffix {
-            align-self: stretch;
-        }
-        .admin-login-form-panel .fi-input-wrp:focus-within {
-            background: #fff;
-            box-shadow: inset 0 0 0 2px var(--primary-500), 0 0 0 4px color-mix(in srgb, var(--primary-500) 10%, transparent);
-        }
-        .admin-login-form-panel .fi-btn {
-            min-height: 48px;
-            border-radius: 12px;
+        .admin-login-panel .fi-btn {
+            min-height: 3rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 0.7rem 1.5rem color-mix(in srgb, var(--primary-600) 22%, transparent);
             font-weight: 700;
-            box-shadow: 0 10px 24px color-mix(in srgb, var(--primary-500) 20%, transparent);
-            transition: transform 160ms ease, box-shadow 160ms ease;
+            transition: box-shadow 0.16s ease, transform 0.16s ease;
         }
-        .admin-login-form-panel .fi-btn:hover {
+        .admin-login-panel .fi-btn:hover {
+            box-shadow: 0 0.9rem 1.8rem color-mix(in srgb, var(--primary-600) 28%, transparent);
             transform: translateY(-1px);
-            box-shadow: 0 14px 28px color-mix(in srgb, var(--primary-500) 26%, transparent);
         }
-        .admin-login-security-note {
+        .admin-login-safe {
             display: flex;
+            margin-top: 1.8rem;
+            color: #94a3b8;
+            font-size: 0.7rem;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            margin-top: 28px;
-            color: #a8a29e;
-            font-size: 12px;
+            gap: 0.45rem;
         }
-        .admin-login-security-note svg {
-            width: 16px;
-            height: 16px;
+        .admin-login-safe svg {
+            width: 0.95rem;
+            height: 0.95rem;
             fill: none;
             stroke: currentColor;
-            stroke-width: 1.8;
             stroke-linecap: round;
             stroke-linejoin: round;
+            stroke-width: 1.8;
+        }
+        .admin-login-copyright {
+            margin: auto auto 0;
+            padding-top: 2rem;
+            color: #b0bac8;
+            font-size: 0.68rem;
         }
 
-        /* 登录页深色模式 */
-        .dark .fi-simple-layout:has(.admin-login-shell) {
-            background: #0c0a09;
+        /* 深色模式 */
+        .dark .fi-simple-layout:has(.admin-login) {
+            background: #060b16;
         }
-        .dark .admin-login-shell {
-            border-color: rgba(68, 64, 60, 0.8);
-            background: #1c1917;
-            box-shadow: 0 32px 80px rgba(0, 0, 0, 0.4);
+        .dark .admin-login {
+            background: #0f172a;
+            border-color: rgba(148, 163, 184, 0.14);
+            box-shadow: 0 2rem 5rem rgba(0, 0, 0, 0.42);
         }
-        .dark .admin-login-form-panel {
-            background: #1c1917;
+        .dark .admin-login-panel {
+            background: #0f172a;
         }
-        .dark .admin-login-form-heading h2 {
-            color: #fafaf9;
+        .dark .admin-login-mobile-brand,
+        .dark .admin-login-heading h2 {
+            color: #f8fafc;
         }
-        .dark .admin-login-form-heading p {
-            color: #a8a29e;
+        .dark .admin-login-heading p,
+        .dark .admin-login-panel .fi-fo-field-label-content {
+            color: #94a3b8;
         }
-        .dark .admin-login-form-panel .fi-fo-field-label-content {
-            color: #e7e5e4;
+        .dark .admin-login-panel .fi-input-wrp {
+            background: #172033;
+            box-shadow: inset 0 0 0 1px #334155;
         }
-        .dark .admin-login-form-panel .fi-input-wrp {
-            background: #292524;
-            box-shadow: inset 0 0 0 1px #44403c;
+        .dark .admin-login-panel .fi-input-wrp:focus-within {
+            background: #172033;
+            box-shadow: inset 0 0 0 2px var(--primary-500), 0 0 0 0.25rem color-mix(in srgb, var(--primary-500) 14%, transparent);
         }
-        .dark .admin-login-form-panel .fi-input-wrp:focus-within {
-            background: #292524;
-            box-shadow: inset 0 0 0 2px var(--primary-500), 0 0 0 4px color-mix(in srgb, var(--primary-500) 12%, transparent);
-        }
-        .dark .admin-login-form-panel .fi-input:-webkit-autofill,
-        .dark .admin-login-form-panel .fi-input:-webkit-autofill:hover,
-        .dark .admin-login-form-panel .fi-input:-webkit-autofill:focus {
-            -webkit-text-fill-color: #fafaf9;
-            box-shadow: 0 0 0 1000px #292524 inset;
+        .dark .admin-login-panel .fi-input:-webkit-autofill,
+        .dark .admin-login-panel .fi-input:-webkit-autofill:hover,
+        .dark .admin-login-panel .fi-input:-webkit-autofill:focus {
+            -webkit-text-fill-color: #f8fafc;
+            box-shadow: 0 0 0 1000px #172033 inset;
         }
 
-        /* 登录页响应式适配 */
-        @media (max-width: 820px) {
-            .fi-simple-layout:has(.admin-login-shell) .fi-simple-main-ctn {
-                padding: 20px;
+        /* 响应式布局 */
+        @media (max-width: 850px) {
+            .fi-simple-layout:has(.admin-login) .fi-simple-main-ctn {
+                padding: 1.25rem;
             }
-            .admin-login-shell {
+            .fi-simple-layout:has(.admin-login) .fi-simple-main {
+                width: min(100%, 29rem);
+                max-width: 29rem;
+            }
+            .admin-login {
                 display: block;
                 min-height: auto;
-                border-radius: 24px;
+                border-radius: 1.4rem;
+                box-shadow: 0 1.25rem 3.5rem rgba(15, 23, 42, 0.13);
             }
-            .admin-login-brand {
+            .admin-login-visual {
                 display: none;
             }
-            .admin-login-form-panel {
-                min-height: 600px;
-                padding: 48px;
+            .admin-login-panel {
+                min-height: auto;
+                padding: 2.5rem 2.25rem 1.5rem;
+                justify-content: flex-start;
             }
-            .admin-login-mobile-mark {
+            .admin-login-form {
+                margin: 0 auto;
+            }
+            .admin-login-mobile-brand {
                 display: flex;
+                margin-bottom: 2rem;
+            }
+            .admin-login-copyright {
+                margin-top: 2.5rem;
             }
         }
         @media (max-width: 520px) {
-            .fi-simple-layout:has(.admin-login-shell) .fi-simple-main-ctn {
-                align-items: flex-start;
-                padding: 12px;
+            .fi-simple-layout:has(.admin-login) .fi-simple-main-ctn {
+                padding: 1rem;
             }
-            .admin-login-shell {
-                border-radius: 20px;
+            .admin-login {
+                border-radius: 1.25rem;
             }
-            .admin-login-form-panel {
-                min-height: calc(100vh - 24px);
-                padding: 34px 24px;
+            .admin-login-panel {
+                min-height: auto;
+                padding: 2rem 1.25rem 1.25rem;
             }
-            .admin-login-form-heading {
-                margin-bottom: 28px;
+            .admin-login-mobile-brand {
+                margin-bottom: 1.75rem;
             }
-            .admin-login-form-heading h2 {
-                font-size: 26px;
+            .admin-login-logo {
+                width: 2.4rem;
+                height: 2.4rem;
+                border-radius: 0.7rem;
+            }
+            .admin-login-heading {
+                margin-bottom: 1.6rem;
+            }
+            .admin-login-heading h2 {
+                font-size: 1.65rem;
+            }
+            .admin-login-heading p {
+                font-size: 0.78rem;
+            }
+            .admin-login-safe {
+                margin-top: 1.5rem;
+            }
+            .admin-login-copyright {
+                margin-top: 2rem;
+                padding-top: 0;
+            }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .admin-login-panel .fi-input-wrp,
+            .admin-login-panel .fi-btn {
+                transition: none;
             }
         }
     </style>

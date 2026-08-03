@@ -5,8 +5,19 @@
 PHP 8.2.28 + Nginx 1.28.0 + MySQL 5.7.44 + Redis 7.4.2 + Node.js 24.4.1
 框架版本: Laravel 12.0
 
+### 开发规范
+- 后台开发目录说明如下，你必须将指定的文件放到指定目录下，如果由于限制需要放到别的目录下，需要经过我的同意：
+  - 权限控制文件目录 `app/Filament/Concerns`
+  - 后台配置文件目录 `app/Filament/Config`
+  - 后台构建文件目录 `app/Filament/Resources`
+  - 后台页面前端目录 `resources/views/Filament`
+  - 后台页面静态资源目录 `public/filament`
+- 所有前端开发包括后端页面之类的，你需要使用系统或者后台提供的主题配置以及强调色，做到主题样式一致且可切换，而且要考虑到移动端设备的布局自适应优化。
+- 插件开发目录在 `app/Plugins` 下，在开发或修改插件时，你需要将插件相关的文件放到对应的插件目录下，不能放在别处，以便做到插件的独立性和可移植性。
+- 前端 Blade 模板文件在 `resources/views` 下，前端静态文件需要放在 `public/assets` 的对应目录下。
+
 ### 运行说明
-- 每轮对话前都要先说 `toai.md 读取完成！`，让我知道你已经阅读了本文件并还没有遗忘。
+- 每轮对话前都要先说 `AGENT.md 读取加载完成！`，让我知道你已经阅读了本文件并还没有遗忘。
 - 开始修改前，先查看相关目录、已有命名方式、路由、组件和服务结构，优先保持项目现有风格。
 - 不要随意新增 Composer 或 npm 依赖。确实需要新增依赖时，先说明原因、替代方案和影响。
 - 你可以生成文件或日志以用于测试，但你测试完成后记得把生成的测试文件和日志删除，避免占用空间。
@@ -144,7 +155,7 @@ PHP 8.2.28 + Nginx 1.28.0 + MySQL 5.7.44 + Redis 7.4.2 + Node.js 24.4.1
 - Laravel 接口都需要使用内置的 `echoJson()` 方法返回 JSON 数据，以便统一处理 JSON 输出格式和错误码。
 
 ### Blade 模板要求 ( 后台系统不受此限制，不会使用 Frame.blade.php 作为公共框架 )
-- Blade 模板一般通过 `resources/views/Frame.blade.php` 作为公共框架，其他页面通过 `@extends('Frame')` 继承。
+- Blade 模板一般通过插件 ToView 的 `app/Plugins/ToView/Views/Frame.blade.php` 作为公共框架，其他页面通过 `@extends('View::Frame')` 继承。
 - 通过公共框架创建后它会支持 jqurey ，以及拥有基本样式与主题，所以需要按框架的规则来写，主题含义示例如下:
   ```
     "Default": {
@@ -167,3 +178,4 @@ PHP 8.2.28 + Nginx 1.28.0 + MySQL 5.7.44 + Redis 7.4.2 + Node.js 24.4.1
     // -- 开头的参数是主题的 CSS 变量，前端可以直接使用 var( --r0 ) 来获取主题色值。
     // 前端也可以通过 \App\Services\ViewService::getTheme() 获取当前在使用的主题数组。
   ```
+- 使用 `View::Frame` 作为公共框架的页面，图标可以使用 Bootstrap Icons v1.11.3，我已经做好了引用。另外 CSS 开发时如果 `app/Plugins/ToView/Assets/css/rely.css` 中有可引用的样式，则不要复写，比如在此文件中声明了一些文字大小规范，你需要延用它。

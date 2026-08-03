@@ -5,6 +5,7 @@ namespace App\Filament\Resources\SystemSettings\SystemConfig;
 use App\Filament\Concerns\HasNavigationLevel;
 use App\Models\SystemConfig;
 use BackedEnum;
+use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
@@ -71,6 +72,22 @@ class SystemConfigPage extends Page {
     public bool $showCreateForm = false;
 
     public string $activeCategory = 'app';
+
+    /**
+     * 获取头部操作。
+     * 在页面标题右侧提供新增配置键开关。
+     * @return array<int, Action> 头部操作按钮
+     */
+    protected function getHeaderActions(): array {
+        return [
+            Action::make( 'toggleCreateForm' )
+                ->label( fn (): string => $this->showCreateForm ? '取消新增' : '添加配置键' )
+                ->icon( fn (): Heroicon => $this->showCreateForm ? Heroicon::OutlinedXMark : Heroicon::OutlinedPlus )
+                ->action( function (): void {
+                    $this->showCreateForm = ! $this->showCreateForm;
+                } ),
+        ];
+    }
 
     /**
      * 初始化系统配置页面。

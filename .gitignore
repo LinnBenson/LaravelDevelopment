@@ -5,11 +5,8 @@
 .htaccess
 .user.ini
 .phpunit.result.cache
+.well-known
 /.phpunit.cache
 /.vscode
-/public/storage
-/public/.htaccess
-/public/.user.ini
-/public/robots.txt
 /storage/*.key
 /vendor

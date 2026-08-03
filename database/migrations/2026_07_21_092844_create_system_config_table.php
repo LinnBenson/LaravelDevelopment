@@ -93,6 +93,22 @@ return new class extends Migration
                 ], JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT|JSON_THROW_ON_ERROR ),
                 'description' => '用于修改应用显示的主题效果'
             ],
+            [
+                'category' => 'system',
+                'type' => 'text',
+                'name' => 'Telegram Bot API',
+                'key' => 'system.telegram.api',
+                'value' => '',
+                'description' => '用于配置 Telegram Bot API'
+            ],
+            [
+                'category' => 'system',
+                'type' => 'text',
+                'name' => 'Telegram UID',
+                'key' => 'system.telegram.uid',
+                'value' => '',
+                'description' => '用于配置 Telegram Bot 的默认接收者 UID'
+            ],
         ];
         foreach ( $insertConfig as $index => $config ) {
             $insert[] = array_merge( $config, [

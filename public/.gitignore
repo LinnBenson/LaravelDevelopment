@@ -1,0 +1,8 @@
+*
+!/assets/
+!/assets/**
+!/filament/
+!/filament/**
+!favicon.ico
+!index.php
+!.gitignore
