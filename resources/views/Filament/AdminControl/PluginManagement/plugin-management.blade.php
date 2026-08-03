@@ -495,7 +495,6 @@
             }
         }
         @media (max-width: 640px) {
-            .plugin-management-main,
             .plugin-management-side {
                 padding: 1rem;
             }

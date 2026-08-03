@@ -3,6 +3,8 @@
 use App\Providers\PluginProvider;
 use App\Plugins\ToView\Support\BootstrapIcons;
 use App\Plugins\ToView\Controllers\AssetController;
+use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Route;
 
 /**
  * To View Plugin
@@ -32,6 +34,7 @@ return new class extends PluginProvider {
     public function register(): void {
         // 注册视图命名空间
         app( 'view' )->addNamespace( 'View', "{$this->path}Views" );
+        Blade::anonymousComponentPath( "{$this->path}Views/Components", 'View' );
         // 注册配置
         config()->set( "filament.navigation_levels.bootstrap_icons", 9000 );
         // 注册路由

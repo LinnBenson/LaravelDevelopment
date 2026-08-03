@@ -25,6 +25,7 @@
         <meta name="x5-fullscreen" content="true">
         <meta name="x5-page-mode" content="app">
         <link rel="stylesheet" href="{{route( 'plugins.to-view.asset', [ 'path' => 'css/rely.css' ])}}">
+        <link rel="stylesheet" href="{{route( 'plugins.to-view.asset', [ 'path' => 'css/unit.css' ])}}">
         <link rel="stylesheet" href="{{route( 'plugins.to-view.asset', [ 'path' => 'css/BootstrapIcons.css' ])}}">
         @if( isset( $frame->theme['css'] ) && is_string( $frame->theme['css'] ) )
             <link rel="stylesheet" href="{{$frame->theme['css']}}">

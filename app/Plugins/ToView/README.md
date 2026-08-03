@@ -3,7 +3,32 @@
 - 继承 `View::Frame` 的 Blade 页面会自动加载 `Assets/js/Core.js`，无需再次引入
   - `@extends( 'View::Frame' )`
 
+## 预设组件
+- 卡片组件 [Views/Components/Card.blade.php]
+  ```
+    <x-View::Card title="卡片标题" icon="卡片图标" open="true:默认打开|false:默认关闭|off:禁用" padding="内边距设置">
+        卡片内容
+    </x-View::Card>
+  ```
+- 按钮组件 [Views/Components/Button.blade.php]
+  ```
+    <x-View::Button icon="按钮图标" size="small|default|big" color="r0|r1|r2|r3|r4|r5|r6" href="跳转链接" target="打开方式" border:线条按钮 stop:禁用按钮 loading:加载中>
+        按钮文本
+    </x-View::Button>
+  ```
+- 布局组件 [Views/Components/Layout.blade.php]
+  ```
+    // default: 间隔页面 gap="0px:间距"
+    // row: 行均匀居中分布 gap="0px:间距"
+    // list: 网格布局 gap="0px:间距" min="80px:元素最小宽度"
+    <x-View::Layout row:横向布局 gap="间距设置">
+        布局内容
+    </x-View::Layout>
+  ```
+
 ## 核心对象 [Assets/js/Core.js]
+- 站点是否已初始化: Boolean `Core.initialized`
+  - Core.js 加载完成后会自动执行 `Core.init()`，初始化完成后为 true
 - 当前请求标识: String `Core.rid`
   - 当前请求的唯一标识，由公共页面框架注入
 - 当前语言代码: String `Core.locale`

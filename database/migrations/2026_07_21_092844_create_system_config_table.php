@@ -96,6 +96,22 @@ return new class extends Migration
             [
                 'category' => 'system',
                 'type' => 'text',
+                'name' => 'Bark 服务地址',
+                'key' => 'system.bark.host',
+                'value' => '',
+                'description' => '用于配置 Bark 的推送服务地址'
+            ],
+            [
+                'category' => 'system',
+                'type' => 'text',
+                'name' => 'Bark 设备码',
+                'key' => 'system.bark.device',
+                'value' => '',
+                'description' => '用于配置 Bark 的默认接收设备码'
+            ],
+            [
+                'category' => 'system',
+                'type' => 'text',
                 'name' => 'Telegram Bot API',
                 'key' => 'system.telegram.api',
                 'value' => '',

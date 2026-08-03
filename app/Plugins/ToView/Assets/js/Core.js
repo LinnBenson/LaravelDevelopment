@@ -6,6 +6,7 @@
  * @property {Function} init 站点初始化方法
  */
 window['Core'] = {
+    // 站点是否已初始化
     initialized: false,
     // 当前请求标识，由公共页面框架注入。
     rid: null,

@@ -93,6 +93,7 @@ i.block {
     display: block;
     clear: both;
 }
+.sizing { box-sizing: border-box; }
 .r0 { background: rgb( var( --r0 ) ) !important; } .r0, .r0 * { color: rgb( var( --r1 ) ) !important; }
 .r1 { background: rgb( var( --r1 ) ) !important; } .r1, .r1 * { color: rgb( var( --r0 ) ) !important; }
 .r2 { background: rgb( var( --r2 ) ) !important; } .r2, .r2 * { color: rgb( var( --r2c ) ) !important; }

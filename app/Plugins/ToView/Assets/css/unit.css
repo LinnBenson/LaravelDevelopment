@@ -1,0 +1,135 @@
+/* 卡片组件 */
+section.toview-card {
+    --header: 30px;
+    display: block;
+    width: 100%;
+    height: auto;
+    margin-bottom: 16px;
+    background-color: rgb( var( --r6 ) );
+    border: 1px solid rgb( var( --r3 ), 0.15 );
+    border-radius: var( --radius );
+    overflow: hidden;
+}
+section.toview-card div.toview-card-title {
+    --size: var( --header );
+    display: flex;
+    padding: 8px calc( var( --padding ) - 8px );
+    border-bottom: 0px solid rgb( var( --r3 ), 0 );
+    align-items: center;
+    transition: border-bottom 0.24s ease;
+}
+section.toview-card.active div.toview-card-title { border-bottom: 1px solid rgb( var( --r3 ), 0.15 ); }
+section.toview-card div.toview-card-title div.toview-card-title-left {
+    display: flex;
+    flex: 1;
+    align-items: center;
+}
+section.toview-card div.toview-card-title div.toview-card-title-right {
+    width: calc( var( --size ) * 1 );
+    cursor: pointer;
+}
+section.toview-card div.toview-card-content-grid {
+    display: grid;
+    grid-template-rows: 0fr;
+    overflow: hidden;
+    transition: grid-template-rows 0.24s ease;
+}
+section.toview-card.active div.toview-card-content-grid { grid-template-rows: 1fr; }
+section.toview-card div.toview-card-content-grid div.toview-card-content-wrap {
+    min-height: 0;
+    overflow: hidden;
+    transform: translateY( -6px );
+    transition: transform 0.24s ease;
+}
+section.toview-card.active div.toview-card-content-grid div.toview-card-content-wrap { transform: translateY( 0 ); }
+section.toview-card div.toview-card-content-grid div.toview-card-content-wrap div.toview-card-content {
+    padding: calc( var( --padding ) - 4px ) var( --padding );
+}
+@media ( max-width: 580px ) {
+    section.toview-card {
+        --padding: calc( var( --padding ) - 4px );
+    }
+}
+/* 按钮组件 */
+div.toview-button {
+    --padding: 24px;
+    --font: var( --fontSize );
+    --height: calc( ( var( --fontSize ) - 1px ) + ( var( --padding ) - 4px ) );
+    --animation: 0px;
+    display: inline-block;
+    vertical-align: top;
+    position: relative;
+}
+div.toview-button[stop], div.toview-button.toview-button-icon[loading] { pointer-events: none; opacity: 0.75; }
+div.toview-button.toview-button-size-small {
+    --padding: 16px;
+    --font: calc( var( --fontSize ) - 2px );
+}
+div.toview-button.toview-button-size-big {
+    --padding: 32px;
+    --font: calc( var( --fontSize ) + 2px );
+}
+div.toview-button div.toview-button-mask {
+    width: calc( 100% + ( var( --animation ) * 2 ) );
+    height: calc( 100% + ( var( --animation ) * 2 ) );
+    background-color: rgb( var( --background ), 0.25 );
+    border-radius: var( --radius );
+    transition: all 0.24s ease;
+    position: absolute;
+    top: calc( var( --animation ) * -1 );
+    left: calc( var( --animation ) * -1 );
+    z-index: -1;
+}
+div.toview-button:hover div.toview-button-mask { --animation: 3px; }
+div.toview-button .toview-button-content {
+    display: inline-flex;
+    align-items: center;
+    height: var( --height );
+    padding: 0px;
+    margin: 0px;
+    background-color: rgb( var( --background ) );
+    border: none;
+    border-radius: var( --radius );
+    cursor: pointer;
+}
+div.toview-button[border] .toview-button-content {
+    background-color: rgb( var( --r6 ) );
+    border: 1px solid rgb( var( --background ) );
+    box-sizing: border-box;
+}
+div.toview-button .toview-button-content * { color: rgb( var( --color ) ); font-size: calc( var( --font ) - 1px ); }
+div.toview-button[border] .toview-button-content * { color: rgb( var( --background ) ); }
+div.toview-button.toview-button-icon .toview-button-content i {
+    --size: var( --height );
+    vertical-align: middle;
+}
+div.toview-button.toview-button-icon[loading] .toview-button-content i {
+    animation: SpinElement 1.5s linear infinite;
+}
+div.toview-button.toview-button-icon[loading] .toview-button-content i::before {
+    content: "\f130" !important;
+}
+div.toview-button.toview-button-icon.toview-button-text .toview-button-content i {
+    margin-left: 4px;
+}
+div.toview-button .toview-button-content span {
+    padding: 0px var( --padding );
+}
+div.toview-button.toview-button-icon .toview-button-content span {
+    padding-left: 0px;
+}
+/* 布局组件 */
+div.toview-button-layout {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var( --gap );
+    align-items: flex-start;
+}
+div.toview-button-layout[row] {
+    justify-content: space-around;
+}
+div.toview-button-layout[list] {
+    display: grid;
+    grid-template-columns: repeat( auto-fill, minmax( var( --min ), 1fr ) );
+    justify-content: space-between;
+}
