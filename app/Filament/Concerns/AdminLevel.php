@@ -27,7 +27,7 @@ class AdminLevel {
      * @param int|string $level 最低等级边界
      * @return Response HTTP 响应
      */
-    public function handle( Request $request, Closure $next, int|string $level = 9000 ): Response {
+    public function handle( Request $request, Closure $next, int|string $level = 99900 ): Response {
         $middleware = [Authenticate::class];
         if ( !$this->routeUsesWebMiddleware( $request ) ) {
             $middleware = [...$this->router->getMiddlewareGroups()['web'], ...$middleware];

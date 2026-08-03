@@ -36,7 +36,7 @@ return new class extends PluginProvider {
         app( 'view' )->addNamespace( 'View', "{$this->path}Views" );
         Blade::anonymousComponentPath( "{$this->path}Views/Components", 'View' );
         // 注册配置
-        config()->set( "filament.navigation_levels.bootstrap_icons", 9000 );
+        config()->set( "filament.navigation_levels.bootstrap_icons", 99900 );
         // 注册路由
         Route::middleware( ['web'] )
             ->prefix( 'internal-plugins-to-view' )

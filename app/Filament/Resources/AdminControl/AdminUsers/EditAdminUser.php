@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\AdminControl\AdminUsers;
 
 use Filament\Actions\DeleteAction;
+use Filament\Facades\Filament;
 use Filament\Resources\Pages\EditRecord;
 
 /**
@@ -12,6 +13,19 @@ use Filament\Resources\Pages\EditRecord;
  */
 class EditAdminUser extends EditRecord {
     protected static string $resource = AdminUserResource::class;
+
+    /**
+     * 处理保存数据。
+     * 编辑当前登录管理员时强制保留原有可用状态。
+     * @param array<string, mixed> $data 表单数据
+     * @return array<string, mixed> 保存数据
+     */
+    protected function mutateFormDataBeforeSave( array $data ): array {
+        if ( $this->record->getKey() === Filament::auth()->id() ) {
+            $data['status'] = $this->record->status;
+        }
+        return $data;
+    }
 
     /**
      * 获取头部操作。

@@ -37,14 +37,14 @@ class UserPolicy {
 
     /**
      * 判断管理员是否可以管理用户。
-     * 达到代理管理等级时可以管理全部用户，否则只能管理自己名下的用户。
+     * 超过代理等级时可以管理全部用户，否则只能管理自己名下的用户。
      * @param AdminUser $adminUser 当前管理员
      * @param User $user 目标用户
      * @return bool 是否允许管理
      */
     private function canManage( AdminUser $adminUser, User $user ): bool {
         return $adminUser->status && (
-            $adminUser->level >= (int) config( 'filament.agent', 100 ) ||
+            $adminUser->level > (int) config( 'filament.agent', 100 ) ||
             $user->agent === $adminUser->getKey()
         );
     }

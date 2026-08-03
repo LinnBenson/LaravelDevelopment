@@ -49,6 +49,7 @@ class AdminUserForm {
                             ->offIcon( Heroicon::OutlinedXMark )
                             ->default( true )
                             ->required()
+                            ->disabled( fn ( ?AdminUser $record ): bool => $record?->getKey() === Filament::auth()->id() )
                             ->inline( false ),
                         TextInput::make( 'level' )
                             ->label( '级别' )
@@ -64,7 +65,7 @@ class AdminUserForm {
                                 'max' => '级别必须低于当前管理员级别。',
                             ] )
                             ->disabled( fn ( ?AdminUser $record ): bool => $record?->getKey() === Filament::auth()->id() )
-                            ->default( 1 ),
+                            ->default( fn (): int => max( (int) Filament::auth()->user()?->level - 1, 0 ) ),
                         TextInput::make( 'password' )
                             ->label( '密码' )
                             ->prefixIcon( Heroicon::OutlinedLockClosed )

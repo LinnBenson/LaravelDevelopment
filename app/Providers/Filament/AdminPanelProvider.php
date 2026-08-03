@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Concerns\LogoutDisabledAdmin;
 use App\Filament\Resources\AdminControl\PluginManagement\PluginManagement;
 use App\Filament\Resources\Dashboard\Login\Login;
 use App\Filament\Resources\Dashboard\Home\HomeDashboard;
@@ -10,7 +11,6 @@ use App\Filament\Resources\DeveloperCenter\Readme\Readme;
 use App\Filament\Resources\DeveloperCenter\FilamentIcons\FilamentIcons;
 use App\Filament\Resources\SystemSettings\SystemConfig\SystemConfigPage;
 use App\Filament\Resources\SystemSettings\ServiceManagement\ServiceManagement;
-use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -78,7 +78,7 @@ class AdminPanelProvider extends PanelProvider {
                 DispatchServingFilamentEvent::class,
             ] )
             ->authMiddleware( [
-                Authenticate::class,
+                LogoutDisabledAdmin::class,
             ] )
             ->renderHook(
                 PanelsRenderHook::HEAD_END,

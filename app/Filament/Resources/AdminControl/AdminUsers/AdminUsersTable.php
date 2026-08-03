@@ -2,14 +2,15 @@
 
 namespace App\Filament\Resources\AdminControl\AdminUsers;
 
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
+use App\Models\AdminUser;
 use Filament\Actions\EditAction;
-use Filament\Tables\Columns\IconColumn;
+use Filament\Notifications\Notification;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Columns\ViewColumn;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Gate;
 
 /**
  * AdminUsersTable
@@ -37,9 +38,26 @@ class AdminUsersTable {
                 TextColumn::make( 'email' )
                     ->label( '邮箱' )
                     ->searchable(),
-                IconColumn::make( 'status' )
+                ToggleColumn::make( 'status' )
                     ->label( '状态' )
-                    ->boolean(),
+                    ->onColor( 'success' )
+                    ->offColor( 'danger' )
+                    ->onIcon( 'heroicon-m-check' )
+                    ->offIcon( 'heroicon-m-x-mark' )
+                    ->disabled( function ( AdminUser $record ): bool {
+                        $adminUser = auth( 'admin' )->user();
+                        return !$adminUser instanceof AdminUser ||
+                            $adminUser->is( $record ) ||
+                            Gate::forUser( $adminUser )->denies( 'update', $record );
+                    } )
+                    ->afterStateUpdated( function ( bool $state, AdminUser $record ): void {
+                        $status = $state ? '启用' : '禁用';
+                        Notification::make()
+                            ->title( '管理员状态修改成功' )
+                            ->body( "管理员 {$record->name} 已{$status}。" )
+                            ->success()
+                            ->send();
+                    } ),
                 TextColumn::make( 'level' )
                     ->label( '级别' )
                     ->numeric()
@@ -62,12 +80,6 @@ class AdminUsersTable {
                 EditAction::make()
                     ->label( '编辑' ),
             ] )
-            ->recordActionsColumnLabel( '操作' )
-            ->toolbarActions( [
-                BulkActionGroup::make( [
-                    DeleteBulkAction::make()
-                        ->label( '删除所选' ),
-                ] ),
-            ] );
+            ->recordActionsColumnLabel( '操作' );
     }
 }

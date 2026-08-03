@@ -42,11 +42,12 @@ class UserForm {
                                 $currentAdmin = Filament::auth()->user();
                                 if (
                                     $currentAdmin instanceof AdminUser &&
-                                    $currentAdmin->level < (int) config( 'filament.agent', 100 )
+                                    $currentAdmin->level <= (int) config( 'filament.agent', 100 )
                                 ) {
                                     return [$currentAdmin->getKey() => "{$currentAdmin->id} · {$currentAdmin->name}"];
                                 }
                                 return [0 => '0 · System'] + AdminUser::query()
+                                    ->where( 'level', '<=', (int) config( 'filament.agent', 100 ) )
                                     ->orderBy( 'name' )
                                     ->get()
                                     ->mapWithKeys( fn ( AdminUser $adminUser ): array => [
@@ -57,13 +58,12 @@ class UserForm {
                             ->default( function(): int {
                                 $currentAdmin = Filament::auth()->user();
                                 return $currentAdmin instanceof AdminUser &&
-                                    $currentAdmin->level < (int) config( 'filament.agent', 100 )
+                                    $currentAdmin->level <= (int) config( 'filament.agent', 100 )
                                     ? (int) $currentAdmin->getKey()
                                     : 0;
                             } )
-                            ->disabled( fn ( string $operation ): bool =>
-                                $operation === 'edit' ||
-                                (int) Filament::auth()->user()?->level < (int) config( 'filament.agent', 100 )
+                            ->disabled( fn (): bool =>
+                                (int) Filament::auth()->user()?->level <= (int) config( 'filament.agent', 100 )
                             )
                             ->dehydrated()
                             ->searchable()

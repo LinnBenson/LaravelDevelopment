@@ -36,6 +36,6 @@ trait HasNavigationLevel {
         if ( !$adminUser instanceof AdminUser ) { return false; }
         $levels = config( 'filament.navigation_levels', [] );
         $minimumLevel = is_array( $levels ) ? (int) ( $levels[static::$navigationPermission] ?? 0 ) : 0;
-        return $adminUser->level >= max( $minimumLevel, 0 );
+        return $adminUser->level > max( $minimumLevel, 0 );
     }
 }

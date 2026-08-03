@@ -40,9 +40,10 @@ class UsersTable {
                 SelectColumn::make( 'agent' )
                     ->label( '代理' )
                     ->visible( fn (): bool =>
-                        (int) auth( 'admin' )->user()?->level >= (int) config( 'filament.agent', 100 )
+                        (int) auth( 'admin' )->user()?->level > (int) config( 'filament.agent', 100 )
                     )
                     ->options( fn (): array => [0 => '0 · System'] + AdminUser::query()
+                        ->where( 'level', '<=', (int) config( 'filament.agent', 100 ) )
                         ->orderBy( 'name' )
                         ->get()
                         ->mapWithKeys( fn ( AdminUser $adminUser ): array => [
@@ -52,19 +53,21 @@ class UsersTable {
                     ->disabled( function ( User $record ): bool {
                         $adminUser = auth( 'admin' )->user();
                         return !$adminUser instanceof AdminUser ||
-                            $adminUser->level < (int) config( 'filament.agent', 100 ) ||
+                            $adminUser->level <= (int) config( 'filament.agent', 100 ) ||
                             Gate::forUser( $adminUser )->denies( 'update', $record );
                     } )
                     ->updateStateUsing( function ( int|string|null $state, User $record ): int {
                         $adminUser = auth( 'admin' )->user();
                         abort_unless(
                             $adminUser instanceof AdminUser &&
-                            $adminUser->level >= (int) config( 'filament.agent', 100 ) &&
+                            $adminUser->level > (int) config( 'filament.agent', 100 ) &&
                             Gate::forUser( $adminUser )->allows( 'update', $record ),
                             403,
                         );
                         $agent = (int) $state;
-                        $agentAdmin = $agent === 0 ? null : AdminUser::query()->find( $agent );
+                        $agentAdmin = $agent === 0 ? null : AdminUser::query()
+                            ->where( 'level', '<=', (int) config( 'filament.agent', 100 ) )
+                            ->find( $agent );
                         if ( $agent !== 0 && !$agentAdmin instanceof AdminUser ) {
                             throw ValidationException::withMessages( ['agent' => '选择的代理不存在。'] );
                         }
@@ -109,6 +112,15 @@ class UsersTable {
                     ->disabled( function ( User $record ): bool {
                         $adminUser = auth( 'admin' )->user();
                         return $adminUser === null || Gate::forUser( $adminUser )->denies( 'update', $record );
+                    } )
+                    ->afterStateUpdated( function ( bool $state, User $record ): void {
+                        $name = filled( $record->nickname ) ? $record->nickname : ( $record->name ?: "UID {$record->id}" );
+                        $status = $state ? '启用' : '禁用';
+                        Notification::make()
+                            ->title( '用户状态修改成功' )
+                            ->body( "用户 {$name} 已{$status}。" )
+                            ->success()
+                            ->send();
                     } ),
                 TextColumn::make( 'level' )
                     ->label( '级别' )
@@ -129,9 +141,10 @@ class UsersTable {
                 SelectFilter::make( 'agent' )
                     ->label( '代理' )
                     ->visible( fn (): bool =>
-                        (int) auth( 'admin' )->user()?->level >= (int) config( 'filament.agent', 100 )
+                        (int) auth( 'admin' )->user()?->level > (int) config( 'filament.agent', 100 )
                     )
                     ->options( fn (): array => [0 => '0 · System'] + AdminUser::query()
+                        ->where( 'level', '<=', (int) config( 'filament.agent', 100 ) )
                         ->orderBy( 'name' )
                         ->get()
                         ->mapWithKeys( fn ( AdminUser $adminUser ): array => [

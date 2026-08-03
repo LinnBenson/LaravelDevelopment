@@ -61,7 +61,7 @@ class AdminUserResource extends Resource {
 
     /**
      * 判断是否可以在后台新增管理员。
-     * 只允许超过代理管理等级的管理员进入新增页面。
+     * 只允许超过代理等级的管理员进入新增页面。
      * @return bool 是否允许新增
      */
     public static function canCreate(): bool {

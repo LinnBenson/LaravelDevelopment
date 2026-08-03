@@ -69,7 +69,7 @@ class UserResource extends Resource {
         $query = parent::getEloquentQuery();
         $adminUser = Filament::auth()->user();
         if ( !$adminUser instanceof AdminUser ) { return $query->whereRaw( '1 = 0' ); }
-        if ( $adminUser->level < (int) config( 'filament.agent', 100 ) ) {
+        if ( $adminUser->level <= (int) config( 'filament.agent', 100 ) ) {
             $query->where( 'agent', $adminUser->getKey() );
         }
         return $query;

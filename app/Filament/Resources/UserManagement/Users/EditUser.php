@@ -2,9 +2,12 @@
 
 namespace App\Filament\Resources\UserManagement\Users;
 
+use App\Models\AdminUser;
 use App\Models\User;
 use Filament\Actions\DeleteAction;
+use Filament\Facades\Filament;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Validation\ValidationException;
 
 /**
  * EditUser
@@ -34,7 +37,20 @@ class EditUser extends EditRecord {
      * @return array<string, mixed> 处理后的表单数据
      */
     protected function mutateFormDataBeforeSave( array $data ): array {
-        $data['agent'] = $this->record->agent;
+        $adminUser = Filament::auth()->user();
+        if ( !$adminUser instanceof AdminUser || $adminUser->level <= (int) config( 'filament.agent', 100 ) ) {
+            $data['agent'] = $this->record->agent;
+        }else {
+            $agent = (int) ( $data['agent'] ?? 0 );
+            $agentExists = $agent === 0 || AdminUser::query()
+                ->whereKey( $agent )
+                ->where( 'level', '<=', (int) config( 'filament.agent', 100 ) )
+                ->exists();
+            if ( !$agentExists ) {
+                throw ValidationException::withMessages( ['agent' => '选择的代理不存在或级别不符合要求。'] );
+            }
+            $data['agent'] = $agent;
+        }
         $data['phone'] = User::formatPhoneForStorage(
             isset( $data['phone_area_code'] ) ? (string) $data['phone_area_code'] : null,
             isset( $data['phone'] ) ? (string) $data['phone'] : null,

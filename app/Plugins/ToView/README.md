@@ -21,7 +21,7 @@
     // default: 间隔页面 gap="0px:间距"
     // row: 行均匀居中分布 gap="0px:间距"
     // list: 网格布局 gap="0px:间距" min="80px:元素最小宽度"
-    <x-View::Layout row:横向布局 gap="间距设置">
+    <x-View::Layout gap="间距设置" min="元素最小宽度" default|row|list>
         布局内容
     </x-View::Layout>
   ```

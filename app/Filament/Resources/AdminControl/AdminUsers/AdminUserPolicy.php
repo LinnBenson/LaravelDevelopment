@@ -33,7 +33,7 @@ class AdminUserPolicy {
 
     /**
      * 新增管理员。
-     * 超过代理管理等级的管理员可以新增更低级管理员。
+     * 超过代理等级的管理员可以新增更低级管理员。
      * @param AdminUser $user 当前管理员
      * @return bool 是否允许
      */
@@ -54,23 +54,23 @@ class AdminUserPolicy {
 
     /**
      * 删除管理员。
-     * 只允许删除权限范围内的管理员。
+     * 只允许删除级别更低的管理员，并禁止删除自己。
      * @param AdminUser $user 当前管理员
      * @param AdminUser $record 目标管理员
      * @return bool 是否允许
      */
     public function delete( AdminUser $user, AdminUser $record ): bool {
-        return $this->canManage( $user, $record );
+        return !$user->is( $record ) && $record->level < $user->level;
     }
 
     /**
      * 批量删除管理员。
-     * 具体记录仍由删除权限逐条检查。
+     * 管理员列表禁止执行批量删除。
      * @param AdminUser $user 当前管理员
      * @return bool 是否允许
      */
     public function deleteAny( AdminUser $user ): bool {
-        return true;
+        return false;
     }
 
     /**
