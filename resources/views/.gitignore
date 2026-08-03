@@ -1,4 +1,5 @@
 *
 !/Filament/
 !/Filament/**
+!Welcome.blade.php
 !.gitignore

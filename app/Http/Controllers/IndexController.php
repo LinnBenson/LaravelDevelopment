@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Lang;
 
 class IndexController extends Controller {
     /**
@@ -10,7 +11,19 @@ class IndexController extends Controller {
      * 返回首页所需的应用信息。
      * @return \Illuminate\Http\JsonResponse JSON 响应
      */
-    public function index(): \Illuminate\Http\JsonResponse {
+    public function index( Request $request ): \Illuminate\Http\JsonResponse {
+        // 获取语言包
+        $lang = null;
+        $langs = $request->query( 'langs' );
+        if ( is_string( $langs ) && $langs !== '' ) {
+            $allowedLangs = [ 'base', 'validation' ]; // 允许的语言包名称列表
+            $requestedLangs = array_unique( array_filter( explode( '|', $langs ) ) );
+            foreach ( $requestedLangs as $langName ) {
+                if ( !in_array( $langName, $allowedLangs, true ) ) { continue; }
+                $translations = Lang::get( $langName, [], app()->getLocale() );
+                if ( is_array( $translations ) ) { $lang[$langName] = $translations; }
+            }
+        }
         // 检查用户
         $user = null;
         // 返回应用信息
@@ -23,6 +36,7 @@ class IndexController extends Controller {
                 'copyright' => setting( 'app.copyright' ),
             ],
             'user' => $user,
+            'lang' => $lang,
         ]);
     }
     /**
@@ -31,7 +45,7 @@ class IndexController extends Controller {
      * @return \Illuminate\View\View
      */
     public function view(): \Illuminate\View\View {
-        return view( 'Test' );
+        return view( 'Welcome' );
     }
     /**
      * 调试

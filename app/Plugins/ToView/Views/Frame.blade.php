@@ -30,13 +30,15 @@
             <link rel="stylesheet" href="{{$frame->theme['css']}}">
         @endif
         <script src="{{route( 'plugins.to-view.asset', [ 'path' => 'js/jquery-4.0.0.min.js' ])}}"></script>
+        <script src="{{route( 'plugins.to-view.asset', [ 'path' => 'js/jquery.cookie.js' ])}}"></script>
         <title>@hasSection( 'title' )@yield( 'title' ) - @endif{{ setting( 'app.title' ) }}</title>
         <style>
             :root { {{$themeStyle}} }
         </style>
         <script>
-            window['setting'] = { 'rid': `{{request()->attributes->get('rid')}}`, 'locale': `{{str_replace( '_', '-', $frame->locale )}}` };
+            window['setting'] = { 'rid': `{{request()->attributes->get('rid')}}`, 'locale': `{{str_replace( '_', '-', $frame->locale )}}`, 'langs': `@yield( 'langs', '' )` };
         </script>
+        <script src="{{route( 'plugins.to-view.asset', [ 'path' => 'js/Core.js' ])}}"></script>
         @stack( 'head' )
     </head>
     <body>
