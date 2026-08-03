@@ -24,10 +24,13 @@ class AdminLevel {
      * 自动补齐插件后台路由所需的 Web 与 Filament 登录中间件。
      * @param Request $request 请求对象
      * @param Closure $next 后续处理
-     * @param int|string $level 最低等级边界
+     * @param int|string|null $level 最低等级边界
      * @return Response HTTP 响应
      */
-    public function handle( Request $request, Closure $next, int|string $level = 99900 ): Response {
+    public function handle( Request $request, Closure $next, int|string|null $level = null ): Response {
+        if ( is_null( $level ) ) {
+            $level = config( 'filament.navigation_levels.plugin_management', 99900 );
+        }
         $middleware = [Authenticate::class];
         if ( !$this->routeUsesWebMiddleware( $request ) ) {
             $middleware = [...$this->router->getMiddlewareGroups()['web'], ...$middleware];

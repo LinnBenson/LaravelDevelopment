@@ -14,12 +14,12 @@ return [
     'navigation_levels' => [
         'dashboard' => 0,
         'admin_users' => 0,
-        'plugin_management' => 99900,
+        'plugin_management' => 99899,
         'users' => 0,
-        'system_config' => 99900,
-        'service_management' => 99900,
-        'log_information' => 99900,
-        'filament_icons' => 99900,
-        'readme' => 99900,
+        'system_config' => 98999,
+        'service_management' => 99899,
+        'log_information' => 99899,
+        'filament_icons' => 99899,
+        'readme' => 99899,
     ],
 ];

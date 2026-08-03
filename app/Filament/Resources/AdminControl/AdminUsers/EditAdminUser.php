@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\AdminControl\AdminUsers;
 
+use App\Models\AdminUser;
 use Filament\Actions\DeleteAction;
 use Filament\Facades\Filament;
 use Filament\Resources\Pages\EditRecord;
@@ -16,13 +17,17 @@ class EditAdminUser extends EditRecord {
 
     /**
      * 处理保存数据。
-     * 编辑当前登录管理员时强制保留原有可用状态。
+     * 编辑自己时保留可用状态，并禁止代理修改自己的用户名。
      * @param array<string, mixed> $data 表单数据
      * @return array<string, mixed> 保存数据
      */
     protected function mutateFormDataBeforeSave( array $data ): array {
-        if ( $this->record->getKey() === Filament::auth()->id() ) {
+        $adminUser = Filament::auth()->user();
+        if ( $adminUser instanceof AdminUser && $this->record->getKey() === $adminUser->getKey() ) {
             $data['status'] = $this->record->status;
+            if ( $adminUser->level <= (int) config( 'filament.agent', 100 ) ) {
+                $data['name'] = $this->record->name;
+            }
         }
         return $data;
     }

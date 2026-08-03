@@ -35,7 +35,13 @@ class AdminUserForm {
                             ->prefixIcon( Heroicon::OutlinedUser )
                             ->required()
                             ->maxLength( 255 )
-                            ->unique( ignoreRecord: true ),
+                            ->unique( ignoreRecord: true )
+                            ->disabled( function ( ?AdminUser $record ): bool {
+                                $adminUser = Filament::auth()->user();
+                                return $adminUser instanceof AdminUser &&
+                                    $record?->getKey() === $adminUser->getKey() &&
+                                    $adminUser->level <= (int) config( 'filament.agent', 100 );
+                            } ),
                         TextInput::make( 'email' )
                             ->label( '邮箱' )
                             ->prefixIcon( Heroicon::OutlinedEnvelope )
