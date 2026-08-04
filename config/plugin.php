@@ -1,12 +1,13 @@
 <?php
 
 return array (
-  'enabled' => 
+    'cache' => storage_path( 'framework/plugins' ),
+  'enabled' =>
   array (
     0 => 'LaravelTool',
     1 => 'ToView',
   ),
-  'hooks' => 
+  'hooks' =>
   array (
     'APP_SERVICE_PROVIDER_REGISTER' => '应用服务注册时调用权限',
     'APP_SERVICE_PROVIDER_BOOT' => '应用服务启动时调用权限',

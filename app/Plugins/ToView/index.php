@@ -18,6 +18,7 @@ return new class extends PluginProvider {
         $this->description = 'System default view rendering component.';
         $this->version = '1.0.0';
         $this->author = 'System';
+        $this->source = 'https://github.com/LinnBenson/ToView/archive/refs/heads/main.zip';
     }
     /**
      * 插件启动时执行的操作

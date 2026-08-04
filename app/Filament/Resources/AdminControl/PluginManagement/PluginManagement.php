@@ -3,17 +3,23 @@
 namespace App\Filament\Resources\AdminControl\PluginManagement;
 
 use App\Filament\Concerns\HasNavigationLevel;
+use App\Filament\Resources\AdminControl\PluginManagement\Services\PluginInstaller;
 use BackedEnum;
 use Filament\Actions\Action;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Support\Icons\Heroicon;
 use FilesystemIterator;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Illuminate\View\Compilers\BladeCompiler;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use RuntimeException;
 use Throwable;
 use UnitEnum;
@@ -44,16 +50,80 @@ class PluginManagement extends Page {
 
     /**
      * 获取头部操作。
-     * 提供重新加载当前插件管理页面的刷新按钮。
+     * 提供压缩包上传或远程链接安装入口。
      * @return array<int, Action> 头部操作按钮
      */
     protected function getHeaderActions(): array {
         return [
-            Action::make( 'refresh' )
-                ->label( '刷新' )
-                ->icon( Heroicon::OutlinedArrowPath )
-                ->url( static::getUrl() ),
+            Action::make( 'installPlugin' )
+                ->label( '安装插件' )
+                ->icon( Heroicon::OutlinedArrowDownTray )
+                ->modalIcon( Heroicon::OutlinedArrowDownTray )
+                ->modalHeading( '安装插件' )
+                ->modalDescription( '上传插件压缩包，或从来源链接获取插件。' )
+                ->schema( [
+                    ToggleButtons::make( 'method' )
+                        ->label( '安装方式' )
+                        ->options( [
+                            'upload' => '上传 ZIP 压缩包',
+                            'url' => '来源链接',
+                        ] )
+                        ->icons( [
+                            'upload' => Heroicon::OutlinedArchiveBoxArrowDown,
+                            'url' => Heroicon::OutlinedLink,
+                        ] )
+                        ->default( 'upload' )
+                        ->inline()
+                        ->live()
+                        ->required(),
+                    FileUpload::make( 'package' )
+                        ->label( '插件 ZIP 压缩包' )
+                        ->acceptedFileTypes( ['application/zip', 'application/x-zip-compressed'] )
+                        ->maxSize( 102400 )
+                        ->storeFiles( false )
+                        ->required( fn ( Get $get ): bool => $get( 'method' ) === 'upload' )
+                        ->visible( fn ( Get $get ): bool => $get( 'method' ) === 'upload' ),
+                    TextInput::make( 'source_url' )
+                        ->label( '插件来源链接' )
+                        ->placeholder( 'https://github.com/owner/plugin/archive/refs/heads/main.zip' )
+                        ->prefixIcon( Heroicon::OutlinedGlobeAlt )
+                        ->url()
+                        ->required( fn ( Get $get ): bool => $get( 'method' ) === 'url' )
+                        ->visible( fn ( Get $get ): bool => $get( 'method' ) === 'url' ),
+                ] )
+                ->modalWidth( '2xl' )
+                ->modalSubmitActionLabel( '安装插件' )
+                ->modalCancelActionLabel( '取消' )
+                ->action( fn ( array $data ): mixed => $this->installPlugin( $data ) ),
         ];
+    }
+
+    /**
+     * 安装插件。
+     * 根据弹窗选择从上传文件或远程链接安装插件。
+     * @param array<string, mixed> $data 安装表单数据
+     * @return mixed
+     */
+    private function installPlugin( array $data ): mixed {
+        try {
+            $installer = app( PluginInstaller::class );
+            if ( ( $data['method'] ?? null ) === 'upload' ) {
+                $upload = $data['package'] ?? null;
+                if ( !$upload instanceof TemporaryUploadedFile ) { throw new RuntimeException( '请选择有效的 ZIP 压缩包。' ); }
+                $result = $installer->installFromUpload( $upload );
+            }else {
+                $result = $installer->installFromUrl( (string) ( $data['source_url'] ?? '' ) );
+            }
+            Notification::make()
+                ->title( "{$result['name']} 安装成功" )
+                ->body( "插件标识：{$result['id']}，版本：{$result['version']}" )
+                ->success()
+                ->send();
+            return $this->redirect( static::getUrl() );
+        }catch ( Throwable $throwable ) {
+            Notification::make()->title( '插件安装失败' )->body( $throwable->getMessage() )->danger()->send();
+            return null;
+        }
     }
 
     /**
@@ -116,6 +186,7 @@ class PluginManagement extends Page {
                 'has_hooks' => $plugin->getHook() !== [],
                 'has_config' => $plugin->config( '' ) !== [],
                 'has_admin' => is_file( "{$plugin->path}admin.php" ) && is_readable( "{$plugin->path}admin.php" ),
+                'has_source' => is_string( $plugin->source ) && trim( $plugin->source ) !== '',
                 'hooks_trusted' => in_array( $pluginId, $enabledPlugins, true ),
             ];
         }
@@ -240,6 +311,8 @@ class PluginManagement extends Page {
                 foreach ( array_keys( $plugin->getHook() ) as $hook ) {
                     $hooks[$hook] = is_string( $hookConfigs[$hook] ?? null ) ? $hookConfigs[$hook] : '暂无 Hook 说明';
                 }
+                $enabledPlugins = config( 'plugin.enabled', [] );
+                $enabledPlugins = is_array( $enabledPlugins ) ? $enabledPlugins : [];
                 return view( 'Filament.AdminControl.PluginManagement.plugin-details', [
                     'plugin' => [
                         'id' => (string) $plugin->id,
@@ -252,6 +325,10 @@ class PluginManagement extends Page {
                         'plugin_dependencies' => $plugin->relyPlugin,
                         'hooks' => $hooks,
                         'has_config' => $plugin->config( '' ) !== [],
+                        'has_hooks' => $hooks !== [],
+                        'hooks_trusted' => in_array( (string) $plugin->id, $enabledPlugins, true ),
+                        'has_admin' => is_file( "{$plugin->path}admin.php" ) && is_readable( "{$plugin->path}admin.php" ),
+                        'has_source' => is_string( $plugin->source ) && trim( $plugin->source ) !== '',
                         'readme' => $this->getPluginReadmeHtml( (string) $plugin->id ),
                     ],
                 ] );
@@ -263,6 +340,23 @@ class PluginManagement extends Page {
     }
 
     /**
+     * 从插件详情切换到其他插件操作。
+     * 先关闭当前详情弹窗，避免 Filament 在同一 Action 弹窗内重复挂载操作。
+     * @param string $action 目标操作名称
+     * @param array<string, mixed> $arguments 操作参数
+     * @return void
+     */
+    public function switchPluginDetailsAction( string $action, array $arguments ): void {
+        if ( !in_array( $action, ['trustHooks', 'cancelHooks', 'editConfig', 'managePlugin', 'updatePlugin'], true ) ) {
+            throw new RuntimeException( '插件操作无效。' );
+        }
+        $pluginId = (string) ( $arguments['pluginId'] ?? '' );
+        $this->resolvePlugin( $pluginId );
+        $this->unmountAction( cancelParentActions: false );
+        $this->mountAction( $action, ['pluginId' => $pluginId] );
+    }
+
+    /**
      * 管理插件操作。
      * 渲染插件根目录的 admin.php Blade 管理页面。
      * @return Action 插件管理操作
@@ -271,12 +365,12 @@ class PluginManagement extends Page {
         return Action::make( 'managePlugin' )
             ->modalIcon( Heroicon::OutlinedWrenchScrewdriver )
             ->modalHeading( function( array $arguments ): string {
-                $plugin = $this->resolveFeaturePlugin( (string) ( $arguments['pluginId'] ?? '' ) );
+                $plugin = $this->resolvePlugin( (string) ( $arguments['pluginId'] ?? '' ) );
                 return "管理 {$plugin->name}";
             } )
             ->modalDescription( '由插件提供的管理页面。' )
             ->modalContent( function( array $arguments ) {
-                $plugin = $this->resolveFeaturePlugin( (string) ( $arguments['pluginId'] ?? '' ) );
+                $plugin = $this->resolvePlugin( (string) ( $arguments['pluginId'] ?? '' ) );
                 return view( 'Filament.AdminControl.PluginManagement.plugin-admin', [
                     'content' => $this->renderPluginAdmin( $plugin ),
                 ] );
@@ -285,6 +379,32 @@ class PluginManagement extends Page {
             ->extraModalWindowAttributes( ['class' => 'plugin-admin-modal'] )
             ->modalSubmitAction( false )
             ->modalCancelActionLabel( '关闭' );
+    }
+
+    /**
+     * 更新插件操作。
+     * 从插件声明的来源链接下载并安装更高版本。
+     * @return Action 插件更新操作
+     */
+    public function updatePluginAction(): Action {
+        return Action::make( 'updatePlugin' )
+            ->requiresConfirmation()
+            ->modalIcon( Heroicon::OutlinedArrowPath )
+            ->modalHeading( function( array $arguments ): string {
+                $plugin = $this->resolvePlugin( (string) ( $arguments['pluginId'] ?? '' ) );
+                return "更新 {$plugin->name}？";
+            } )
+            ->modalDescription( '将从插件声明的来源链接下载并安装更高版本。' )
+            ->modalContent( function( array $arguments ) {
+                $plugin = $this->resolvePlugin( (string) ( $arguments['pluginId'] ?? '' ) );
+                return view( 'Filament.AdminControl.PluginManagement.update-plugin-source', [
+                    'source' => (string) $plugin->source,
+                ] );
+            } )
+            ->modalSubmitActionLabel( '确认更新' )
+            ->modalCancelActionLabel( '取消' )
+            ->color( 'primary' )
+            ->action( fn ( array $arguments ): mixed => $this->updatePlugin( (string) ( $arguments['pluginId'] ?? '' ) ) );
     }
 
     /**
@@ -341,7 +461,7 @@ class PluginManagement extends Page {
             ->modalHeading( fn ( array $arguments ): string => "修改 {$arguments['pluginId']} 配置" )
             ->modalDescription( '请使用合法的 JSON 格式，用户配置会覆盖插件默认配置。' )
             ->fillForm( function( array $arguments ): array {
-                $plugin = $this->resolveFeaturePlugin( (string) ( $arguments['pluginId'] ?? '' ) );
+                $plugin = $this->resolvePlugin( (string) ( $arguments['pluginId'] ?? '' ) );
                 $config = json_encode(
                     $plugin->config( '' ),
                     JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES,
@@ -422,7 +542,7 @@ class PluginManagement extends Page {
      */
     private function savePluginConfig( string $id, string $json ): void {
         try {
-            $plugin = $this->resolveFeaturePlugin( $id );
+            $plugin = $this->resolvePlugin( $id );
             if ( $plugin->config( '' ) === [] ) { throw new RuntimeException( '该插件没有可修改的配置。' ); }
             $config = json_decode( $json, true, 512, JSON_THROW_ON_ERROR );
             if ( !is_array( $config ) ) { throw new RuntimeException( '插件配置必须是 JSON 对象或数组。' ); }
@@ -434,16 +554,26 @@ class PluginManagement extends Page {
     }
 
     /**
-     * 解析功能插件。
+     * 从插件来源链接更新插件。
      * @param string $id 插件标识
-     * @return object 插件实例
+     * @return mixed
      */
-    private function resolveFeaturePlugin( string $id ): object {
-        $plugin = $this->resolvePlugin( $id );
-        if ( $plugin->type !== 'plugin' ) {
-            throw new RuntimeException( '功能插件不存在或无法加载。' );
+    private function updatePlugin( string $id ): mixed {
+        try {
+            $plugin = $this->resolvePlugin( $id );
+            $source = is_string( $plugin->source ) ? trim( $plugin->source ) : '';
+            if ( $source === '' ) { throw new RuntimeException( '该插件未声明来源链接。' ); }
+            $result = app( PluginInstaller::class )->updateFromUrl( $id, $source );
+            Notification::make()
+                ->title( "{$result['name']} 更新成功" )
+                ->body( "已更新至 {$result['version']}" )
+                ->success()
+                ->send();
+            return $this->redirect( static::getUrl() );
+        }catch ( Throwable $throwable ) {
+            Notification::make()->title( '插件更新失败' )->body( $throwable->getMessage() )->danger()->send();
+            return null;
         }
-        return $plugin;
     }
 
     /**

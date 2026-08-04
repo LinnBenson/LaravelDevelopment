@@ -10,6 +10,62 @@
         </div>
     </div>
 
+    @if ( $plugin['has_hooks'] || $plugin['has_config'] || $plugin['has_admin'] || $plugin['has_source'] )
+        <div class="plugin-details-actions">
+            @if ( $plugin['has_hooks'] )
+                @if ( $plugin['hooks_trusted'] )
+                    <x-filament::button
+                        size="sm"
+                        color="danger"
+                        icon="heroicon-o-shield-check"
+                        wire:click="switchPluginDetailsAction('cancelHooks', {{ \Illuminate\Support\Js::from(['pluginId' => $plugin['id']]) }})"
+                    >
+                        取消 Hook
+                    </x-filament::button>
+                @else
+                    <x-filament::button
+                        size="sm"
+                        color="warning"
+                        icon="heroicon-o-shield-exclamation"
+                        wire:click="switchPluginDetailsAction('trustHooks', {{ \Illuminate\Support\Js::from(['pluginId' => $plugin['id']]) }})"
+                    >
+                        信任 Hook
+                    </x-filament::button>
+                @endif
+            @endif
+            @if ( $plugin['has_config'] )
+                <x-filament::button
+                    size="sm"
+                    color="gray"
+                    icon="heroicon-o-cog-6-tooth"
+                    wire:click="switchPluginDetailsAction('editConfig', {{ \Illuminate\Support\Js::from(['pluginId' => $plugin['id']]) }})"
+                >
+                    修改配置
+                </x-filament::button>
+            @endif
+            @if ( $plugin['has_admin'] )
+                <x-filament::button
+                    size="sm"
+                    color="primary"
+                    icon="heroicon-o-wrench-screwdriver"
+                    wire:click="switchPluginDetailsAction('managePlugin', {{ \Illuminate\Support\Js::from(['pluginId' => $plugin['id']]) }})"
+                >
+                    管理插件
+                </x-filament::button>
+            @endif
+            @if ( $plugin['has_source'] )
+                <x-filament::button
+                    size="sm"
+                    color="primary"
+                    icon="heroicon-o-arrow-path"
+                    wire:click="switchPluginDetailsAction('updatePlugin', {{ \Illuminate\Support\Js::from(['pluginId' => $plugin['id']]) }})"
+                >
+                    更新插件
+                </x-filament::button>
+            @endif
+        </div>
+    @endif
+
     <dl class="plugin-details-meta">
         <div><dt>插件标识</dt><dd>{{ $plugin['id'] }}</dd></div>
         <div><dt>插件类型</dt><dd>{{ $plugin['type'] === 'plugin' ? '功能插件' : '依赖插件' }}</dd></div>
@@ -113,6 +169,12 @@
         margin-top: 0.25rem;
         color: #6b7280;
         font-size: 0.8125rem;
+    }
+    /* 插件详情操作 */
+    .plugin-details-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.625rem;
     }
     /* 插件元数据 */
     .plugin-details-meta {

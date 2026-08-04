@@ -16,7 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->encryptCookies( except: [
-            'rid', 'locale', 'themeName'
+            'rid', 'locale', 'theme'
         ]);
         $middleware->web(
             append: [

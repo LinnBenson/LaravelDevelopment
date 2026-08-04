@@ -112,6 +112,7 @@ location / {
 - 插件名称: String|null `$plugin->name`
 - 插件版本: String|null `$plugin->version`
 - 插件作者: String|null `$plugin->author`
+- 插件来源: String|null `$plugin->source`
 - 插件描述: String|null `$plugin->description`
 - Composer 依赖: Array `$plugin->relyComposer`
   - 数组键为 Composer 包名，数组值为 Composer 版本约束
@@ -122,6 +123,10 @@ location / {
   - 校验插件标识、目录、Composer 依赖、插件依赖及循环依赖，通过后启用并缓存插件实例
   - 插件不存在或标识无效时返回 null，依赖不满足或插件结构无效时抛出 `LogicException`
   - return [PluginProvider|null]插件实例
+- 移除插件加载缓存
+  - `PluginProvider::forget( [string]插件标识 )`
+  - 安装、更新或回滚后移除当前进程内的插件实例缓存
+  - return [void]
 - 启用插件
   - `$plugin->enable( [string]插件标识, [string]插件目录 )`
   - 设置插件标识和目录并执行插件启动入口，每个插件实例只能调用一次
@@ -149,6 +154,24 @@ location / {
 - 判断插件是否已启用
   - `$plugin->isEnabled()`
   - return [bool]插件是否已经启用
+
+## 插件安装服务 [app/Filament/Resources/AdminControl/PluginManagement/Services/PluginInstaller.php]
+- 从上传文件安装
+  - `PluginInstaller::installFromUpload( [UploadedFile]ZIP 压缩包 )`
+  - 在 `config/plugin.php` 的 `cache` 目录中解压和校验，通过后移入 `app/Plugins`、调用 `install()`，失败时回滚数据库与插件目录
+  - return [array]已安装插件的标识、名称和版本
+- 从远程链接安装
+  - `PluginInstaller::installFromUrl( [string]ZIP 来源链接 )`
+  - 支持逐跳校验的 HTTP/HTTPS 重定向，拒绝内网地址并限制下载与解压体积
+  - return [array]已安装插件的标识、名称和版本
+- 从远程链接更新
+  - `PluginInstaller::updateFromUrl( [string]插件标识, [string]ZIP 来源链接 )`
+  - 更新包标识必须与已安装插件一致且版本必须更高；更新前备份旧目录，新版本安装失败时自动恢复
+  - return [array]更新后插件的标识、名称和版本
+- 从上传文件更新
+  - `PluginInstaller::updateFromUpload( [string]插件标识, [UploadedFile]ZIP 压缩包 )`
+  - 与远程更新共用版本校验、目录备份和失败回滚流程，供后续手动更新入口复用
+  - return [array]更新后插件的标识、名称和版本
 
 ## 视图服务 [app/Services/ViewService.php]
 - 获取框架视图数据

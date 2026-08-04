@@ -39,6 +39,8 @@ class PluginProvider {
 
     public ?string $description = null;
 
+    public ?string $source = null;
+
     /** @var array<string, string> */
     public array $relyComposer = [];
 
@@ -80,6 +82,16 @@ class PluginProvider {
         }finally {
             unset( self::$loading[$id] );
         }
+    }
+
+    /**
+     * 移除插件加载缓存。
+     * 安装或更新回滚时用于避免继续使用已移除的插件实例。
+     * @param string $id 插件标识
+     * @return void
+     */
+    public static function forget( string $id ): void {
+        unset( self::$cache[$id], self::$loading[$id] );
     }
 
     /**
