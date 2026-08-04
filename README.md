@@ -173,16 +173,6 @@ location / {
   - 与远程更新共用版本校验、目录备份和失败回滚流程，供后续手动更新入口复用
   - return [array]更新后插件的标识、名称和版本
 
-## 视图服务 [app/Services/ViewService.php]
-- 获取框架视图数据
-  - `ViewService::renderFrame()`
-  - 用于公共 Blade 框架初始化，可在视图中通过 `$frame = \App\Services\ViewService::renderFrame()` 调用
-  - return [object]包含当前主题配置 `theme` 和将下划线转换为连字符的当前语言环境 `locale`
-- 获取当前主题配置
-  - `ViewService::getTheme()`
-  - 根据 `theme` Cookie 从 `setting( 'app.theme' )` 中选择当前主题；Cookie 对应的主题不存在或配置无效时使用 `Default` 主题
-  - return [array]当前主题配置
-
 ## 用户模型 [app/Models/User.php]
 - 获取用户等级
   - `User::getLevel( [int|string|null]用户等级 = null )`

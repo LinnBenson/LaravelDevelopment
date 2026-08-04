@@ -95,7 +95,7 @@ return new class extends Migration
             ],
             [
                 'category' => 'system',
-                'type' => 'url',
+                'type' => 'text',
                 'name' => '邮箱 SMTP 服务器',
                 'key' => 'system.mail.host',
                 'value' => config( 'mail.mailers.smtp.host' ) ?? '',
@@ -135,7 +135,7 @@ return new class extends Migration
             ],
             [
                 'category' => 'system',
-                'type' => 'text',
+                'type' => 'url',
                 'name' => 'Bark 服务地址',
                 'key' => 'system.bark.host',
                 'value' => '',
