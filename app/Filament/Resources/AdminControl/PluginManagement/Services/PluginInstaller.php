@@ -93,8 +93,7 @@ class PluginInstaller {
      * @return array{id: string, name: string, version: string} 安装结果
      */
     private function withWorkspace( callable $callback ): array {
-        $cacheRoot = (string) config( 'plugin.cache', storage_path( 'framework/plugins' ) );
-        if ( $cacheRoot === '' ) { throw new RuntimeException( '插件缓存目录未配置。' ); }
+        $cacheRoot = storage_path( 'framework/plugins' );
         if ( !File::isDirectory( $cacheRoot ) && !File::makeDirectory( $cacheRoot, 0755, true ) ) {
             throw new RuntimeException( '插件缓存目录创建失败。' );
         }

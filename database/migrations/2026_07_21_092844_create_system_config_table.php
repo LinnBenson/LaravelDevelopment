@@ -95,6 +95,46 @@ return new class extends Migration
             ],
             [
                 'category' => 'system',
+                'type' => 'url',
+                'name' => '邮箱 SMTP 服务器',
+                'key' => 'system.mail.host',
+                'value' => config( 'mail.mailers.smtp.host' ) ?? '',
+                'description' => '用于配置邮箱 SMTP 服务器'
+            ],
+            [
+                'category' => 'system',
+                'type' => 'number',
+                'name' => '邮箱 SMTP 端口',
+                'key' => 'system.mail.port',
+                'value' => config( 'mail.mailers.smtp.port' ) ?? '',
+                'description' => '用于配置邮箱 SMTP 端口'
+            ],
+            [
+                'category' => 'system',
+                'type' => 'text',
+                'name' => '邮箱 SMTP 用户名',
+                'key' => 'system.mail.username',
+                'value' => config( 'mail.mailers.smtp.username' ) ?? '',
+                'description' => '用于配置邮箱 SMTP 用户名'
+            ],
+            [
+                'category' => 'system',
+                'type' => 'text',
+                'name' => '邮箱 SMTP 密码',
+                'key' => 'system.mail.password',
+                'value' => config( 'mail.mailers.smtp.password' ) ?? '',
+                'description' => '用于配置邮箱 SMTP 密码'
+            ],
+            [
+                'category' => 'system',
+                'type' => 'text',
+                'name' => '邮箱 SMTP 发件者',
+                'key' => 'system.mail.forward',
+                'value' => config( 'mail.from.address' ) ?? '',
+                'description' => '用于配置邮箱 SMTP 发件者'
+            ],
+            [
+                'category' => 'system',
                 'type' => 'text',
                 'name' => 'Bark 服务地址',
                 'key' => 'system.bark.host',
