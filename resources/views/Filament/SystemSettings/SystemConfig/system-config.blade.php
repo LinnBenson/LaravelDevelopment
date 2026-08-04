@@ -1114,9 +1114,10 @@
             }
             .system-config-item {
                 grid-template-columns: 1fr;
-                gap: 0.8rem;
+                gap: 0.2rem;
             }
             .system-config-meta {
+                min-height: 1.5rem;
                 padding-top: 0;
                 justify-content: flex-start;
                 text-align: left;
