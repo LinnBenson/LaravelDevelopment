@@ -5,6 +5,7 @@ namespace App\Providers;
 use Composer\InstalledVersions;
 use Composer\Semver\Semver;
 use Composer\Semver\VersionParser;
+use Illuminate\Support\Facades\Log;
 use LogicException;
 use Throwable;
 
@@ -74,8 +75,10 @@ class PluginProvider {
                     "Plugin {$id} must return a PluginProvider instance."
                 );
             }
-            self::validateComposerDependencies( $id, $plugin );
-            self::validatePluginDependencies( $id, $plugin );
+            if (
+                !self::validateComposerDependencies( $id, $plugin ) ||
+                !self::validatePluginDependencies( $id, $plugin )
+            ) { return null; }
             $plugin->enable( $id, $pluginPath );
             self::$cache[$id] = $plugin;
             return $plugin;
@@ -261,50 +264,77 @@ class PluginProvider {
      * 验证 Composer 依赖。
      * @param string $id 插件标识
      * @param PluginProvider $plugin 插件实例
-     * @return void
+     * @return bool 依赖是否满足
      */
-    private static function validateComposerDependencies( string $id, PluginProvider $plugin ): void {
+    private static function validateComposerDependencies( string $id, PluginProvider $plugin ): bool {
         $versionParser = new VersionParser();
         foreach ( $plugin->relyComposer as $package => $constraint ) {
             if ( !InstalledVersions::isInstalled( $package ) ) {
-                throw new LogicException(
-                    "Plugin {$id} requires Composer package {$package} {$constraint}, but it is not installed."
-                );
+                Log::warning( 'The plugin Composer dependency is missing and plugin loading has been skipped.', [
+                    'plugin_id' => $id,
+                    'package' => $package,
+                    'required_version' => $constraint,
+                ] );
+                return false;
             }
-            if ( InstalledVersions::satisfies( $versionParser, $package, $constraint ) ) {
-                continue;
+            try {
+                if ( InstalledVersions::satisfies( $versionParser, $package, $constraint ) ) { continue; }
+                Log::warning( 'The dependency version of the plug-in Composer is not satisfied and the plug-in loading has been skipped.', [
+                    'plugin_id' => $id,
+                    'package' => $package,
+                    'required_version' => $constraint,
+                    'installed_version' => InstalledVersions::getPrettyVersion( $package ) ?? 'unknown',
+                ] );
+            }catch ( Throwable $throwable ) {
+                Log::warning( 'The plugin Composer dependency declaration is invalid and plugin loading has been skipped.', [
+                    'plugin_id' => $id,
+                    'package' => $package,
+                    'required_version' => $constraint,
+                    'error' => $throwable->getMessage(),
+                ] );
             }
-            $installedVersion = InstalledVersions::getPrettyVersion( $package ) ?? 'unknown';
-            throw new LogicException(
-                "Plugin {$id} requires Composer package {$package} {$constraint}, installed version is {$installedVersion}."
-            );
+            return false;
         }
+        return true;
     }
 
     /**
      * 验证插件依赖。
      * @param string $id 插件标识
      * @param PluginProvider $plugin 插件实例
-     * @return void
+     * @return bool 依赖是否满足
      */
-    private static function validatePluginDependencies( string $id, PluginProvider $plugin ): void {
+    private static function validatePluginDependencies( string $id, PluginProvider $plugin ): bool {
         foreach ( $plugin->relyPlugin as $pluginId => $constraint ) {
             $relyPlugin = self::load( $pluginId );
             if ( $relyPlugin === null ) {
-                throw new LogicException(
-                    "Plugin {$id} requires plugin {$pluginId} {$constraint}, but it is not installed."
-                );
+                Log::warning( 'The plug-in dependency is missing or cannot be loaded, and the plug-in loading has been skipped.', [
+                    'plugin_id' => $id,
+                    'dependency_plugin_id' => $pluginId,
+                    'required_version' => $constraint,
+                ] );
+                return false;
             }
             $installedVersion = $relyPlugin->version;
-            if (
-                !is_string( $installedVersion ) ||
-                !Semver::satisfies( $installedVersion, $constraint )
-            ) {
-                $installedVersion ??= 'unknown';
-                throw new LogicException(
-                    "Plugin {$id} requires plugin {$pluginId} {$constraint}, installed version is {$installedVersion}."
-                );
+            try {
+                if ( is_string( $installedVersion ) && Semver::satisfies( $installedVersion, $constraint ) ) { continue; }
+                Log::warning( 'The plug-in dependency version is not satisfied and plug-in loading has been skipped.', [
+                    'plugin_id' => $id,
+                    'dependency_plugin_id' => $pluginId,
+                    'required_version' => $constraint,
+                    'installed_version' => $installedVersion ?? 'unknown',
+                ] );
+            }catch ( Throwable $throwable ) {
+                Log::warning( 'The plug-in dependency declaration is invalid and plug-in loading has been skipped.', [
+                    'plugin_id' => $id,
+                    'dependency_plugin_id' => $pluginId,
+                    'required_version' => $constraint,
+                    'installed_version' => $installedVersion ?? 'unknown',
+                    'error' => $throwable->getMessage(),
+                ] );
             }
+            return false;
         }
+        return true;
     }
 }
