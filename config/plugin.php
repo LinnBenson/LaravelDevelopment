@@ -3,8 +3,9 @@
 return array (
   'enabled' =>
   array (
-    0 => 'LaravelTool',
-    1 => 'ToView',
+    0 => 'ToView',
+    1 => 'LaravelTool',
+    2 => 'AdminOperationLog',
   ),
   'hooks' =>
   array (
