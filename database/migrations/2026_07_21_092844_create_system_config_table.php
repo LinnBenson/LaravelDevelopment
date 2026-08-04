@@ -37,7 +37,7 @@ return new class extends Migration
             ],
             [
                 'category' => 'app',
-                'type' => 'url',
+                'type' => 'text',
                 'name' => '应用域名',
                 'key' => 'app.host',
                 'value' => explode( '//', config( 'app.url' ) )[1] ?? '',
