@@ -63,7 +63,10 @@ jobs:
               dist/LaravelTool.zip \
               --clobber
 
-            gh release edit "${RELEASE_TAG}" --latest
+            gh release edit "${RELEASE_TAG}" \
+              --title "Plugins Latest" \
+              --notes "这里是系统默认的插件更新安装包。" \
+              --latest
           else
             gh release create "${RELEASE_TAG}" \
               dist/ToView.zip \
