@@ -21,10 +21,6 @@ class FilamentIcons extends Page {
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedSquares2x2;
 
-    protected static ?string $navigationLabel = 'Filament Icons';
-
-    protected static ?string $title = 'Filament Icons';
-
     protected static ?string $slug = 'developer-center/filament-icons';
 
     protected static ?int $navigationSort = 20;
@@ -34,10 +30,6 @@ class FilamentIcons extends Page {
     public string $search = '';
 
     public string $iconStyle = 'all';
-
-    public static function getNavigationGroup(): string|UnitEnum|null {
-        return __( 'filament.groups.developer' );
-    }
 
     /**
      * 设置图标样式。
@@ -82,11 +74,10 @@ class FilamentIcons extends Page {
     }
 
     /**
-     * 获取页面面包屑。
-     * 返回开发者中心图标页面层级。
-     * @return array<string> 面包屑列表
+     * 页面信息
      */
-    public function getBreadcrumbs(): array {
-        return ['开发者中心', 'Filament Icons'];
-    }
+    public function getBreadcrumbs(): array { return [__( 'filament.groups.developer' ), __( 'filament.navigation.filament_icons' )]; }
+    public static function getNavigationLabel(): string { return __( 'filament.navigation.filament_icons' ); }
+    public function getTitle(): string { return __( 'filament.navigation.filament_icons' ); }
+    public static function getNavigationGroup(): string|UnitEnum|null { return __( 'filament.groups.developer' ); }
 }

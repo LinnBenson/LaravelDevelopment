@@ -32,19 +32,11 @@ class SystemConfigPage extends Page {
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCog6Tooth;
 
-    protected static ?string $navigationLabel = '系统配置';
-
-    protected static ?string $title = '系统配置';
-
     protected static ?string $slug = 'system-settings/config';
 
     protected static ?int $navigationSort = 10;
 
     protected string $view = 'Filament::SystemSettings.SystemConfig.system-config';
-
-    public static function getNavigationGroup(): string|UnitEnum|null {
-        return __( 'filament.groups.system' );
-    }
 
     /** @var array<int, bool|string|null> */
     public array $values = [];
@@ -358,7 +350,7 @@ class SystemConfigPage extends Page {
      * @return array<string> 面包屑列表
      */
     public function getBreadcrumbs(): array {
-        return ['系统设置', '系统配置'];
+        return [__( 'filament.groups.system' ), __( 'filament.navigation.system_config' )];
     }
 
     /**
@@ -630,4 +622,12 @@ class SystemConfigPage extends Page {
             ->danger()
             ->send();
     }
+
+
+    /**
+     * 页面信息
+     */
+    public static function getNavigationLabel(): string { return __( 'filament.navigation.system_config' ); }
+    public function getTitle(): string { return __( 'filament.titles.system_config' ); }
+    public static function getNavigationGroup(): string|UnitEnum|null { return __( 'filament.groups.system' ); }
 }

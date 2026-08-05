@@ -25,10 +25,6 @@ class LogInformation extends Page {
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentText;
 
-    protected static ?string $navigationLabel = '日志信息';
-
-    protected static ?string $title = '日志信息';
-
     protected static ?string $slug = 'developer-center/logs';
 
     protected static ?int $navigationSort = 10;
@@ -38,10 +34,6 @@ class LogInformation extends Page {
     public ?string $selectedLog = null;
 
     public ?string $logContent = null;
-
-    public static function getNavigationGroup(): string|UnitEnum|null {
-        return __( 'filament.groups.developer' );
-    }
 
     /**
      * 初始化日志页面。
@@ -159,7 +151,7 @@ class LogInformation extends Page {
      * @return array<string> 面包屑列表
      */
     public function getBreadcrumbs(): array {
-        return ['开发者中心', '日志信息'];
+        return [__( 'filament.groups.developer' ), __( 'filament.navigation.logs' )];
     }
 
     /**
@@ -259,4 +251,11 @@ class LogInformation extends Page {
             ->danger()
             ->send();
     }
+
+    /**
+     * 页面信息
+     */
+    public static function getNavigationLabel(): string { return __( 'filament.navigation.logs' ); }
+    public function getTitle(): string { return __( 'filament.titles.logs' ); }
+    public static function getNavigationGroup(): string|UnitEnum|null { return __( 'filament.groups.developer' ); }
 }

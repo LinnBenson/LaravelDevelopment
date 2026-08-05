@@ -30,10 +30,6 @@ class HomeDashboard extends Dashboard {
 
     protected static string $navigationPermission = 'dashboard';
 
-    protected static ?string $title = '仪表板';
-
-    protected static ?string $navigationLabel = '仪表板';
-
     protected string $view = 'Filament::Dashboard.Home.home-dashboard';
 
     /**
@@ -204,4 +200,11 @@ class HomeDashboard extends Dashboard {
             return 0;
         }
     }
+
+
+    /**
+     * 页面信息
+     */
+    public static function getNavigationLabel(): string { return __( 'filament.navigation.dashboard' ); }
+    public function getTitle(): string { return __( 'filament.titles.dashboard' ); }
 }

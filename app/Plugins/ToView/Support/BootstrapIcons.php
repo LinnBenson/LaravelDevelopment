@@ -20,10 +20,6 @@ class BootstrapIcons extends Page {
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedSquares2x2;
 
-    protected static ?string $navigationLabel = 'Bootstrap Icons';
-
-    protected static ?string $title = 'Bootstrap Icons';
-
     protected static ?string $slug = 'developer-center/bootstrap-icons';
 
     protected static ?int $navigationSort = 21;
@@ -33,10 +29,6 @@ class BootstrapIcons extends Page {
     public string $search = '';
 
     public string $iconStyle = 'all';
-
-    public static function getNavigationGroup(): string|UnitEnum|null {
-        return __( 'filament.groups.developer' );
-    }
 
     /**
      * 设置图标样式。
@@ -96,11 +88,10 @@ class BootstrapIcons extends Page {
     }
 
     /**
-     * 获取页面面包屑。
-     * 返回开发者中心图标页面层级。
-     * @return array<string> 面包屑列表
+     * 页面信息
      */
-    public function getBreadcrumbs(): array {
-        return ['开发者中心', 'Bootstrap Icons'];
-    }
+    public function getBreadcrumbs(): array { return [__( 'filament.groups.developer' ), 'Bootstrap Icons']; }
+    public static function getNavigationLabel(): string { return 'Bootstrap Icons'; }
+    public function getTitle(): string { return 'Bootstrap Icons'; }
+    public static function getNavigationGroup(): string|UnitEnum|null { return __( 'filament.groups.developer' ); }
 }

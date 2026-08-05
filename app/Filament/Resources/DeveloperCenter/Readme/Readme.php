@@ -24,19 +24,11 @@ class Readme extends Page {
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBookOpen;
 
-    protected static ?string $navigationLabel = 'README.md';
-
-    protected static ?string $title = 'README.md';
-
     protected static ?string $slug = 'developer-center/readme';
 
     protected static ?int $navigationSort = 30;
 
     protected string $view = 'Filament::DeveloperCenter.Readme.readme';
-
-    public static function getNavigationGroup(): string|UnitEnum|null {
-        return __( 'filament.groups.developer' );
-    }
 
     /**
      * 获取 README 格式化内容。
@@ -77,11 +69,10 @@ class Readme extends Page {
     }
 
     /**
-     * 获取页面面包屑。
-     * 返回开发者中心 README 页面层级。
-     * @return array<string> 面包屑列表
+     * 页面信息
      */
-    public function getBreadcrumbs(): array {
-        return ['开发者中心', 'README.md'];
-    }
+    public function getBreadcrumbs(): array { return [__( 'filament.groups.developer' ), __( 'filament.navigation.readme' )]; }
+    public static function getNavigationLabel(): string { return __( 'filament.navigation.readme' ); }
+    public function getTitle(): string { return __( 'filament.navigation.readme' ); }
+    public static function getNavigationGroup(): string|UnitEnum|null { return __( 'filament.groups.developer' ); }
 }

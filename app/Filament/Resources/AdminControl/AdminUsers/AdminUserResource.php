@@ -29,17 +29,7 @@ class AdminUserResource extends Resource {
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUsers;
 
-    protected static ?string $navigationLabel = '管理员列表';
-
-    protected static ?string $modelLabel = '管理员';
-
-    protected static ?string $pluralModelLabel = '管理员列表';
-
     protected static ?int $navigationSort = 10;
-
-    public static function getNavigationGroup(): string|UnitEnum|null {
-        return __( 'filament.groups.admin' );
-    }
 
     /**
      * 表单配置。
@@ -112,4 +102,12 @@ class AdminUserResource extends Resource {
             'edit' => EditAdminUser::route( '/{record}/edit' ),
         ];
     }
+
+    /**
+     * 页面信息
+     */
+    public static function getNavigationLabel(): string { return __( 'filament.navigation.admin_users' ); }
+    public static function getModelLabel(): string { return __( 'filament.models.admin_user' ); }
+    public static function getPluralModelLabel(): string { return __( 'filament.models.admin_users' ); }
+    public static function getNavigationGroup(): string|UnitEnum|null { return __( 'filament.groups.admin' ); }
 }

@@ -30,17 +30,7 @@ class UserResource extends Resource {
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUserGroup;
 
-    protected static ?string $navigationLabel = '用户列表';
-
-    protected static ?string $modelLabel = '用户';
-
-    protected static ?string $pluralModelLabel = '用户列表';
-
     protected static ?int $navigationSort = 10;
-
-    public static function getNavigationGroup(): string|UnitEnum|null {
-        return __( 'filament.groups.user' );
-    }
 
     /**
      * 表单配置。
@@ -98,4 +88,12 @@ class UserResource extends Resource {
             'edit' => EditUser::route( '/{record}/edit' ),
         ];
     }
+
+    /**
+     * 页面信息
+     */
+    public static function getNavigationLabel(): string { return __( 'filament.navigation.users' ); }
+    public static function getModelLabel(): string { return __( 'filament.models.user' ); }
+    public static function getPluralModelLabel(): string { return __( 'filament.models.users' ); }
+    public static function getNavigationGroup(): string|UnitEnum|null { return __( 'filament.groups.user' ); }
 }

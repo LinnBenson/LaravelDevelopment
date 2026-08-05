@@ -25,19 +25,11 @@ class ServiceManagement extends Page {
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedServerStack;
 
-    protected static ?string $navigationLabel = '服务项管理';
-
-    protected static ?string $title = '服务项管理';
-
     protected static ?string $slug = 'system-settings/services';
 
     protected static ?int $navigationSort = 20;
 
     protected string $view = 'Filament::SystemSettings.ServiceManagement.service-management';
-
-    public static function getNavigationGroup(): string|UnitEnum|null {
-        return __( 'filament.groups.system' );
-    }
 
     /** @var array<string, bool> */
     public array $expandedLogs = [];
@@ -203,7 +195,7 @@ class ServiceManagement extends Page {
      * @return array<string> 面包屑列表
      */
     public function getBreadcrumbs(): array {
-        return ['系统设置', '服务项管理'];
+        return [__( 'filament.groups.system' ), __( 'filament.navigation.services' )];
     }
 
     /**
@@ -318,4 +310,11 @@ class ServiceManagement extends Page {
     private function notifyFailure( string $message ): void {
         Notification::make()->title( $message )->danger()->send();
     }
+
+    /**
+     * 页面信息
+     */
+    public static function getNavigationLabel(): string { return __( 'filament.navigation.services' ); }
+    public function getTitle(): string { return __( 'filament.titles.services' ); }
+    public static function getNavigationGroup(): string|UnitEnum|null { return __( 'filament.groups.system' ); }
 }

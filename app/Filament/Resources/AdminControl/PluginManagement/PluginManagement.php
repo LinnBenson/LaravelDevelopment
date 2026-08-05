@@ -36,19 +36,11 @@ class PluginManagement extends Page {
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPuzzlePiece;
 
-    protected static ?string $navigationLabel = '插件管理';
-
-    protected static ?string $title = '插件管理';
-
     protected static ?string $slug = 'plugin-management';
 
     protected static ?int $navigationSort = 20;
 
     protected string $view = 'Filament::AdminControl.PluginManagement.plugin-management';
-
-    public static function getNavigationGroup(): string|UnitEnum|null {
-        return __( 'filament.groups.admin' );
-    }
 
     /**
      * 获取头部操作。
@@ -693,10 +685,10 @@ class PluginManagement extends Page {
     }
 
     /**
-     * 获取页面面包屑。
-     * @return array<string> 面包屑列表
+     * 页面信息
      */
-    public function getBreadcrumbs(): array {
-        return ['管理员控制', '插件管理'];
-    }
+    public function getBreadcrumbs(): array { return [__( 'filament.groups.admin' ), __( 'filament.navigation.plugins' )]; }
+    public static function getNavigationLabel(): string { return __( 'filament.navigation.plugins' ); }
+    public function getTitle(): string { return __( 'filament.titles.plugins' ); }
+    public static function getNavigationGroup(): string|UnitEnum|null { return __( 'filament.groups.admin' ); }
 }
