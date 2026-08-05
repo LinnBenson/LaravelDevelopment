@@ -15,9 +15,10 @@ return new class extends PluginProvider {
     public function __construct() {
         $this->name = 'Laravel Tool';
         $this->description = 'Laravel Framework Development Tools';
-        $this->version = '1.0.0';
+        $this->version = '1.0.1';
         $this->author = 'System';
         $this->setType( 1 );
+        $this->source = 'https://github.com/LinnBenson/LaravelDevelopment/releases/download/plugins-latest/LaravelTool.zip';
     }
     /**
      * 插件启动时执行的操作
