@@ -16,7 +16,7 @@ return new class extends PluginProvider {
     public function __construct() {
         $this->name = 'To View';
         $this->description = 'System default view rendering component.';
-        $this->version = '1.0.1';
+        $this->version = '1.0.2';
         $this->author = 'System';
         $this->source = 'https://github.com/LinnBenson/LaravelDevelopment/releases/download/plugins-latest/ToView.zip';
     }
