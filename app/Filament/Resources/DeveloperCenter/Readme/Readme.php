@@ -24,17 +24,19 @@ class Readme extends Page {
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBookOpen;
 
-    protected static string|UnitEnum|null $navigationGroup = '开发者中心';
-
     protected static ?string $navigationLabel = 'README.md';
 
     protected static ?string $title = 'README.md';
 
     protected static ?string $slug = 'developer-center/readme';
 
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 30;
 
     protected string $view = 'Filament::DeveloperCenter.Readme.readme';
+
+    public static function getNavigationGroup(): string|UnitEnum|null {
+        return __( 'filament.groups.developer' );
+    }
 
     /**
      * 获取 README 格式化内容。

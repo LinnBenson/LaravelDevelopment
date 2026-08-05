@@ -20,21 +20,23 @@ class BootstrapIcons extends Page {
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedSquares2x2;
 
-    protected static string|UnitEnum|null $navigationGroup = '开发者中心';
-
     protected static ?string $navigationLabel = 'Bootstrap Icons';
 
     protected static ?string $title = 'Bootstrap Icons';
 
     protected static ?string $slug = 'developer-center/bootstrap-icons';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 21;
 
     protected string $view = 'View::bootstrap-icons';
 
     public string $search = '';
 
     public string $iconStyle = 'all';
+
+    public static function getNavigationGroup(): string|UnitEnum|null {
+        return __( 'filament.groups.developer' );
+    }
 
     /**
      * 设置图标样式。

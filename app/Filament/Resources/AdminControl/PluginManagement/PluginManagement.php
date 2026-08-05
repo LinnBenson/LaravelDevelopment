@@ -36,17 +36,19 @@ class PluginManagement extends Page {
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPuzzlePiece;
 
-    protected static string|UnitEnum|null $navigationGroup = '管理员控制';
-
     protected static ?string $navigationLabel = '插件管理';
 
     protected static ?string $title = '插件管理';
 
     protected static ?string $slug = 'plugin-management';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 20;
 
     protected string $view = 'Filament::AdminControl.PluginManagement.plugin-management';
+
+    public static function getNavigationGroup(): string|UnitEnum|null {
+        return __( 'filament.groups.admin' );
+    }
 
     /**
      * 获取头部操作。

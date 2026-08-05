@@ -52,7 +52,7 @@ return new class extends PluginProvider {
      * @return void
      */
     public function registerAdminPage( $panel ): void {
-        config()->set( "filament.navigation_levels.bootstrap_icons", config( 'filament.navigation_levels.filament_icons', 99899 ) );
+        config()->set( "filament.navigation_levels.bootstrap_icons", config( 'filament.navigation_levels.filament_icons', 99990 ) );
         $panel->pages( [
             BootstrapIcons::class,
         ] );

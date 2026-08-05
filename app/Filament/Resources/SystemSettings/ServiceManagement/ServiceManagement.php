@@ -25,17 +25,19 @@ class ServiceManagement extends Page {
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedServerStack;
 
-    protected static string|UnitEnum|null $navigationGroup = '系统设置';
-
     protected static ?string $navigationLabel = '服务项管理';
 
     protected static ?string $title = '服务项管理';
 
     protected static ?string $slug = 'system-settings/services';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 20;
 
     protected string $view = 'Filament::SystemSettings.ServiceManagement.service-management';
+
+    public static function getNavigationGroup(): string|UnitEnum|null {
+        return __( 'filament.groups.system' );
+    }
 
     /** @var array<string, bool> */
     public array $expandedLogs = [];

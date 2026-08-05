@@ -14,7 +14,7 @@
                             <path d="M8.5 12.2 11 14.7l4.8-5.2" />
                         </svg>
                     </span>
-                    <span>{{ config( 'app.name' ) }}</span>
+                    <span>{{ setting( 'app.title' ) }}</span>
                 </header>
 
                 <div class="admin-login-intro">
@@ -39,7 +39,7 @@
                             <path d="M8.5 12.2 11 14.7l4.8-5.2" />
                         </svg>
                     </span>
-                    <strong>{{ config( 'app.name' ) }}</strong>
+                    <strong>{{ setting( 'app.title' ) }}</strong>
                 </div>
 
                 <header class="admin-login-heading">
@@ -59,7 +59,7 @@
                 </div>
             </div>
 
-            <p class="admin-login-copyright">© {{ date( 'Y' ) }} {{ config( 'app.name' ) }}</p>
+            <p class="admin-login-copyright">© {{ date( 'Y' ) }} {{ setting( 'app.title' ) }}</p>
         </section>
     </main>
 

@@ -32,17 +32,19 @@ class SystemConfigPage extends Page {
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCog6Tooth;
 
-    protected static string|UnitEnum|null $navigationGroup = '系统设置';
-
     protected static ?string $navigationLabel = '系统配置';
 
     protected static ?string $title = '系统配置';
 
     protected static ?string $slug = 'system-settings/config';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 10;
 
     protected string $view = 'Filament::SystemSettings.SystemConfig.system-config';
+
+    public static function getNavigationGroup(): string|UnitEnum|null {
+        return __( 'filament.groups.system' );
+    }
 
     /** @var array<int, bool|string|null> */
     public array $values = [];

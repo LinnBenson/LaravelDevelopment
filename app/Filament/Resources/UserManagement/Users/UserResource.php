@@ -30,15 +30,17 @@ class UserResource extends Resource {
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUserGroup;
 
-    protected static string|UnitEnum|null $navigationGroup = '用户管理';
-
     protected static ?string $navigationLabel = '用户列表';
 
     protected static ?string $modelLabel = '用户';
 
     protected static ?string $pluralModelLabel = '用户列表';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 10;
+
+    public static function getNavigationGroup(): string|UnitEnum|null {
+        return __( 'filament.groups.user' );
+    }
 
     /**
      * 表单配置。

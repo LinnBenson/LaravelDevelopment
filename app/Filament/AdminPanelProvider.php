@@ -43,6 +43,7 @@ class AdminPanelProvider extends PanelProvider {
         $panel
             ->default()
             ->id( 'admin' )
+            ->brandName( 'Service Console' )
             ->path( config( 'filament.path', 'admin' ) )
             ->authGuard( 'admin' )
             ->login( Login::class )
@@ -60,12 +61,12 @@ class AdminPanelProvider extends PanelProvider {
                 ServiceManagement::class,
             ] )
             ->navigationGroups( [
-                '管理员控制',
-                '用户管理',
-                '系统设置',
-                '开发者中心',
+                __( 'filament.groups.admin' ),
+                __( 'filament.groups.user' ),
+                __( 'filament.groups.other' ),
+                __( 'filament.groups.system' ),
+                __( 'filament.groups.developer' ),
             ] )
-            ->discoverWidgets( in: app_path( 'Filament/Widgets' ), for: 'App\Filament\Widgets' )
             ->middleware( [
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,

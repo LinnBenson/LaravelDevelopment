@@ -29,15 +29,17 @@ class AdminUserResource extends Resource {
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUsers;
 
-    protected static string|UnitEnum|null $navigationGroup = '管理员控制';
-
     protected static ?string $navigationLabel = '管理员列表';
 
     protected static ?string $modelLabel = '管理员';
 
     protected static ?string $pluralModelLabel = '管理员列表';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 10;
+
+    public static function getNavigationGroup(): string|UnitEnum|null {
+        return __( 'filament.groups.admin' );
+    }
 
     /**
      * 表单配置。

@@ -25,21 +25,23 @@ class LogInformation extends Page {
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentText;
 
-    protected static string|UnitEnum|null $navigationGroup = '开发者中心';
-
     protected static ?string $navigationLabel = '日志信息';
 
     protected static ?string $title = '日志信息';
 
     protected static ?string $slug = 'developer-center/logs';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 10;
 
     protected string $view = 'Filament::DeveloperCenter.LogInformation.log-information';
 
     public ?string $selectedLog = null;
 
     public ?string $logContent = null;
+
+    public static function getNavigationGroup(): string|UnitEnum|null {
+        return __( 'filament.groups.developer' );
+    }
 
     /**
      * 初始化日志页面。
