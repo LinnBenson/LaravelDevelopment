@@ -10,3 +10,4 @@
 /.vscode
 /storage/*.key
 /vendor
+/update_tmp/
