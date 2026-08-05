@@ -70,6 +70,6 @@ jobs:
               dist/LaravelTool.zip \
               --target "${GITHUB_SHA}" \
               --title "Plugins Latest" \
-              --notes "由 GitHub Actions 自动生成的最新插件安装包。" \
+              --notes "这里是系统默认的插件更新安装包。" \
               --latest
           fi
