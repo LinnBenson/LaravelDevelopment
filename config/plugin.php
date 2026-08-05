@@ -5,6 +5,7 @@ return array (
   array (
     0 => 'ToView',
     1 => 'LaravelTool',
+    2 => 'PushNotifier',
   ),
   'hooks' => 
   array (

@@ -195,6 +195,11 @@ return [
     |
     */
 
-    'attributes' => [],
+    'attributes' => [
+        'type' => 'notification type',
+        'source' => 'notification source',
+        'title' => 'notification title',
+        'content' => 'notification content',
+    ],
 
 ];

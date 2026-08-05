@@ -36,8 +36,6 @@ return new class extends PluginProvider {
         // 注册视图命名空间
         app( 'view' )->addNamespace( 'View', "{$this->path}Views" );
         Blade::anonymousComponentPath( "{$this->path}Views/Components", 'View' );
-        // 注册配置
-        config()->set( "filament.navigation_levels.bootstrap_icons", config( 'filament.navigation_levels.filament_icons', 99899 ) );
         // 注册路由
         Route::middleware( ['web'] )
             ->prefix( 'internal-plugins-to-view' )
@@ -54,6 +52,7 @@ return new class extends PluginProvider {
      * @return void
      */
     public function registerAdminPage( $panel ): void {
+        config()->set( "filament.navigation_levels.bootstrap_icons", config( 'filament.navigation_levels.filament_icons', 99899 ) );
         $panel->pages( [
             BootstrapIcons::class,
         ] );

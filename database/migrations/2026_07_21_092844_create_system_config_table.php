@@ -128,10 +128,10 @@ return new class extends Migration
             [
                 'category' => 'system',
                 'type' => 'text',
-                'name' => '邮箱 SMTP 发件者',
-                'key' => 'system.mail.forward',
-                'value' => config( 'mail.from.address' ) ?? '',
-                'description' => '用于配置邮箱 SMTP 发件者'
+                'name' => '邮箱 SMTP 收件人',
+                'key' => 'system.mail.recipient',
+                'value' => '',
+                'description' => '用于配置邮箱默认收件人'
             ],
             [
                 'category' => 'system',

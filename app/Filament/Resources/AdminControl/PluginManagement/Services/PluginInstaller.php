@@ -8,7 +8,6 @@ use Composer\Semver\VersionParser;
 use GuzzleHttp\Psr7\Uri;
 use GuzzleHttp\Psr7\UriResolver;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use RecursiveDirectoryIterator;
@@ -164,9 +163,8 @@ class PluginInstaller {
             PluginProvider::forget( $pluginId );
             $plugin = PluginProvider::load( $pluginId );
             if ( $plugin === null ) { throw new RuntimeException( '插件移入后无法加载。' ); }
-            DB::transaction( function() use ( $plugin ): void {
-                if ( $plugin->install() !== true ) { throw new RuntimeException( '插件 install() 未返回 true。' ); }
-            } );
+            // 插件安装通常包含建表等 DDL，MySQL 会隐式提交事务，不能由外层事务包裹。
+            if ( $plugin->install() !== true ) { throw new RuntimeException( '插件 install() 未返回 true。' ); }
             return [
                 'id' => $pluginId,
                 'name' => $plugin->name ?? $pluginId,

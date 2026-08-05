@@ -159,5 +159,10 @@ return [
             'rule-name' => 'custom-message',
         ],
     ],
-    'attributes' => [],
+    'attributes' => [
+        'type' => '通知类型',
+        'source' => '通知来源',
+        'title' => '通知标题',
+        'content' => '通知内容',
+    ],
 ];
