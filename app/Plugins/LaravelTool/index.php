@@ -15,7 +15,7 @@ return new class extends PluginProvider {
     public function __construct() {
         $this->name = 'Laravel Tool';
         $this->description = 'Laravel Framework Development Tools';
-        $this->version = '1.0.2';
+        $this->version = '1.0.3';
         $this->author = 'System';
         $this->setType( 1 );
         $this->source = 'https://github.com/LinnBenson/LaravelDevelopment/releases/download/plugins-latest/LaravelTool.zip';
