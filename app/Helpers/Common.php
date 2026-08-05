@@ -60,7 +60,7 @@ if ( !function_exists( 'uuid' ) ) {
         return (string) Illuminate\Support\Str::uuid();
     }
 }
-if ( !function_exists( 'random_string' ) ) {
+if ( !function_exists( 'randomString' ) ) {
     /**
      * 生成随机字符串
      * 根据长度和类型生成随机字符串。
@@ -68,7 +68,7 @@ if ( !function_exists( 'random_string' ) ) {
      * @param int $type 字符串类型，0 仅数字，1 仅大小写字母，2 大小写字母加数字
      * @return string 随机字符串
      */
-    function random_string( int $length, int $type = 2 ): string {
+    function randomString( int $length, int $type = 2 ): string {
         if ( $length <= 0 ) { return ''; }
         $chars = match( $type ) {
             0 => '0123456789',

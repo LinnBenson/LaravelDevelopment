@@ -11,6 +11,9 @@
    - `php artisan optimize:clear`
 6. 运行数据库迁移和数据填充
    - `php artisan migrate --seed`
+7. 创建公开存储目录链接
+   - `php artisan storage:link`
+   - 用于访问管理员头像、用户头像及其它存储在 `public` 磁盘中的文件
 
 # 伪静态部署
 ```
@@ -40,12 +43,15 @@ location / {
   - 输出 `config/workerman.php` 中指定服务的 Workerman 进程状态
 - 调试服务
   - `php artisan server [服务标识] debug`
-  - 以循环重启的方式调试 `config/workerman.php` 中指定的服务，使用 `exit` 停止调试任务
+  - 以循环重启的方式调试 `config/workerman.php` 中指定的服务，使用 `stop` 停止调试任务
 
 ## 自定义参数
 - RID 请求唯一标识符
   - 通过 `SetRequestMiddleware` 中间件设置，优先使用请求头中的 `RID` 参数，其次使用 Cookie 中的 `rid` 参数，若都不存在则自动生成一个 UUID 作为 RID
   - 可通过 `$request->attributes->get('rid')` 获取当前请求的 RID
+- Locale 应用语言
+  - 通过 `SetRequestMiddleware` 中间件设置，依次读取请求头中的 `Locale` 参数、Cookie 中的 `locale` 参数和 `Accept-Language` 请求头
+  - 仅接受 `config/app.php` 中 `locales` 已配置的语言，均未匹配时使用应用默认语言
 
 ## 后台菜单等级权限
 - 菜单等级统一配置在 `config/filament.php` 的 `navigation_levels` 中
@@ -98,7 +104,7 @@ location / {
 - 获取插件实例
   - `plugin( [string]插件标识 )`
   - 通过 `PluginProvider::load()` 加载插件，同一进程内重复调用时返回缓存实例
-  - 插件不存在或标识无效时返回 null，依赖不满足或插件结构无效时抛出 `LogicException`
+  - 插件不存在、标识无效或依赖不满足时返回 null；循环依赖或插件入口结构无效时抛出 `LogicException`
   - return [object|null]插件实例或 null
 - 执行 Shell 命令
   - `runShell( [string]Shell 命令 )`
@@ -121,7 +127,7 @@ location / {
 - 加载插件
   - `PluginProvider::load( [string]插件标识 )`
   - 校验插件标识、目录、Composer 依赖、插件依赖及循环依赖，通过后启用并缓存插件实例
-  - 插件不存在或标识无效时返回 null，依赖不满足或插件结构无效时抛出 `LogicException`
+  - 插件不存在、标识无效或依赖不满足时返回 null；循环依赖或插件入口未返回 `PluginProvider` 实例时抛出 `LogicException`
   - return [PluginProvider|null]插件实例
 - 移除插件加载缓存
   - `PluginProvider::forget( [string]插件标识 )`
@@ -134,7 +140,19 @@ location / {
 - 运行插件钩子
   - `PluginProvider::runHook( [string]钩子名称, [mixed]...钩子回调参数 )`
   - 按 `config/plugin.php` 中的 `enabled` 顺序调用所有插件注册的同名钩子；钩子未在系统配置中注册时抛出 `LogicException`
-  - return [bool]钩子执行完成返回 true
+  - return [mixed]当前实现执行完成后返回 true
+- 插件启动入口
+  - `protected function boot(): void`
+  - 插件启用时由 `enable()` 自动调用，插件类可以覆盖此受保护方法以注册配置、事件和钩子
+  - return [void]
+- 插件安装入口
+  - `$plugin->install()`
+  - 安装插件时调用，插件类可以覆盖此方法执行数据库或配置初始化
+  - return [bool]安装成功返回 true，失败返回 false
+- 插件卸载入口
+  - `$plugin->uninstall()`
+  - 卸载插件时调用，插件类可以覆盖此方法清理数据库或配置
+  - return [bool]卸载成功返回 true，失败返回 false
 - 注册插件钩子
   - `$plugin->hook( [string]钩子名称, [callable|string]钩子回调函数或方法名 )`
   - 钩子名称必须在系统钩子配置中存在，且不能与当前插件已注册钩子重复；传入方法名时，该方法必须是插件实例的公开方法
@@ -156,38 +174,78 @@ location / {
   - return [bool]插件是否已经启用
 
 ## 插件安装服务 [app/Filament/Resources/AdminControl/PluginManagement/Services/PluginInstaller.php]
+- 获取服务实例
+  - `$installer = app( PluginInstaller::class )`
 - 从上传文件安装
-  - `PluginInstaller::installFromUpload( [UploadedFile]ZIP 压缩包 )`
-  - 在 `config/plugin.php` 的 `cache` 目录中解压和校验，通过后移入 `app/Plugins`、调用 `install()`，失败时回滚数据库与插件目录
+  - `$installer->installFromUpload( [UploadedFile]ZIP 压缩包 )`
+  - 在 `storage/framework/plugins` 临时目录中解压和校验，通过后移入 `app/Plugins`、调用 `install()`，失败时回滚数据库与插件目录
   - return [array]已安装插件的标识、名称和版本
 - 从远程链接安装
-  - `PluginInstaller::installFromUrl( [string]ZIP 来源链接 )`
+  - `$installer->installFromUrl( [string]ZIP 来源链接 )`
   - 支持逐跳校验的 HTTP/HTTPS 重定向，拒绝内网地址并限制下载与解压体积
   - return [array]已安装插件的标识、名称和版本
 - 从远程链接更新
-  - `PluginInstaller::updateFromUrl( [string]插件标识, [string]ZIP 来源链接 )`
+  - `$installer->updateFromUrl( [string]插件标识, [string]ZIP 来源链接 )`
   - 更新包标识必须与已安装插件一致且版本必须更高；更新前备份旧目录，新版本安装失败时自动恢复
   - return [array]更新后插件的标识、名称和版本
 - 从上传文件更新
-  - `PluginInstaller::updateFromUpload( [string]插件标识, [UploadedFile]ZIP 压缩包 )`
+  - `$installer->updateFromUpload( [string]插件标识, [UploadedFile]ZIP 压缩包 )`
   - 与远程更新共用版本校验、目录备份和失败回滚流程，供后续手动更新入口复用
   - return [array]更新后插件的标识、名称和版本
 
 ## 用户模型 [app/Models/User.php]
+- 字段备注: Array `User::FIELD_COMMENTS`
+- 用户等级: Array `User::LEVELS`
+- 获取全部字段备注
+  - `User::fields()`
+  - return [array]字段名与中文备注
+- 获取指定字段备注
+  - `User::field( [string]字段名 )`
+  - return [string]字段备注，不存在时返回空字符串
+- 获取上级代理管理员
+  - `$user->agentAdmin()`
+  - return [BelongsTo]通过 `agent` 字段关联的管理员
 - 获取用户等级
   - `User::getLevel( [int|string|null]用户等级 = null )`
   - 不传等级时返回全部等级配置；传入等级时返回最接近且不小于该数值的等级名称
   - 无效、负数或超过最高等级时返回 `Unknown`
   - return [array|string]等级配置列表或等级名称
 - 组合电话号码存储格式
-  - `User::formatPhoneForStorage( [string]国际区号, [string]本地号码 )`
+  - `User::formatPhoneForStorage( [string|null]国际区号, [string|null]本地号码 )`
   - return [string|null]不带加号的 `xx xxxxxxxxxxx` 格式
 - 拆分电话号码
-  - `User::splitPhone( [string]已存储的电话号码 )`
+  - `User::splitPhone( [string|null]已存储的电话号码 )`
   - return [array]国际区号和本地号码
 - 格式化电话号码显示
-  - `User::formatPhoneForDisplay( [string]已存储的电话号码 )`
+  - `User::formatPhoneForDisplay( [string|null]已存储的电话号码 )`
   - return [string|null]带加号的 `+xx xxxxxxxxxxx` 格式
+
+## 管理员模型 [app/Models/AdminUser.php]
+- 字段备注: Array `AdminUser::FIELD_COMMENTS`
+- 获取全部字段备注
+  - `AdminUser::fields()`
+  - return [array]字段名与中文备注
+- 获取指定字段备注
+  - `AdminUser::field( [string]字段名 )`
+  - return [string]字段备注，不存在时返回空字符串
+- 获取 Filament 头像地址
+  - `$adminUser->getFilamentAvatarUrl()`
+  - return [string|null]头像存在时返回 `public` 磁盘访问地址，否则返回 null
+- 判断是否可以访问后台面板
+  - `$adminUser->canAccessPanel( [Panel]后台面板 )`
+  - return [bool]管理员处于启用状态时返回 true
+
+## 系统配置模型 [app/Models/SystemConfig.php]
+- 配置类别: Array `SystemConfig::CATEGORIES`
+- 配置类型: Array `SystemConfig::TYPES`
+- 获取配置类别名称
+  - `$config->category_label`
+  - 由 `getCategoryLabelAttribute()` 访问器提供
+  - return [string]类别对应的中文名称，未知类别返回原值
+- 获取配置类型名称
+  - `$config->type_label`
+  - 由 `getTypeLabelAttribute()` 访问器提供
+  - return [string]类型对应的中文名称，未知类型返回原值
 
 ## Workerman 服务 [app/Workerman/Server.php]
 - 服务项名称: String `Server::$name`
@@ -207,7 +265,8 @@ location / {
   - 根据服务心跳判断服务是否正在运行
   - return [bool]服务是否正在运行
 - 设置定时器
-  - `Server::setTimer( [string]定时器名称, [float]时间间隔, [callable]回调函数, [array]回调参数 = [], [bool]是否持久执行 = true )`
+  - `Server::setTimer( [string]定时器名称, [mixed]...Workerman 定时器参数 )`
+  - 可变参数会依次传递给 `Workerman\Timer::add()`，常用参数为时间间隔、回调函数、回调参数和是否持久执行
   - 同一进程中定时器名称不可重复；名称已存在时不会重复创建
   - return [bool|int]成功返回定时器 ID，名称已存在时返回 false
 - 删除定时器
