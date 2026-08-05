@@ -42,8 +42,9 @@ class AdminPanelProvider extends PanelProvider {
     public function panel( Panel $panel ): Panel {
         $panel
             ->default()
+            ->spa()
             ->id( 'admin' )
-            ->brandName( 'Service Console' )
+            ->brandName( 'Admin Dashboard' )
             ->path( config( 'filament.path', 'admin' ) )
             ->authGuard( 'admin' )
             ->login( Login::class )
