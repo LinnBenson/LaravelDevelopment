@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Providers\Filament;
+namespace App\Filament;
 
 use App\Filament\Concerns\LogoutDisabledAdmin;
 use App\Filament\Resources\AdminControl\PluginManagement\PluginManagement;
@@ -30,7 +30,7 @@ use Illuminate\Support\HtmlString;
 /**
  * AdminPanelProvider
  * Filament 后台面板服务提供器。
- * @package App\Providers\Filament
+ * @package App\Filament
  */
 class AdminPanelProvider extends PanelProvider {
     /**
