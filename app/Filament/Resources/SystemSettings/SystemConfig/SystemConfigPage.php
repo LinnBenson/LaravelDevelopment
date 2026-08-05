@@ -42,7 +42,7 @@ class SystemConfigPage extends Page {
 
     protected static ?int $navigationSort = 1;
 
-    protected string $view = 'Filament.SystemSettings.SystemConfig.system-config';
+    protected string $view = 'Filament::SystemSettings.SystemConfig.system-config';
 
     /** @var array<int, bool|string|null> */
     public array $values = [];

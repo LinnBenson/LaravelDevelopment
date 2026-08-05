@@ -34,7 +34,7 @@ class HomeDashboard extends Dashboard {
 
     protected static ?string $navigationLabel = '仪表板';
 
-    protected string $view = 'Filament.Dashboard.Home.home-dashboard';
+    protected string $view = 'Filament::Dashboard.Home.home-dashboard';
 
     /**
      * 获取当前管理员名称。

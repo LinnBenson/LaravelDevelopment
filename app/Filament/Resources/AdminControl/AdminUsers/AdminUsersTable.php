@@ -33,7 +33,7 @@ class AdminUsersTable {
                     ->searchable(),
                 ViewColumn::make( 'name' )
                     ->label( '用户名' )
-                    ->view( 'Filament.AdminControl.AdminUsers.admin-user-name' )
+                    ->view( 'Filament::AdminControl.AdminUsers.admin-user-name' )
                     ->searchable(),
                 TextColumn::make( 'email' )
                     ->label( '邮箱' )

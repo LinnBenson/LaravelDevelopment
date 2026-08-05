@@ -35,7 +35,7 @@ class ServiceManagement extends Page {
 
     protected static ?int $navigationSort = 2;
 
-    protected string $view = 'Filament.SystemSettings.ServiceManagement.service-management';
+    protected string $view = 'Filament::SystemSettings.ServiceManagement.service-management';
 
     /** @var array<string, bool> */
     public array $expandedLogs = [];
@@ -153,7 +153,7 @@ class ServiceManagement extends Page {
         return Action::make( 'statusService' )
             ->modalHeading( fn (): string => "{$this->statusServiceName} 服务状态" )
             ->modalDescription( 'Workerman status 命令的即时输出。' )
-            ->modalContent( fn () => view( 'Filament.SystemSettings.ServiceManagement.service-status', [
+            ->modalContent( fn () => view( 'Filament::SystemSettings.ServiceManagement.service-status', [
                 'output' => $this->statusOutput,
             ] ) )
             ->modalSubmitAction( false )

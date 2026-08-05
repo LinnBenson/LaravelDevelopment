@@ -46,7 +46,7 @@ class PluginManagement extends Page {
 
     protected static ?int $navigationSort = 2;
 
-    protected string $view = 'Filament.AdminControl.PluginManagement.plugin-management';
+    protected string $view = 'Filament::AdminControl.PluginManagement.plugin-management';
 
     /**
      * 获取头部操作。
@@ -313,7 +313,7 @@ class PluginManagement extends Page {
                 }
                 $enabledPlugins = config( 'plugin.enabled', [] );
                 $enabledPlugins = is_array( $enabledPlugins ) ? $enabledPlugins : [];
-                return view( 'Filament.AdminControl.PluginManagement.plugin-details', [
+                return view( 'Filament::AdminControl.PluginManagement.plugin-details', [
                     'plugin' => [
                         'id' => (string) $plugin->id,
                         'type' => $plugin->type,
@@ -371,7 +371,7 @@ class PluginManagement extends Page {
             ->modalDescription( '由插件提供的管理页面。' )
             ->modalContent( function( array $arguments ) {
                 $plugin = $this->resolvePlugin( (string) ( $arguments['pluginId'] ?? '' ) );
-                return view( 'Filament.AdminControl.PluginManagement.plugin-admin', [
+                return view( 'Filament::AdminControl.PluginManagement.plugin-admin', [
                     'content' => $this->renderPluginAdmin( $plugin ),
                 ] );
             } )
@@ -397,7 +397,7 @@ class PluginManagement extends Page {
             ->modalDescription( '将从插件声明的来源链接下载并安装更高版本。' )
             ->modalContent( function( array $arguments ) {
                 $plugin = $this->resolvePlugin( (string) ( $arguments['pluginId'] ?? '' ) );
-                return view( 'Filament.AdminControl.PluginManagement.update-plugin-source', [
+                return view( 'Filament::AdminControl.PluginManagement.update-plugin-source', [
                     'source' => (string) $plugin->source,
                 ] );
             } )
@@ -425,7 +425,7 @@ class PluginManagement extends Page {
                 foreach ( array_keys( $plugin->getHook() ) as $hook ) {
                     $hooks[$hook] = is_string( $hookConfigs[$hook] ?? null ) ? $hookConfigs[$hook] : '暂无 Hook 说明';
                 }
-                return view( 'Filament.AdminControl.PluginManagement.trust-hooks', ['hooks' => $hooks] );
+                return view( 'Filament::AdminControl.PluginManagement.trust-hooks', ['hooks' => $hooks] );
             } )
             ->modalSubmitActionLabel( '确认信任' )
             ->modalCancelActionLabel( '取消' )

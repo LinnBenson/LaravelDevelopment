@@ -92,7 +92,7 @@ class UsersTable {
                     ->placeholder( '-' ),
                 ViewColumn::make( 'name' )
                     ->label( '用户名' )
-                    ->view( 'Filament.UserManagement.Users.user-name' )
+                    ->view( 'Filament::UserManagement.Users.user-name' )
                     ->searchable(),
                 TextColumn::make( 'email' )
                     ->label( '邮箱' )

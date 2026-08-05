@@ -34,7 +34,7 @@ class Readme extends Page {
 
     protected static ?int $navigationSort = 4;
 
-    protected string $view = 'Filament.DeveloperCenter.Readme.readme';
+    protected string $view = 'Filament::DeveloperCenter.Readme.readme';
 
     /**
      * 获取 README 格式化内容。

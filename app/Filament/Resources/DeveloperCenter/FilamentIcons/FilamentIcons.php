@@ -31,7 +31,7 @@ class FilamentIcons extends Page {
 
     protected static ?int $navigationSort = 2;
 
-    protected string $view = 'Filament.DeveloperCenter.FilamentIcons.filament-icons';
+    protected string $view = 'Filament::DeveloperCenter.FilamentIcons.filament-icons';
 
     public string $search = '';
 

@@ -10,7 +10,7 @@ PHP 8.2.28 + Nginx 1.28.0 + MySQL 5.7.44 + Redis 7.4.2 + Node.js 24.4.1
   - 权限控制文件目录 `app/Filament/Concerns`
   - 后台配置文件目录 `app/Filament/Config`
   - 后台构建文件目录 `app/Filament/Resources`
-  - 后台页面前端目录 `resources/views/Filament`
+  - 后台页面前端目录 `app/Filament/Views`
   - 后台页面静态资源目录 `public/filament`
 - 所有前端开发包括后端页面之类的，你需要使用系统或者后台提供的主题配置以及强调色，做到主题样式一致且可切换，而且要考虑到移动端设备的布局自适应优化。
 - 插件开发目录在 `app/Plugins` 下，在开发或修改插件时，你需要将插件相关的文件放到对应的插件目录下，不能放在别处，以便做到插件的独立性和可移植性。

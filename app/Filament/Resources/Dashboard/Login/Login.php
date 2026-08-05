@@ -14,7 +14,7 @@ use Illuminate\Validation\ValidationException;
  * @package App\Filament\Resources\Dashboard\Login
  */
 class Login extends \Filament\Auth\Pages\Login {
-    protected string $view = 'Filament.Dashboard.Login.login';
+    protected string $view = 'Filament::Dashboard.Login.login';
 
     /**
      * 管理员登录认证。

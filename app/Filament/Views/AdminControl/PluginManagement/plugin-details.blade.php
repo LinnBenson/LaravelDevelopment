@@ -140,7 +140,7 @@
         min-width: 0;
         padding: 1rem;
         border-radius: 0.75rem;
-        background: rgba(245, 158, 11, 0.08);
+        background: color-mix(in srgb, var(--primary-500) 8%, transparent);
         align-items: center;
         gap: 0.875rem;
     }
@@ -149,8 +149,8 @@
         width: 3rem;
         height: 3rem;
         border-radius: 0.75rem;
-        background: rgba(245, 158, 11, 0.14);
-        color: #d97706;
+        background: color-mix(in srgb, var(--primary-500) 14%, transparent);
+        color: var(--primary-600);
         align-items: center;
         justify-content: center;
         flex: 0 0 auto;

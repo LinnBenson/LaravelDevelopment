@@ -35,7 +35,7 @@ class LogInformation extends Page {
 
     protected static ?int $navigationSort = 1;
 
-    protected string $view = 'Filament.DeveloperCenter.LogInformation.log-information';
+    protected string $view = 'Filament::DeveloperCenter.LogInformation.log-information';
 
     public ?string $selectedLog = null;
 

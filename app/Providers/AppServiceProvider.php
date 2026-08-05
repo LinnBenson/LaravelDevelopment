@@ -9,6 +9,7 @@ use App\Models\AdminUser;
 use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\View;
 
 class AppServiceProvider extends ServiceProvider {
     /**
@@ -24,6 +25,7 @@ class AppServiceProvider extends ServiceProvider {
      * 启动应用服务。
      */
     public function boot(): void {
+        View::addNamespace( 'Filament', app_path( 'Filament/Views' ) );
         Gate::policy( AdminUser::class, AdminUserPolicy::class );
         Gate::policy( User::class, UserPolicy::class );
 
