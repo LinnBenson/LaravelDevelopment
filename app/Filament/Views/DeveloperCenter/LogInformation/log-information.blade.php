@@ -162,8 +162,9 @@
             font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
             font-size: 0.8125rem;
             line-height: 1.6;
-            white-space: pre-wrap;
-            word-break: break-word;
+            white-space: pre;
+            overflow-wrap: normal;
+            word-break: normal;
         }
         @media (max-width: 1024px) {
             .log-information-layout {

@@ -1,3 +1,7 @@
+@php
+    $queueWorkerRunning = getQueueWorkerStatus();
+@endphp
+
 {{-- Laravel Tool 管理页面示例 --}}
 <div class="laravel-tool-demo">
     <section class="laravel-tool-hero">
@@ -13,7 +17,10 @@
     <section class="laravel-tool-section">
         <div class="laravel-tool-heading">
             <h3>运行环境</h3>
-            <span class="laravel-tool-status"><i></i> 运行正常</span>
+            <span class="laravel-tool-status" data-status="{{ $queueWorkerRunning ? 'running' : 'stopped' }}">
+                <i></i>
+                {{ $queueWorkerRunning ? '队列工作进程运行中' : '队列工作进程未运行' }}
+            </span>
         </div>
         <div class="laravel-tool-stats">
             <article>
@@ -55,19 +62,19 @@
             ],
             '数据库' => [
                 ['key' => 'migrate-status', 'command' => 'migrate:status', 'description' => '查看数据库迁移状态'],
-                ['key' => 'migrate', 'command' => 'migrate', 'description' => '运行数据库迁移', 'copy' => true],
-                ['key' => 'migrate-rollback', 'command' => 'migrate:rollback', 'description' => '回滚上一批迁移', 'copy' => true],
-                ['key' => 'migrate-fresh', 'command' => 'migrate:fresh', 'description' => '重建全部数据表', 'copy' => true],
-                ['key' => 'database-seed', 'command' => 'db:seed', 'description' => '运行数据填充', 'copy' => true],
+                ['key' => 'migrate', 'command' => 'migrate', 'description' => '运行数据库迁移'],
+                ['key' => 'migrate-rollback', 'command' => 'migrate:rollback', 'description' => '回滚上一批迁移', 'confirm' => '确认回滚上一批数据库迁移？'],
+                ['key' => 'migrate-fresh', 'command' => 'migrate:fresh', 'description' => '重建全部数据表', 'confirm' => '此操作会删除全部数据表并重建，确认继续？'],
+                ['key' => 'database-seed', 'command' => 'db:seed', 'description' => '运行数据填充'],
             ],
             '队列与计划任务' => [
                 ['key' => 'queue-failed', 'command' => 'queue:failed', 'description' => '查看失败队列任务'],
                 ['key' => 'queue-restart', 'command' => 'queue:restart', 'description' => '通知队列进程重启'],
                 ['key' => 'schedule-list', 'command' => 'schedule:list', 'description' => '查看计划任务列表'],
-                ['key' => 'queue-work', 'command' => 'queue:work', 'description' => '启动队列处理进程', 'copy' => true],
-                ['key' => 'queue-listen', 'command' => 'queue:listen', 'description' => '监听队列任务', 'copy' => true],
-                ['key' => 'schedule-run', 'command' => 'schedule:run', 'description' => '运行到期计划任务', 'copy' => true],
-                ['key' => 'schedule-work', 'command' => 'schedule:work', 'description' => '启动计划任务进程', 'copy' => true],
+                ['key' => 'queue-work', 'command' => 'queue:work', 'description' => '启动队列处理进程'],
+                ['key' => 'queue-listen', 'command' => 'queue:listen', 'description' => '监听队列任务'],
+                ['key' => 'schedule-run', 'command' => 'schedule:run', 'description' => '运行到期计划任务'],
+                ['key' => 'schedule-work', 'command' => 'schedule:work', 'description' => '启动计划任务进程'],
             ],
             '代码生成' => [
                 ['key' => 'make-service', 'command' => 'make:service', 'description' => '生成 Service 类', 'input' => '例如 UserService'],
@@ -91,11 +98,11 @@
                 ['key' => 'make-test', 'command' => 'make:test', 'description' => '生成测试类', 'input' => '例如 UserTest'],
             ],
             '开发与维护' => [
-                ['key' => 'test', 'command' => 'test', 'description' => '运行项目测试', 'copy' => true],
-                ['key' => 'tinker', 'command' => 'tinker', 'description' => '进入交互式终端', 'copy' => true],
-                ['key' => 'storage-link', 'command' => 'storage:link', 'description' => '创建公开存储链接', 'copy' => true],
-                ['key' => 'down', 'command' => 'down', 'description' => '进入维护模式', 'copy' => true],
-                ['key' => 'up', 'command' => 'up', 'description' => '退出维护模式', 'copy' => true],
+                ['key' => 'test', 'command' => 'test', 'description' => '运行项目测试'],
+                ['key' => 'tinker', 'command' => 'tinker', 'description' => '启动交互式终端'],
+                ['key' => 'storage-link', 'command' => 'storage:link', 'description' => '创建公开存储链接'],
+                ['key' => 'down', 'command' => 'down', 'description' => '进入维护模式', 'confirm' => '确认让应用进入维护模式？'],
+                ['key' => 'up', 'command' => 'up', 'description' => '退出维护模式'],
             ],
         ];
     @endphp
@@ -111,34 +118,6 @@
                 result: '',
                 status: '',
                 resultOpen: false,
-                copyFallback( value ) {
-                    const input = document.createElement( 'textarea' );
-                    input.value = value;
-                    input.readOnly = true;
-                    input.style.position = 'fixed';
-                    input.style.top = '0';
-                    input.style.left = '0';
-                    input.style.opacity = '0';
-                    document.body.appendChild( input );
-                    input.focus();
-                    input.select();
-                    input.setSelectionRange( 0, input.value.length );
-                    const copied = document.execCommand( 'copy' );
-                    input.remove();
-                    return copied;
-                },
-                async copy( command ) {
-                    const value = `php artisan ${command}`;
-                    if ( ! window.isSecureContext || ! window.navigator.clipboard ) {
-                        return this.copyFallback( value );
-                    }
-                    try {
-                        await window.navigator.clipboard.writeText( value );
-                        return true;
-                    }catch ( error ) {
-                        return false;
-                    }
-                },
                 async run( command, name = '' ) {
                     if ( this.running !== null ) { return; }
                     if ( name !== null && name.trim() === '' ) {
@@ -190,29 +169,12 @@
                                 autocomplete="off"
                             >
                         @endif
-                        @if ( $item['copy'] ?? false )
-                            {{--
-                            <button
-                                type="button"
-                                class="fi-copyable"
-                                x-on:click="
-                                    copy( '{{ $item['command'] }}' ).then( copied => {
-                                        $tooltip( copied ? '已复制' : '复制失败，请手动复制', {
-                                            theme: $store.theme,
-                                            timeout: 2000,
-                                        } )
-                                    } )
-                                "
-                            >复制</button>
-                            --}}
-                        @else
-                            <button
-                                type="button"
-                                x-on:click="run( '{{ $item['key'] }}', {{ isset( $item['input'] ) ? '$refs[\'name-'.$item['key'].'\'].value' : 'null' }} )"
-                                x-bind:disabled="running !== null"
-                                x-text="running === '{{ $item['key'] }}' ? '运行中…' : '运行'"
-                            >运行</button>
-                        @endif
+                        <button
+                            type="button"
+                            x-on:click="{{ isset( $item['confirm'] ) ? 'if ( ! window.confirm( '.Illuminate\Support\Js::from( $item['confirm'] ).' ) ) return; ' : '' }}run( '{{ $item['key'] }}', {{ isset( $item['input'] ) ? '$refs[\'name-'.$item['key'].'\'].value' : 'null' }} )"
+                            x-bind:disabled="running !== null"
+                            x-text="running === '{{ $item['key'] }}' ? '运行中…' : '运行'"
+                        >运行</button>
                     </div>
                 @endforeach
             @endforeach
@@ -323,6 +285,12 @@
         height: 0.45rem;
         border-radius: 999px;
         background: #10b981;
+    }
+    .laravel-tool-heading .laravel-tool-status[data-status="stopped"] {
+        color: #dc2626;
+    }
+    .laravel-tool-status[data-status="stopped"] i {
+        background: #ef4444;
     }
     .laravel-tool-stats {
         display: grid;
@@ -485,16 +453,25 @@
         color: #dc2626;
     }
     .laravel-tool-result-modal pre {
-        max-height: 26rem;
+        max-width: calc(100% - 2.5rem);
+        max-height: 24rem;
         overflow: auto;
-        margin: 0;
+        margin: 1rem 1.25rem 1rem;
         padding: 1.25rem;
-        background: rgba(107, 114, 128, 0.06);
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        border-radius: 0.625rem;
+        background: #0f172a;
+        color: #e2e8f0;
         font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
         font-size: 0.75rem;
         line-height: 1.6;
-        white-space: pre-wrap;
-        overflow-wrap: anywhere;
+        white-space: pre;
+        overflow-wrap: normal;
+        word-break: normal;
+    }
+    .laravel-tool-result-modal pre::selection {
+        background: color-mix(in srgb, var(--primary-500) 55%, transparent);
+        color: #ffffff;
     }
     .laravel-tool-result-modal footer {
         border-top: 1px solid rgba(107, 114, 128, 0.16);
@@ -539,6 +516,11 @@
         }
         .laravel-tool-commands input {
             width: 100%;
+        }
+        .laravel-tool-result-modal pre {
+            max-width: calc(100% - 1.5rem);
+            margin: 0.75rem 0.75rem 0;
+            padding: 1rem;
         }
     }
 </style>

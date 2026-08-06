@@ -49,10 +49,18 @@ class AdminController extends Controller {
         'view-cache' => 'view:cache',
         'view-clear' => 'view:clear',
         'migrate-status' => 'migrate:status',
+        'migrate' => 'migrate',
+        'migrate-rollback' => 'migrate:rollback',
+        'migrate-fresh' => 'migrate:fresh',
+        'database-seed' => 'db:seed',
         'database-show' => 'db:show',
         'schedule-list' => 'schedule:list',
+        'schedule-run' => 'schedule:run',
+        'schedule-work' => 'schedule:work',
         'queue-failed' => 'queue:failed',
         'queue-restart' => 'queue:restart',
+        'queue-work' => 'queue:work',
+        'queue-listen' => 'queue:listen',
         'make-service' => 'make:class',
         'make-controller' => 'make:controller',
         'make-model' => 'make:model',
@@ -72,6 +80,36 @@ class AdminController extends Controller {
         'make-rule' => 'make:rule',
         'make-seeder' => 'make:seeder',
         'make-test' => 'make:test',
+        'test' => 'test',
+        'tinker' => 'tinker',
+        'storage-link' => 'storage:link',
+        'down' => 'down',
+        'up' => 'up',
+    ];
+
+    /** @var array<int, string> 必须通过 Shell 执行的命令 */
+    private const SHELL_COMMANDS = [
+        'migrate',
+        'migrate-rollback',
+        'migrate-fresh',
+        'database-seed',
+        'queue-work',
+        'queue-listen',
+        'schedule-run',
+        'schedule-work',
+        'test',
+        'tinker',
+        'storage-link',
+        'down',
+        'up',
+    ];
+
+    /** @var array<int, string> 需要脱离 HTTP 请求在后台运行的命令 */
+    private const BACKGROUND_COMMANDS = [
+        'queue-work',
+        'queue-listen',
+        'schedule-run',
+        'schedule-work',
     ];
 
     /**
@@ -108,6 +146,9 @@ class AdminController extends Controller {
             $parameters['name'] = $name;
         }
         try {
+            if ( in_array( $validated['command'], self::SHELL_COMMANDS, true ) ) {
+                return $this->runShellCommand( $validated['command'], $command );
+            }
             $exitCode = Artisan::call( $command, $parameters );
             $output = trim( Artisan::output() );
             if ( $exitCode !== 0 ) {
@@ -127,5 +168,52 @@ class AdminController extends Controller {
                 'output' => '',
             ], 500 );
         }
+    }
+
+    /**
+     * 通过 Shell 运行 Artisan 命令
+     * 常驻命令使用 nohup 放入后台，其余命令返回完整输出和退出状态。
+     * @param string $commandKey 命令标识
+     * @param string $artisanCommand Artisan 命令
+     * @return JsonResponse JSON 响应
+     */
+    private function runShellCommand( string $commandKey, string $artisanCommand ): JsonResponse {
+        $parts = [PHP_BINDIR.'/php', base_path( 'artisan' ), $artisanCommand, '--no-interaction'];
+        if ( $commandKey === 'queue-work' ) {
+            $parts[] = '--tries=1';
+            $parts[] = '--timeout=40';
+        }
+        $shellCommand = implode( ' ', array_map( 'escapeshellarg', $parts ) );
+        if ( in_array( $commandKey, self::BACKGROUND_COMMANDS, true ) ) {
+            $output = runShell( "nohup {$shellCommand} > /dev/null 2>&1 & echo \$!" );
+            $processId = trim( (string) $output );
+            if ( $processId === '' || !ctype_digit( $processId ) ) {
+                return echoJson( false, [
+                    'message' => '后台进程启动失败。',
+                    'output' => $processId,
+                ], 500 );
+            }
+            return echoJson( true, [
+                'message' => '后台进程已启动。',
+                'output' => "进程 PID：{$processId}",
+            ] );
+        }
+        $output = runShell( "{ {$shellCommand}; command_status=\$?; printf '\\n__EXIT_CODE__:%s\\n' \"\$command_status\"; }" );
+        if ( $output === null ) {
+            return echoJson( false, [
+                'message' => '命令未能执行。',
+                'output' => '',
+            ], 500 );
+        }
+        $exitCode = 1;
+        if ( preg_match( '/\n__EXIT_CODE__:(\d+)\s*$/', $output, $matches ) === 1 ) {
+            $exitCode = (int) $matches[1];
+            $output = preg_replace( '/\n__EXIT_CODE__:\d+\s*$/', '', $output ) ?? $output;
+        }
+        $output = trim( $output );
+        return echoJson( $exitCode === 0, [
+            'message' => $exitCode === 0 ? '命令执行成功。' : '命令执行失败。',
+            'output' => $output,
+        ], $exitCode === 0 ? 200 : 500 );
     }
 }
