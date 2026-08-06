@@ -92,6 +92,7 @@ class LogInformation extends Page {
         try {
             $this->selectedLog = str_replace( '\\', '/', $fileName );
             $this->logContent = $this->readLastLines( $path );
+            $this->dispatch( 'log-content-updated' );
         }catch ( Throwable ) {
             $this->selectedLog = null;
             $this->logContent = null;

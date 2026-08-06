@@ -57,7 +57,12 @@
                     请从左侧选择日志文件
                 </div>
             @else
-                <pre class="log-information-layout-content">{{ $logContent }}</pre>
+                <pre
+                    class="log-information-layout-content"
+                    x-data
+                    x-init="$nextTick(() => { $el.scrollTop = $el.scrollHeight })"
+                    x-on:log-content-updated.window="$nextTick(() => { $el.scrollTop = $el.scrollHeight })"
+                >{{ $logContent }}</pre>
             @endif
         </x-filament::section>
     </div>
