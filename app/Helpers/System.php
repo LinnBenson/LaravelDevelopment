@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Lang;
 use \App\Providers\PluginProvider;
+use Illuminate\Support\Facades\Cache;
 
 if ( !function_exists( 'setting' ) ) {
     /**
@@ -108,5 +109,17 @@ if ( !function_exists( 'runShell' ) ) {
         $output = file_get_contents( $cacheFile );
         unlink( $cacheFile );
         return is_string( $output ) ? $output : null;
+    }
+}
+if ( !function_exists( 'getQueueWorkerStatus' ) ) {
+    /**
+     * 获取队列工作进程状态
+     * @param string|null $workerName 队列工作进程名称，为 null 时获取默认队列工作进程状态
+     * @return bool 队列工作进程状态，true 表示正在运行，false 表示未运行
+     */
+    function getQueueWorkerStatus( ?string $workerName = null ): bool {
+        $workerName = $workerName ? "QueueWorkerHeartbeat:{$workerName}" : "QueueWorkerHeartbeat";
+        $lastHeartbeat = Cache::get( $workerName );
+        return $lastHeartbeat ? true : false;
     }
 }

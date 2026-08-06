@@ -10,6 +10,8 @@ use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Queue;
 
 class AppServiceProvider extends ServiceProvider {
     /**
@@ -25,6 +27,13 @@ class AppServiceProvider extends ServiceProvider {
      * 启动应用服务。
      */
     public function boot(): void {
+        Queue::looping( function (): void {
+            Cache::put(
+                'QueueWorkerHeartbeat',
+                now()->timestamp,
+                now()->addSeconds( 70 )
+            );
+        });
         View::addNamespace( 'Filament', app_path( 'Filament/Views' ) );
         Gate::policy( AdminUser::class, AdminUserPolicy::class );
         Gate::policy( User::class, UserPolicy::class );
