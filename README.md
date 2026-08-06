@@ -14,6 +14,9 @@
 7. 创建公开存储目录链接
    - `php artisan storage:link`
    - 用于访问管理员头像、用户头像及其它存储在 `public` 磁盘中的文件
+8. 启动基础队列
+   - `php artisan queue:work --tries=1 --timeout=65`
+   - 用于处理异步任务，如发送通知、邮件等
 
 # 伪静态部署
 ```
@@ -110,6 +113,10 @@ location / {
   - `runShell( [string]Shell 命令 )`
   - 执行 Shell 命令并合并返回标准输出和错误输出
   - return [string|null]命令输出，无法获取输出时返回 null
+- 获取队列工作进程状态
+  - `getQueueWorkerStatus( [string|null]队列工作进程名称 = null )`
+  - 默认读取公共队列 Worker 的心跳状态；传入名称时读取对应命名 Worker 的预留心跳状态
+  - return [bool]队列工作进程是否正在运行
 
 ## 插件提供器 [app/Providers/PluginProvider.php]
 - 插件标识: String|null `$plugin->id`

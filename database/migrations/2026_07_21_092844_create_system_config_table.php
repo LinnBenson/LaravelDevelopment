@@ -112,6 +112,14 @@ return new class extends Migration
             [
                 'category' => 'system',
                 'type' => 'text',
+                'name' => '邮箱 SMTP 协议',
+                'key' => 'system.mail.scheme',
+                'value' => config( 'mail.mailers.smtp.scheme' ) ?? '',
+                'description' => '用于配置邮箱 SMTP 服务器协议'
+            ],
+            [
+                'category' => 'system',
+                'type' => 'text',
                 'name' => '邮箱 SMTP 用户名',
                 'key' => 'system.mail.username',
                 'value' => config( 'mail.mailers.smtp.username' ) ?? '',
@@ -127,14 +135,6 @@ return new class extends Migration
             ],
             [
                 'category' => 'system',
-                'type' => 'text',
-                'name' => '邮箱 SMTP 收件人',
-                'key' => 'system.mail.recipient',
-                'value' => '',
-                'description' => '用于配置邮箱默认收件人'
-            ],
-            [
-                'category' => 'system',
                 'type' => 'url',
                 'name' => 'Bark 服务地址',
                 'key' => 'system.bark.host',
@@ -144,27 +144,11 @@ return new class extends Migration
             [
                 'category' => 'system',
                 'type' => 'text',
-                'name' => 'Bark 设备码',
-                'key' => 'system.bark.device',
-                'value' => '',
-                'description' => '用于配置 Bark 的默认接收设备码'
-            ],
-            [
-                'category' => 'system',
-                'type' => 'text',
                 'name' => 'Telegram Bot API',
                 'key' => 'system.telegram.api',
                 'value' => '',
                 'description' => '用于配置 Telegram Bot API'
-            ],
-            [
-                'category' => 'system',
-                'type' => 'text',
-                'name' => 'Telegram UID',
-                'key' => 'system.telegram.uid',
-                'value' => '',
-                'description' => '用于配置 Telegram Bot 的默认接收者 UID'
-            ],
+            ]
         ];
         foreach ( $insertConfig as $index => $config ) {
             $insert[] = array_merge( $config, [
