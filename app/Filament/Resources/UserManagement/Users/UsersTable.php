@@ -90,8 +90,8 @@ class UsersTable {
                         if ( $oldAgent instanceof AdminUser ) {
                             DB::transaction( function () use ( $oldAgent, $record ): void {
                                 SendNotification::make()
-                                    ->title( '新用户已移除' )
-                                    ->body( "用户 {$record->id} 已被从您的名下移除，现在您已无法管理此用户。" )
+                                    ->title( '用户移除通知' )
+                                    ->body( "用户 {$record->id} 已被管理员从您的名下移除，现在您已无法管理此用户。" )
                                     ->status( 'success' )
                                     ->persistent()
                                     ->sendToDatabase( $oldAgent );
@@ -100,7 +100,7 @@ class UsersTable {
                         if ( $agentAdmin instanceof AdminUser ) {
                             DB::transaction( function () use ( $agentAdmin, $record ): void {
                                 SendNotification::make()
-                                    ->title( '新用户已添加' )
+                                    ->title( '用户添加通知' )
                                     ->body( "用户 {$record->id} 已被分配至您的名下，现在您可以管理此用户。" )
                                     ->status( 'success' )
                                     ->persistent()
