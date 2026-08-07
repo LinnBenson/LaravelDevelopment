@@ -26,6 +26,7 @@ class CreateUser extends CreateRecord {
         $adminUser = Filament::auth()->user();
         if ( $adminUser instanceof AdminUser && $adminUser->level <= (int) config( 'filament.agent', 100 ) ) {
             $data['agent'] = $adminUser->getKey();
+            $data['level'] = 10;
         }else {
             $agent = (int) ( $data['agent'] ?? 0 );
             $agentExists = $agent === 0 || AdminUser::query()

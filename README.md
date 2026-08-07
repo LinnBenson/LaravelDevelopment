@@ -242,6 +242,41 @@ location / {
   - `$adminUser->canAccessPanel( [Panel]后台面板 )`
   - return [bool]管理员处于启用状态时返回 true
 
+## Filament 数据库通知 [app/Filament/Config/SendNotification.php]
+- 在 HTTP 控制器、路由或服务中向指定用户发送数据库通知
+  ```php
+  use App\Filament\Config\SendNotification;
+  use Filament\Actions\Action;
+  use Illuminate\Support\Facades\DB;
+
+  DB::transaction( function () use ( $user ): void {
+      SendNotification::make() // 必填；创建通知，ID 自动生成
+          ->title( '系统通知' ) // 通知标题，建议填写；string|null，通知标题
+          ->body( '你的申请已经通过。' ) // 通知内容，可选；string|null，通知正文
+          ->status( 'success' ) // 通知状态，可选；success|info|warning|danger，默认 null
+          ->color( 'success' ) // 通知颜色，可选；primary|success|info|warning|danger|gray，默认 null
+          ->icon( 'heroicon-o-check-circle' ) // 图标，可选；Heroicon 名称，默认根据 status 选择
+          ->iconColor( 'success' ) // 图标颜色，可选；primary|success|info|warning|danger|gray，默认跟随 status
+          ->seconds( 10 ) // 超时关闭时间，可选；float 秒数，默认 6 秒；也可使用 duration( 毫秒 ) 或 persistent()
+          ->actions( [ // 可选；Action[]，默认 []
+              Action::make( 'viewDetails' ) // 必填；按钮唯一标识，仅使用字母、数字、短横线和下划线
+                  ->label( '查看详情' ) // 按钮显示文字，建议填写；string|null
+                  ->icon( 'heroicon-o-eye' ) // 按钮图标，可选；Heroicon 名称，默认 null
+                  ->color( 'primary' ) // 按钮颜色，可选；primary|success|info|warning|danger|gray，默认 null
+                  ->url( '/admin/example', true ) // 按钮跳转链接，可选；string|null，站内路径或完整 URL，第二个值可选；新窗口打开链接，未调用时为 false
+                  ->markAsRead() // 可选；点击后标记已读，未调用时为 false
+                  ->close(), // 可选；点击后关闭通知，未调用时为 false
+          ] )
+          ->sendToDatabase( $user ); // 接收者必填；第二参数可选，是否广播刷新事件，默认 false
+  } );
+  ```
+- `status()` 可设置 `success`、`info`、`warning` 或 `danger`，也可以使用 `success()`、`info()`、`warning()`、`danger()` 快捷方法
+- `seconds( [float]秒数 )` 或 `duration( [int]毫秒数 )` 设置通知显示后的自动关闭时间；`persistent()` 设置为持续显示
+- 定时关闭由浏览器中的 Filament 前端处理，不需要队列、定时任务或常驻服务
+- `sendToDatabase( [Model|Collection|array]接收者, [bool]是否广播刷新事件 = false )` 同步写入 `notifications` 表；接收者模型必须使用 Laravel 的 `Notifiable` Trait
+- 第二个参数为 `false` 时由后台每 30 秒轮询通知，不依赖广播服务；为 `true` 时会广播 `DatabaseNotificationsSent` 事件，实时刷新需要配置 Broadcasting、Laravel Echo、WebSocket 服务，并在非 `sync` 队列下运行 Queue Worker
+- 仅向当前 HTTP 请求的后台操作人显示临时通知时，可使用 `Filament\Notifications\Notification::make()->title( '操作成功' )->success()->send()`，该方式通过 Session 显示且不写入数据库
+
 ## 系统配置模型 [app/Models/SystemConfig.php]
 - 配置类别: Array `SystemConfig::CATEGORIES`
 - 配置类型: Array `SystemConfig::TYPES`

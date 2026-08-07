@@ -14,6 +14,9 @@ use Illuminate\Notifications\Notifiable;
 class User extends Authenticatable {
     use Notifiable;
 
+    /** 标准用户等级。 */
+    public const LEVEL_USER = 50;
+
     /**
      * 用户字段备注。
      *
@@ -43,7 +46,7 @@ class User extends Authenticatable {
     public const LEVELS = [
         0 => 'Visitor',
         10 => 'System User',
-        50 => 'User',
+        self::LEVEL_USER => 'User',
         100 => 'Verified User',
         1000 => 'Member',
     ];

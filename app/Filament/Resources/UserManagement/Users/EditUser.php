@@ -40,6 +40,7 @@ class EditUser extends EditRecord {
         $adminUser = Filament::auth()->user();
         if ( !$adminUser instanceof AdminUser || $adminUser->level <= (int) config( 'filament.agent', 100 ) ) {
             $data['agent'] = $this->record->agent;
+            $data['level'] = $this->record->level;
         }else {
             $agent = (int) ( $data['agent'] ?? 0 );
             $agentExists = $agent === 0 || AdminUser::query()

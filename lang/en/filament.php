@@ -12,6 +12,7 @@ return [
         'admin_users' => 'Administrators',
         'plugins' => 'Plugin Management',
         'users' => 'Users',
+        'notification_information' => 'Notification Information',
         'system_config' => 'System Configuration',
         'services' => 'Service Management',
         'logs' => 'Log Information',
@@ -23,6 +24,8 @@ return [
         'admin_users' => 'Administrators',
         'user' => 'User',
         'users' => 'Users',
+        'notification' => 'Notification',
+        'notifications' => 'Notification Information',
     ],
     'titles' => [
         'dashboard' => 'Dashboard',
@@ -30,5 +33,25 @@ return [
         'system_config' => 'System Configuration',
         'services' => 'Service Management',
         'logs' => 'Log Information',
-    ]
+    ],
+    'actions' => [
+        'send_message' => 'Send message',
+        'send_user_message' => 'Send message',
+        'send' => 'Send',
+        'view' => 'View',
+        'close' => 'Close',
+        'edit' => 'Edit',
+        'delete' => 'Delete',
+    ],
+    'notifications' => [
+        'fields' => [
+            'title' => 'Title',
+            'body' => 'Content',
+        ],
+        'send' => [
+            'heading' => 'Send a message to :name',
+            'success' => 'Message sent successfully',
+            'failed' => 'Message could not be sent. Please try again later.',
+        ],
+    ],
 ];

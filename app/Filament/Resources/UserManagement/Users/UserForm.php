@@ -133,6 +133,9 @@ class UserForm {
                             ->options( collect( User::getLevel() )
                                 ->mapWithKeys( fn ( string $name, int $level ): array => [$level => "{$level} · {$name}"] )
                                 ->all() )
+                            ->disabled( fn (): bool =>
+                                (int) Filament::auth()->user()?->level <= (int) config( 'filament.agent', 100 )
+                            )
                             ->required()
                             ->native( false )
                             ->default( 10 ),

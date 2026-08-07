@@ -2,15 +2,22 @@
 
 namespace App\Filament\Resources\AdminControl\AdminUsers;
 
+use App\Filament\Config\DatabaseNotificationConfig;
 use App\Models\AdminUser;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Notifications\Notification;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Columns\ViewColumn;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Throwable;
 
 /**
  * AdminUsersTable
@@ -77,9 +84,57 @@ class AdminUsersTable {
                     ->label( '状态' ),
             ] )
             ->recordActions( [
-                EditAction::make()
-                    ->label( '编辑' ),
+                ActionGroup::make( [
+                    self::sendMessageAction(),
+                    EditAction::make()
+                        ->label( __( 'filament.actions.edit' ) ),
+                    DeleteAction::make()
+                        ->label( __( 'filament.actions.delete' ) ),
+                ] ),
             ] )
             ->recordActionsColumnLabel( '操作' );
+    }
+
+    /**
+     * 创建发送信息操作。
+     * 将信息作为 Filament 数据库通知发送给目标管理员。
+     * @return Action 发送信息操作
+     */
+    private static function sendMessageAction(): Action {
+        return Action::make( 'sendMessage' )
+            ->label( __( 'filament.actions.send_message' ) )
+            ->icon( Heroicon::OutlinedPaperAirplane )
+            ->color( 'primary' )
+            ->authorize( function ( AdminUser $record ): bool {
+                $adminUser = auth( 'admin' )->user();
+                return $adminUser instanceof AdminUser &&
+                    $adminUser->status &&
+                    ( $adminUser->is( $record ) || $record->level < $adminUser->level );
+            } )
+            ->modalHeading( fn ( AdminUser $record ): string => __( 'filament.notifications.send.heading', [
+                'name' => $record->name,
+            ] ) )
+            ->modalSubmitActionLabel( __( 'filament.actions.send' ) )
+            ->modalWidth( '4xl' )
+            ->schema( DatabaseNotificationConfig::schema() )
+            ->action( function ( array $data, AdminUser $record ): void {
+                try {
+                    DB::transaction( function () use ( $data, $record ): void {
+                        DatabaseNotificationConfig::make( $data )
+                            ->sendToDatabase( $record );
+                    } );
+                }catch ( Throwable $exception ) {
+                    report( $exception );
+                    Notification::make()
+                        ->title( __( 'filament.notifications.send.failed' ) )
+                        ->danger()
+                        ->send();
+                    return;
+                }
+                Notification::make()
+                    ->title( __( 'filament.notifications.send.success' ) )
+                    ->success()
+                    ->send();
+            } );
     }
 }

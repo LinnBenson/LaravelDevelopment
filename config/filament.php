@@ -16,6 +16,7 @@ return [
         'admin_users' => 0,
         'plugin_management' => 99900,
         'users' => 0,
+        'notification_information' => 0,
         'system_config' => 90000,
         'service_management' => 99900,
         'log_information' => 99900,

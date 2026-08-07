@@ -2,12 +2,17 @@
 
 namespace App\Filament\Resources\UserManagement\Users;
 
+use App\Filament\Config\DatabaseNotificationConfig;
 use App\Models\AdminUser;
 use App\Models\User;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Notifications\Notification;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
@@ -15,8 +20,11 @@ use Filament\Tables\Columns\ViewColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
+use Throwable;
+use App\Filament\Config\SendNotification;
 
 /**
  * UsersTable
@@ -57,6 +65,9 @@ class UsersTable {
                             Gate::forUser( $adminUser )->denies( 'update', $record );
                     } )
                     ->updateStateUsing( function ( int|string|null $state, User $record ): int {
+                        $oldAgent = AdminUser::query()
+                            ->where( 'level', '<=', (int) config( 'filament.agent', 100 ) )
+                            ->find( $record->agent );
                         $adminUser = auth( 'admin' )->user();
                         abort_unless(
                             $adminUser instanceof AdminUser &&
@@ -76,6 +87,46 @@ class UsersTable {
                         $agentName = $agent === 0
                             ? '0 · System'
                             : "{$agent} · {$agentAdmin->name}";
+                        if ( $oldAgent instanceof AdminUser ) {
+                            DB::transaction( function () use ( $oldAgent, $record ): void {
+                                SendNotification::make()
+                                    ->title( '新用户已移除' )
+                                    ->body( "用户 {$record->id} 已被从您的名下移除，现在您已无法管理此用户。" )
+                                    ->status( 'success' )
+                                    ->persistent()
+                                    ->actions( [
+                                        Action::make( 'isee' )
+                                            ->label( '我知道了' )
+                                            ->icon( 'heroicon-o-check' )
+                                            ->color( 'primary' )
+                                            ->markAsRead()
+                                    ] )
+                                    ->sendToDatabase( $oldAgent );
+                            } );
+                        }
+                        if ( $agentAdmin instanceof AdminUser ) {
+                            DB::transaction( function () use ( $agentAdmin, $record ): void {
+                                SendNotification::make()
+                                    ->title( '新用户已添加' )
+                                    ->body( "用户 {$record->id} 已被分配至您的名下，现在您可以管理此用户。" )
+                                    ->status( 'success' )
+                                    ->persistent()
+                                    ->actions( [
+                                        Action::make( 'check' )
+                                            ->label( '查看' )
+                                            ->icon( 'heroicon-o-eye' )
+                                            ->color( 'info' )
+                                            ->url( "/admin/users/{$record->id}/edit" )
+                                            ->markAsRead(),
+                                        Action::make( 'isee' )
+                                            ->label( '我知道了' )
+                                            ->icon( 'heroicon-o-check' )
+                                            ->color( 'primary' )
+                                            ->markAsRead()
+                                    ] )
+                                    ->sendToDatabase( $agentAdmin );
+                            } );
+                        }
                         Notification::make()
                             ->title( '代理修改成功' )
                             ->body( "用户 {$record->id} 的代理已修改为 {$agentName}。" )
@@ -164,15 +215,67 @@ class UsersTable {
                     ->native( false ),
             ] )
             ->recordActions( [
-                EditAction::make()
-                    ->label( '编辑' ),
+                ActionGroup::make( [
+                    self::sendMessageAction(),
+                    EditAction::make()
+                        ->label( __( 'filament.actions.edit' ) ),
+                    DeleteAction::make()
+                        ->label( __( 'filament.actions.delete' ) ),
+                ] ),
             ] )
             ->recordActionsColumnLabel( '操作' )
             ->toolbarActions( [
                 BulkActionGroup::make( [
                     DeleteBulkAction::make()
-                        ->label( '删除所选' ),
+                        ->label( '删除所选' )
+                        ->authorizeIndividualRecords( 'delete' ),
                 ] ),
             ] );
+    }
+
+    /**
+     * 创建发送消息操作。
+     * 将消息作为 Filament 数据库通知发送给目标用户。
+     * @return Action 发送消息操作
+     */
+    private static function sendMessageAction(): Action {
+        return Action::make( 'sendMessage' )
+            ->label( __( 'filament.actions.send_user_message' ) )
+            ->icon( Heroicon::OutlinedPaperAirplane )
+            ->color( 'primary' )
+            ->authorize( function ( User $record ): bool {
+                $adminUser = auth( 'admin' )->user();
+                return $adminUser instanceof AdminUser &&
+                    $adminUser->status &&
+                    (
+                        $adminUser->level > (int) config( 'filament.agent', 100 ) ||
+                        $record->agent === $adminUser->getKey()
+                    );
+            } )
+            ->modalHeading( fn ( User $record ): string => __( 'filament.notifications.send.heading', [
+                'name' => filled( $record->nickname ) ? $record->nickname : ( $record->name ?: "UID {$record->id}" ),
+            ] ) )
+            ->modalSubmitActionLabel( __( 'filament.actions.send' ) )
+            ->modalWidth( '4xl' )
+            ->schema( DatabaseNotificationConfig::schema() )
+            ->action( function ( array $data, User $record ): void {
+                try {
+                    DB::transaction( function () use ( $data, $record ): void {
+                        DatabaseNotificationConfig::make( $data )
+                            ->sendToDatabase( $record );
+                    } );
+                }catch ( Throwable $exception ) {
+                    report( $exception );
+                    Notification::make()
+                        ->title( __( 'filament.notifications.send.failed' ) )
+                        ->danger()
+                        ->send();
+                    return;
+                }
+                Notification::make()
+                    ->title( __( 'filament.notifications.send.success' ) )
+                    ->success()
+                    ->send();
+            } );
     }
 }

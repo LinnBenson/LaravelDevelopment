@@ -49,7 +49,7 @@ class AdminPanelProvider extends PanelProvider {
             ->authGuard( 'admin' )
             ->login( Login::class )
             ->databaseNotifications()
-            ->databaseNotificationsPolling( '30s' )
+            ->databaseNotificationsPolling( '0s' )
             ->colors( [
                 'primary' => Color::Blue,
             ] )
