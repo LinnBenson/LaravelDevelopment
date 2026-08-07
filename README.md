@@ -257,7 +257,7 @@ location / {
           ->color( 'success' ) // 通知颜色，可选；primary|success|info|warning|danger|gray，默认 null
           ->icon( 'heroicon-o-check-circle' ) // 图标，可选；Heroicon 名称，默认根据 status 选择
           ->iconColor( 'success' ) // 图标颜色，可选；primary|success|info|warning|danger|gray，默认跟随 status
-          ->seconds( 10 ) // 超时关闭时间，可选；float 秒数，默认 6 秒；也可使用 duration( 毫秒 ) 或 persistent()
+          ->seconds( 10 ) // 超时关闭时间，可选；float 秒数，默认 6 秒；也可使用 duration( 毫秒 ) 或 persistent() 禁用
           ->actions( [ // 可选；Action[]，默认 []
               Action::make( 'viewDetails' ) // 必填；按钮唯一标识，仅使用字母、数字、短横线和下划线
                   ->label( '查看详情' ) // 按钮显示文字，建议填写；string|null
