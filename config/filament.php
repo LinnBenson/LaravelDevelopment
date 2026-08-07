@@ -22,4 +22,12 @@ return [
         'filament_icons' => 99900,
         'readme' => 99900,
     ],
+    // 后台菜单分组
+    'navigation_groups' => [
+        'filament.groups.admin',
+        'filament.groups.user',
+        'filament.groups.other',
+        'filament.groups.system',
+        'filament.groups.developer',
+    ],
 ];

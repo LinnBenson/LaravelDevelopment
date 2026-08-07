@@ -109,7 +109,7 @@
     <section class="laravel-tool-section">
         <div class="laravel-tool-heading">
             <h3>常用命令</h3>
-            <span>仅开放预设安全命令</span>
+            <span>调试模式 | {{ config('app.debug') ? '开启' : '关闭' }}</span>
         </div>
         <div
             class="laravel-tool-commands"

@@ -90,6 +90,25 @@ class UserResource extends Resource {
     }
 
     /**
+     * 获取全局搜索字段。
+     * 支持通过用户 UID、用户名、昵称、邮箱和电话进行搜索。
+     * @return array<int, string> 全局搜索字段
+     */
+    public static function getGloballySearchableAttributes(): array {
+        return [
+            'id',
+            'name',
+            'nickname',
+            'email',
+            'phone',
+        ];
+    }
+    public static function getGlobalSearchResultTitle( \Illuminate\Database\Eloquent\Model $record ): string {
+        $name = filled( $record->nickname ) ? $record->nickname : $record->name;
+        return "{$record->id} · {$name}";
+    }
+
+    /**
      * 页面信息
      */
     public static function getNavigationLabel(): string { return __( 'filament.navigation.users' ); }

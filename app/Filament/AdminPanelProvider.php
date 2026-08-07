@@ -48,6 +48,8 @@ class AdminPanelProvider extends PanelProvider {
             ->path( config( 'filament.path', 'admin' ) )
             ->authGuard( 'admin' )
             ->login( Login::class )
+            ->databaseNotifications()
+            ->databaseNotificationsPolling( '30s' )
             ->colors( [
                 'primary' => Color::Blue,
             ] )
@@ -61,13 +63,10 @@ class AdminPanelProvider extends PanelProvider {
                 SystemConfigPage::class,
                 ServiceManagement::class,
             ] )
-            ->navigationGroups( [
-                __( 'filament.groups.admin' ),
-                __( 'filament.groups.user' ),
-                __( 'filament.groups.other' ),
-                __( 'filament.groups.system' ),
-                __( 'filament.groups.developer' ),
-            ] )
+            ->navigationGroups( array_map(
+                static fn ( string $group ): string => __( $group ),
+                config( 'filament.navigation_groups', [] )
+            ) )
             ->middleware( [
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,

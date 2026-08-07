@@ -104,6 +104,22 @@ class AdminUserResource extends Resource {
     }
 
     /**
+     * 获取全局搜索字段。
+     * 支持通过管理员 UID、用户名和邮箱进行搜索。
+     * @return array<int, string> 全局搜索字段
+     */
+    public static function getGloballySearchableAttributes(): array {
+        return [
+            'id',
+            'name',
+            'email',
+        ];
+    }
+    public static function getGlobalSearchResultTitle( \Illuminate\Database\Eloquent\Model $record ): string {
+        return "{$record->id} · {$record->name}";
+    }
+
+    /**
      * 页面信息
      */
     public static function getNavigationLabel(): string { return __( 'filament.navigation.admin_users' ); }
