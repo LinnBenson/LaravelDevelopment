@@ -94,13 +94,6 @@ class UsersTable {
                                     ->body( "用户 {$record->id} 已被从您的名下移除，现在您已无法管理此用户。" )
                                     ->status( 'success' )
                                     ->persistent()
-                                    ->actions( [
-                                        Action::make( 'isee' )
-                                            ->label( '我知道了' )
-                                            ->icon( 'heroicon-o-check' )
-                                            ->color( 'primary' )
-                                            ->markAsRead()
-                                    ] )
                                     ->sendToDatabase( $oldAgent );
                             } );
                         }
@@ -111,19 +104,6 @@ class UsersTable {
                                     ->body( "用户 {$record->id} 已被分配至您的名下，现在您可以管理此用户。" )
                                     ->status( 'success' )
                                     ->persistent()
-                                    ->actions( [
-                                        Action::make( 'check' )
-                                            ->label( '查看' )
-                                            ->icon( 'heroicon-o-eye' )
-                                            ->color( 'info' )
-                                            ->url( "/admin/users/{$record->id}/edit" )
-                                            ->markAsRead(),
-                                        Action::make( 'isee' )
-                                            ->label( '我知道了' )
-                                            ->icon( 'heroicon-o-check' )
-                                            ->color( 'primary' )
-                                            ->markAsRead()
-                                    ] )
                                     ->sendToDatabase( $agentAdmin );
                             } );
                         }
