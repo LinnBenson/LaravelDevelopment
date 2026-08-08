@@ -4,25 +4,21 @@ namespace App\Filament\Resources\Dashboard\Home;
 
 use App\Filament\Concerns\HasNavigationLevel;
 use App\Filament\Resources\AdminControl\AdminUsers\AdminUserResource;
-use App\Filament\Resources\DeveloperCenter\FilamentIcons\FilamentIcons;
-use App\Filament\Resources\DeveloperCenter\Readme\Readme;
 use App\Filament\Resources\SystemSettings\ServiceManagement\ServiceManagement;
 use App\Filament\Resources\SystemSettings\SystemConfig\SystemConfigPage;
+use App\Filament\Resources\UserManagement\NotificationInformation\NotificationInformationResource;
 use App\Filament\Resources\UserManagement\Users\UserResource;
 use App\Models\AdminUser;
 use App\Models\User;
-use App\Workerman\Server;
-use Composer\InstalledVersions;
 use Filament\Facades\Filament;
 use Filament\Pages\Dashboard;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
-use Throwable;
 
 /**
  * HomeDashboard
- * 后台首页仪表板。
+ * 代理与高级管理员共用的后台首页。
  * @package App\Filament\Resources\Dashboard\Home
  */
 class HomeDashboard extends Dashboard {
@@ -32,31 +28,30 @@ class HomeDashboard extends Dashboard {
 
     protected string $view = 'Filament::Dashboard.Home.home-dashboard';
 
-    /**
-     * 获取当前管理员名称。
-     * 返回当前登录管理员的显示名称。
-     * @return string 管理员名称
-     */
-    public function getAdminName(): string {
-        return (string) ( Filament::auth()->user()?->name ?: 'Administrator' );
+    /** 获取当前登录管理员。 */
+    public function getAdmin(): ?AdminUser {
+        $admin = Filament::auth()->user();
+        return $admin instanceof AdminUser ? $admin : null;
     }
 
-    /**
-     * 获取当前管理员头像。
-     * 返回当前管理员有效的公开头像地址。
-     * @return string|null 头像地址
-     */
+    /** 判断当前管理员是否为代理。 */
+    public function isAgent(): bool {
+        return (int) $this->getAdmin()?->level <= (int) config( 'filament.agent', 1000 );
+    }
+
+    /** 获取当前管理员名称。 */
+    public function getAdminName(): string {
+        return (string) ( $this->getAdmin()?->name ?: 'Administrator' );
+    }
+
+    /** 获取当前管理员头像。 */
     public function getAdminAvatarUrl(): ?string {
-        $avatar = Filament::auth()->user()?->avatar;
+        $avatar = $this->getAdmin()?->avatar;
         if ( blank( $avatar ) || ! Storage::disk( 'public' )->exists( $avatar ) ) { return null; }
         return Storage::disk( 'public' )->url( $avatar );
     }
 
-    /**
-     * 获取问候语。
-     * 根据当前时间返回对应的问候语。
-     * @return string 问候语
-     */
+    /** 根据当前时间获取问候语。 */
     public function getGreeting(): string {
         $hour = (int) now()->format( 'H' );
         if ( $hour < 6 ) { return '夜深了'; }
@@ -66,145 +61,52 @@ class HomeDashboard extends Dashboard {
     }
 
     /**
-     * 获取统计数据。
-     * 返回后台首页需要展示的核心数据。
-     * @return array<int, array{label: string, value: int, description: string, icon: string}>
+     * 获取当前管理员权限范围内的用户查询。
+     * 代理只查询自己名下用户，高级管理员查询全部用户。
+     * @return Builder<User> 用户查询
      */
+    private function userQuery(): Builder {
+        $query = User::query();
+        $admin = $this->getAdmin();
+        if ( !$admin ) { return $query->whereRaw( '1 = 0' ); }
+        if ( $this->isAgent() ) { $query->where( 'agent', $admin->getKey() ); }
+        return $query;
+    }
+
+    /** 获取当前权限范围内的核心统计。 */
     public function getStats(): array {
+        $scope = $this->isAgent() ? '名下' : '全部';
         return [
-            [
-                'label' => '用户总数',
-                'value' => User::query()->count(),
-                'description' => '所有已创建用户',
-                'icon' => 'heroicon-o-user-group',
-            ],
-            [
-                'label' => '启用用户',
-                'value' => User::query()->where( 'status', true )->count(),
-                'description' => '当前正常使用账号',
-                'icon' => 'heroicon-o-check-badge',
-            ],
-            [
-                'label' => '管理员',
-                'value' => AdminUser::query()->count(),
-                'description' => '后台管理员账号',
-                'icon' => 'heroicon-o-shield-check',
-            ],
-            [
-                'label' => '日志文件',
-                'value' => $this->getLogFileCount(),
-                'description' => 'storage/logs 内文件',
-                'icon' => 'heroicon-o-document-text',
-            ],
+            ['label' => '用户总数', 'value' => ( clone $this->userQuery() )->count(), 'description' => "{$scope}用户", 'icon' => 'heroicon-o-user-group', 'tone' => 'primary'],
+            ['label' => '启用用户', 'value' => ( clone $this->userQuery() )->where( 'status', true )->count(), 'description' => '当前可用账号', 'icon' => 'heroicon-o-check-badge', 'tone' => 'success'],
+            ['label' => '停用用户', 'value' => ( clone $this->userQuery() )->where( 'status', false )->count(), 'description' => '当前停用账号', 'icon' => 'heroicon-o-no-symbol', 'tone' => 'danger'],
+            ['label' => '本月新增', 'value' => ( clone $this->userQuery() )->whereBetween( 'created_at', [now()->startOfMonth(), now()->endOfMonth()] )->count(), 'description' => now()->format( 'Y 年 m 月' ), 'icon' => 'heroicon-o-chart-bar', 'tone' => 'warning'],
         ];
     }
 
-    /**
-     * 获取最近用户。
-     * 返回最近创建的五个用户。
-     * @return Collection<int, User> 最近用户集合
-     */
+    /** 获取当前权限范围内最近创建的用户。 */
     public function getRecentUsers(): Collection {
-        return User::query()->latest()->limit( 5 )->get();
+        return $this->userQuery()->latest()->limit( 6 )->get();
     }
 
-    /**
-     * 获取服务项汇总。
-     * 根据 Workerman 配置和服务心跳统计服务总数、运行数及停止数。
-     * @return array{total: int, running: int, stopped: int} 服务项汇总
-     */
-    public function getServiceSummary(): array {
-        $configs = config( 'workerman', [] );
-        if ( !is_array( $configs ) ) { return ['total' => 0, 'running' => 0, 'stopped' => 0]; }
-        $names = array_keys( array_filter( $configs, fn ( mixed $config, string|int $name ): bool =>
-            is_string( $name ) && preg_match( '/^[A-Za-z0-9_-]+$/', $name ) === 1 && is_array( $config ), ARRAY_FILTER_USE_BOTH
-        ) );
-        $running = count( array_filter( $names, fn ( string $name ): bool => Server::status( $name ) ) );
-        return [
-            'total' => count( $names ),
-            'running' => $running,
-            'stopped' => count( $names ) - $running,
-        ];
-    }
-
-    /**
-     * 获取快捷入口。
-     * 返回后台常用页面链接。
-     * @return array<int, array{label: string, description: string, url: string, icon: string}>
-     */
+    /** 获取当前管理员可访问的快捷入口。 */
     public function getQuickLinks(): array {
-        return [
-            [
-                'label' => '管理员列表',
-                'description' => '管理后台账号',
-                'url' => AdminUserResource::getUrl( 'index' ),
-                'icon' => 'heroicon-o-shield-check',
-            ],
-            [
-                'label' => '用户列表',
-                'description' => '查看和管理用户',
-                'url' => UserResource::getUrl( 'index' ),
-                'icon' => 'heroicon-o-users',
-            ],
-            [
-                'label' => '系统配置',
-                'description' => '维护应用配置',
-                'url' => SystemConfigPage::getUrl(),
-                'icon' => 'heroicon-o-cog-6-tooth',
-            ],
-            [
-                'label' => '服务项管理',
-                'description' => '查看 Workerman 服务',
-                'url' => ServiceManagement::getUrl(),
-                'icon' => 'heroicon-o-server-stack',
-            ],
+        $links = [
+            ['label' => '用户列表', 'description' => $this->isAgent() ? '管理我的用户' : '管理全部用户', 'url' => UserResource::getUrl( 'index' ), 'icon' => 'heroicon-o-users', 'visible' => UserResource::canAccess()],
+            ['label' => '通知信息', 'description' => '查看通知记录', 'url' => NotificationInformationResource::getUrl( 'index' ), 'icon' => 'heroicon-o-bell', 'visible' => NotificationInformationResource::canAccess()],
+            ['label' => '管理员列表', 'description' => '查看后台账号', 'url' => AdminUserResource::getUrl( 'index' ), 'icon' => 'heroicon-o-shield-check', 'visible' => AdminUserResource::canAccess()],
+            ['label' => '系统配置', 'description' => '维护应用配置', 'url' => SystemConfigPage::getUrl(), 'icon' => 'heroicon-o-cog-6-tooth', 'visible' => SystemConfigPage::canAccess()],
+            ['label' => '服务项管理', 'description' => '查看运行服务', 'url' => ServiceManagement::getUrl(), 'icon' => 'heroicon-o-server-stack', 'visible' => ServiceManagement::canAccess()],
         ];
+        return array_values( array_filter( $links, fn ( array $link ): bool => $link['visible'] ) );
     }
 
-    /**
-     * 获取开发工具入口。
-     * 返回开发者中心相关页面链接。
-     * @return array<int, array{label: string, url: string}>
-     */
-    public function getDeveloperLinks(): array {
-        return [
-            ['label' => 'Filament Icons', 'url' => FilamentIcons::getUrl()],
-            ['label' => 'README.md', 'url' => Readme::getUrl()],
-        ];
+    /** 获取当前管理员身份说明。 */
+    public function getRoleDescription(): string {
+        if ( $this->isAgent() ) { return '代理账号 · 当前数据仅包含您名下的用户'; }
+        return '管理员账号 · 当前数据包含全部用户';
     }
 
-    /**
-     * 获取系统信息。
-     * 返回当前应用运行环境版本信息。
-     * @return array<string, string> 系统信息
-     */
-    public function getSystemInformation(): array {
-        return [
-            'Laravel' => app()->version(),
-            'Filament' => InstalledVersions::getPrettyVersion( 'filament/filament' ) ?? '--',
-            'PHP' => PHP_VERSION,
-            '环境' => app()->environment(),
-        ];
-    }
-
-    /**
-     * 获取日志文件数量。
-     * 递归统计 storage/logs 目录内的文件。
-     * @return int 日志文件数量
-     */
-    private function getLogFileCount(): int {
-        try {
-            if ( ! File::isDirectory( storage_path( 'logs' ) ) ) { return 0; }
-            return count( File::allFiles( storage_path( 'logs' ) ) );
-        }catch ( Throwable ) {
-            return 0;
-        }
-    }
-
-
-    /**
-     * 页面信息
-     */
     public static function getNavigationLabel(): string { return __( 'filament.navigation.dashboard' ); }
     public function getTitle(): string { return __( 'filament.titles.dashboard' ); }
 }
