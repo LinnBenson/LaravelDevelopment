@@ -107,6 +107,122 @@ window['Core'] = {
                 }
             }
         });
+    },
+    /**
+     * 显示通知消息
+     * @param {number} status 通知状态，0=成功、1=消息、2=错误、3=警告
+     * @param {string} title 通知标题
+     * @param {string} message 通知内容
+     * @param {number} timeout 显示时长，单位毫秒，0 表示不自动关闭
+     * @returns {void}
+     */
+    toast: function( status, title = '', message = '', timeout = 8000 ) {
+        const closeToast = () => {
+            clearTimeout( Core.cache['ToastTimeout'] );
+            const $box = $( 'div#toview-unit-box div.toview-unit-toast-box' );
+            $box.addClass( 'toview-unit-toast-box-close' ).one( 'animationend', function() {
+                $box.removeClass( 'active' );
+                $( this ).removeClass( 'toview-unit-toast-box-close' );
+            });
+        }
+        if ( status === false ) {
+            return closeToast();
+        }
+        // 数据整理
+        const iconMap = {
+            0: [ 'r4', 'bi-check-circle' ],
+            1: [ 'r3', 'bi-info-circle' ],
+            2: [ 'r5', 'bi-exclamation-circle' ],
+            3: [ 'r5', 'bi-shield-x' ]
+        };
+        const icon = iconMap[parseInt( status )] || iconMap[0];
+        title = typeof title === 'string' && title !== '' ? title.trim() : '';
+        message = typeof message === 'string' && message !== '' ? message.trim() : '';
+        timeout = parseInt( timeout ); if ( timeout < 0 ) { timeout = 0; }
+        // 填充数据
+        const $box = $( 'div#toview-unit-box div.toview-unit-toast-box' );
+        $box.find( 'div.toview-unit-toast-item.toview-unit-toast-icon i' ).attr( 'class', `bi block ${icon[1]}` ).css( 'color', `rgb( var( --${icon[0]} ) )` );
+        $box.find( 'div.toview-unit-toast-item.toview-unit-toast-text div.toview-unit-toast-text-title' ).text( title );
+        $box.find( 'div.toview-unit-toast-item.toview-unit-toast-text div.toview-unit-toast-text-content' ).text( message );
+        // 显示通知
+        $box.addClass( 'active' );
+        $box.addClass( 'toview-unit-toast-box-open' ).one( 'animationend', function() {
+            $( this ).removeClass( 'toview-unit-toast-box-open' );
+        });
+        clearTimeout( Core.cache['ToastTimeout'] );
+        if ( timeout > 0 ) {
+            Core.cache['ToastTimeout'] = setTimeout( () => {
+                closeToast();
+            }, timeout );
+        }
+    },
+    /**
+     * 控制全屏加载状态
+     * 显示或关闭页面全屏加载遮罩，并支持在指定时间后自动关闭。
+     * @param {boolean} show 是否显示加载遮罩
+     * @param {number} timeout 自动关闭时间，单位毫秒，0 表示不自动关闭
+     * @returns {void}
+     */
+    loading: function( show = true, timeout = 0 ) {
+        const closeLoading = () => {
+            clearTimeout( Core.cache['LoadingTimeout'] );
+            const $box = $( 'div#toview-unit-box div.toview-unit-loading-box' );
+            $box.removeClass( 'active' );
+        }
+        if ( show ) {
+            const $box = $( 'div#toview-unit-box div.toview-unit-loading-box' );
+            $box.addClass( 'active' );
+            if ( timeout > 0 ) {
+                Core.cache['LoadingTimeout'] = setTimeout( () => {
+                    closeLoading();
+                }, timeout );
+            }
+        }else {
+            closeLoading();
+        }
+    },
+    /**
+     * 控制元素加载状态
+     * 在指定的 jQuery 元素内部显示或关闭加载遮罩，并支持在指定时间后自动关闭。
+     * @param {jQuery} $card 需要显示加载遮罩的 jQuery 元素
+     * @param {boolean} show 是否显示加载遮罩
+     * @param {number} timeout 自动关闭时间，单位毫秒，0 表示不自动关闭
+     * @returns {void}
+     */
+    boxLoading: function( $card, show = true, timeout = 0 ) {
+        const closeBoxLoading = () => {
+            $card.find( 'div.toview-unit-loading-box' ).removeClass( 'active' );
+            setTimeout(() => {
+                $card.find( 'div.toview-unit-loading-box' ).remove();
+                $card.css({ 'overflow': '', 'position': '' });
+            }, 300 );
+        }
+        const code = $box = $( 'div#toview-unit-box div.toview-unit-loading-box' ).html();
+        if ( show ) {
+            if ( $card.find( 'div.toview-unit-loading-box' ).length === 0 ) {
+                $card.css({ 'overflow': 'hidden', 'position': 'relative' });
+                $card.append( `
+                    <div class="toview-unit-loading-box center" style="
+                        width: 100%;
+                        height: 100%;
+                        background-color: rgb( var( --r6 ), 0.75 );
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                    ">${code}</div>
+                ` );
+            }
+            setTimeout(() => {
+                $card.find( 'div.toview-unit-loading-box' ).addClass( 'active' );
+            }, 10 );
+            if ( timeout > 0 ) {
+                setTimeout( () => {
+                    closeBoxLoading();
+                }, timeout );
+            }
+        }else {
+            closeBoxLoading();
+        }
     }
 };
 

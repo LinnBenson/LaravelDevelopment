@@ -43,6 +43,27 @@
         @stack( 'head' )
     </head>
     <body>
+        <div id="toview-unit-box">
+            <div class="toview-unit toview-unit-full toview-unit-loading">
+                <div class="toview-unit-loading-box center">
+                    <div class="toview-unit-loading"></div>
+                </div>
+            </div>
+            <div class="toview-unit toview-unit-full toview-unit-toast">
+                <div class="toview-unit-toast-box">
+                    <div class="toview-unit-toast-item toview-unit-toast-icon">
+                        <i class=""></i>
+                    </div>
+                    <div class="toview-unit-toast-item toview-unit-toast-text">
+                        <div class="toview-unit-toast-text-title more"></div>
+                        <div class="toview-unit-toast-text-content p6"></div>
+                    </div>
+                    <div class="toview-unit-toast-item toview-unit-toast-close">
+                        <i class="bi block bi-x-lg" onClick="Core.toast( false )"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
         @yield( 'body' )
         <script>
             @stack( 'script', '' )

@@ -67,6 +67,29 @@
   - 用户状态失效时清除本地用户信息；存在 token 时同时删除 token 并刷新页面
   - `Core.init()` 初始化时请求 `base|validation`，之后每 8 秒自动刷新时不重复请求语言包
   - return [void]
+- 显示通知消息
+  - `Core.toast( [number|false]通知状态, [string]通知标题 = '', [string]通知内容 = '', [number]显示时长 = 8000 )`
+  - 通知状态支持 `0` 成功、`1` 消息、`2` 错误、`3` 警告；传入 `false` 时立即关闭当前通知
+  - 显示时长单位为毫秒，传入 `0` 时不自动关闭，重复调用会替换当前通知并重新计时
+  - 例如 `Core.toast( 0, '保存成功', '数据已保存', 3000 )`
+  - 例如 `Core.toast( false )` 手动关闭当前通知
+  - return [void]
+- 控制全屏加载状态
+  - `Core.loading( [boolean]是否显示 = true, [number]自动关闭时间 = 0 )`
+  - 显示或关闭页面全屏加载遮罩
+  - 自动关闭时间单位为毫秒，传入 `0` 时不自动关闭
+  - 例如 `Core.loading()` 显示全屏加载遮罩
+  - 例如 `Core.loading( true, 3000 )` 显示遮罩并在 3 秒后自动关闭
+  - 例如 `Core.loading( false )` 手动关闭全屏加载遮罩
+  - return [void]
+- 控制元素加载状态
+  - `Core.boxLoading( [jQuery]目标元素, [boolean]是否显示 = true, [number]自动关闭时间 = 0 )`
+  - 在目标 jQuery 元素内部显示或关闭加载遮罩
+  - 自动关闭时间单位为毫秒，传入 `0` 时不自动关闭
+  - 例如 `Core.boxLoading( $( '#card' ) )` 在指定元素内显示加载遮罩
+  - 例如 `Core.boxLoading( $( '#card' ), true, 3000 )` 显示遮罩并在 3 秒后自动关闭
+  - 例如 `Core.boxLoading( $( '#card' ), false )` 手动关闭指定元素的加载遮罩
+  - return [void]
 - 获取翻译文本
   - `t( [string]翻译键名, [object]占位符替换参数 = {} )`
   - 使用点号键从 `Core.cache.lang` 读取翻译，例如 `base.save` 或 `validation.required`

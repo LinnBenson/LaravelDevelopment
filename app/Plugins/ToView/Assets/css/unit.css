@@ -1,3 +1,142 @@
+/* 全局组件 */
+div#toview-unit-box {
+    width: var( --vw );
+    height: var( --vh );
+    pointer-events: none;
+    position: fixed;
+    z-index: 9999;
+}
+div#toview-unit-box div.toview-unit.toview-unit-full {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+div.toview-unit-loading-box {
+    width: 100%;
+    height: 100%;
+    background-color: rgb( var( --r0 ), 0.75 );
+    transform: scale( 0 );
+    pointer-events: none;
+    opacity: 0;
+    transition: all 0.24s ease;
+}
+div.toview-unit-loading-box.active {
+    transform: scale( 1 );
+    pointer-events: auto;
+    opacity: 1;
+}
+div.toview-unit-loading-box div.toview-unit-loading {
+  --w:10ch;
+  font-weight: bold;
+  font-family: monospace;
+  font-size: 30px;
+  line-height: 1.4em;
+  letter-spacing: var(--w);
+  width: var(--w);
+  overflow: hidden;
+  white-space: nowrap;
+  color: rgb( var( --r3 ), 0 );
+  text-shadow:
+        calc( 0*var(--w)) 0 rgb( var( --r3 ) ),calc(-1*var(--w)) 0 rgb( var( --r3 ) ),calc(-2*var(--w)) 0 rgb( var( --r3 ) ),calc(-3*var(--w)) 0 rgb( var( --r3 ) ),calc(-4*var(--w)) 0 rgb( var( --r3 ) ),
+        calc(-5*var(--w)) 0 rgb( var( --r3 ) ),calc(-6*var(--w)) 0 rgb( var( --r3 ) ),calc(-7*var(--w)) 0 rgb( var( --r3 ) ),calc(-8*var(--w)) 0 rgb( var( --r3 ) ),calc(-9*var(--w)) 0 rgb( var( --r3 ) );
+  animation: toview-unit-loading 2s infinite linear;
+}
+div.toview-unit-loading-box div.toview-unit-loading:before {
+  content:"Loading...";
+}
+@keyframes toview-unit-loading {
+  9.09% {text-shadow:
+        calc( 0*var(--w)) -10px rgb( var( --r3 ) ),calc(-1*var(--w)) 0 rgb( var( --r3 ) ),calc(-2*var(--w)) 0 rgb( var( --r3 ) ),calc(-3*var(--w)) 0 rgb( var( --r3 ) ),calc(-4*var(--w)) 0 rgb( var( --r3 ) ),
+        calc(-5*var(--w)) 0 rgb( var( --r3 ) ),calc(-6*var(--w)) 0 rgb( var( --r3 ) ),calc(-7*var(--w)) 0 rgb( var( --r3 ) ),calc(-8*var(--w)) 0 rgb( var( --r3 ) ),calc(-9*var(--w)) 0 rgb( var( --r3 ) )}
+  18.18% {text-shadow:
+        calc( 0*var(--w)) 0 rgb( var( --r3 ) ),calc(-1*var(--w)) -10px rgb( var( --r3 ) ),calc(-2*var(--w)) 0 rgb( var( --r3 ) ),calc(-3*var(--w)) 0 rgb( var( --r3 ) ),calc(-4*var(--w)) 0 rgb( var( --r3 ) ),
+        calc(-5*var(--w)) 0 rgb( var( --r3 ) ),calc(-6*var(--w)) 0 rgb( var( --r3 ) ),calc(-7*var(--w)) 0 rgb( var( --r3 ) ),calc(-8*var(--w)) 0 rgb( var( --r3 ) ),calc(-9*var(--w)) 0 rgb( var( --r3 ) )}
+  27.27% {text-shadow:
+        calc( 0*var(--w)) 0 rgb( var( --r3 ) ),calc(-1*var(--w)) 0 rgb( var( --r3 ) ),calc(-2*var(--w)) -10px rgb( var( --r3 ) ),calc(-3*var(--w)) 0 rgb( var( --r3 ) ),calc(-4*var(--w)) 0 rgb( var( --r3 ) ),
+        calc(-5*var(--w)) 0 rgb( var( --r3 ) ),calc(-6*var(--w)) 0 rgb( var( --r3 ) ),calc(-7*var(--w)) 0 rgb( var( --r3 ) ),calc(-8*var(--w)) 0 rgb( var( --r3 ) ),calc(-9*var(--w)) 0 rgb( var( --r3 ) )}
+  36.36% {text-shadow:
+        calc( 0*var(--w)) 0 rgb( var( --r3 ) ),calc(-1*var(--w)) 0 rgb( var( --r3 ) ),calc(-2*var(--w)) 0 rgb( var( --r3 ) ),calc(-3*var(--w)) -10px rgb( var( --r3 ) ),calc(-4*var(--w)) 0 rgb( var( --r3 ) ),
+        calc(-5*var(--w)) 0 rgb( var( --r3 ) ),calc(-6*var(--w)) 0 rgb( var( --r3 ) ),calc(-7*var(--w)) 0 rgb( var( --r3 ) ),calc(-8*var(--w)) 0 rgb( var( --r3 ) ),calc(-9*var(--w)) 0 rgb( var( --r3 ) )}
+  45.45% {text-shadow:
+        calc( 0*var(--w)) 0 rgb( var( --r3 ) ),calc(-1*var(--w)) 0 rgb( var( --r3 ) ),calc(-2*var(--w)) 0 rgb( var( --r3 ) ),calc(-3*var(--w)) 0 rgb( var( --r3 ) ),calc(-4*var(--w)) -10px rgb( var( --r3 ) ),
+        calc(-5*var(--w)) 0 rgb( var( --r3 ) ),calc(-6*var(--w)) 0 rgb( var( --r3 ) ),calc(-7*var(--w)) 0 rgb( var( --r3 ) ),calc(-8*var(--w)) 0 rgb( var( --r3 ) ),calc(-9*var(--w)) 0 rgb( var( --r3 ) )}
+  54.54% {text-shadow:
+        calc( 0*var(--w)) 0 rgb( var( --r3 ) ),calc(-1*var(--w)) 0 rgb( var( --r3 ) ),calc(-2*var(--w)) 0 rgb( var( --r3 ) ),calc(-3*var(--w)) 0 rgb( var( --r3 ) ),calc(-4*var(--w)) 0 rgb( var( --r3 ) ),
+        calc(-5*var(--w)) -10px rgb( var( --r3 ) ),calc(-6*var(--w)) 0 rgb( var( --r3 ) ),calc(-7*var(--w)) 0 rgb( var( --r3 ) ),calc(-8*var(--w)) 0 rgb( var( --r3 ) ),calc(-9*var(--w)) 0 rgb( var( --r3 ) )}
+  63.63% {text-shadow:
+        calc( 0*var(--w)) 0 rgb( var( --r3 ) ),calc(-1*var(--w)) 0 rgb( var( --r3 ) ),calc(-2*var(--w)) 0 rgb( var( --r3 ) ),calc(-3*var(--w)) 0 rgb( var( --r3 ) ),calc(-4*var(--w)) 0 rgb( var( --r3 ) ),
+        calc(-5*var(--w)) 0 rgb( var( --r3 ) ),calc(-6*var(--w)) -10px rgb( var( --r3 ) ),calc(-7*var(--w)) 0 rgb( var( --r3 ) ),calc(-8*var(--w)) 0 rgb( var( --r3 ) ),calc(-9*var(--w)) 0 rgb( var( --r3 ) )}
+  72.72% {text-shadow:
+        calc( 0*var(--w)) 0 rgb( var( --r3 ) ),calc(-1*var(--w)) 0 rgb( var( --r3 ) ),calc(-2*var(--w)) 0 rgb( var( --r3 ) ),calc(-3*var(--w)) 0 rgb( var( --r3 ) ),calc(-4*var(--w)) 0 rgb( var( --r3 ) ),
+        calc(-5*var(--w)) 0 rgb( var( --r3 ) ),calc(-6*var(--w)) 0 rgb( var( --r3 ) ),calc(-7*var(--w)) -10px rgb( var( --r3 ) ),calc(-8*var(--w)) 0 rgb( var( --r3 ) ),calc(-9*var(--w)) 0 rgb( var( --r3 ) )}
+  81.81% {text-shadow:
+        calc( 0*var(--w)) 0 rgb( var( --r3 ) ),calc(-1*var(--w)) 0 rgb( var( --r3 ) ),calc(-2*var(--w)) 0 rgb( var( --r3 ) ),calc(-3*var(--w)) 0 rgb( var( --r3 ) ),calc(-4*var(--w)) 0 rgb( var( --r3 ) ),
+        calc(-5*var(--w)) 0 rgb( var( --r3 ) ),calc(-6*var(--w)) 0 rgb( var( --r3 ) ),calc(-7*var(--w)) 0 rgb( var( --r3 ) ),calc(-8*var(--w)) -10px rgb( var( --r3 ) ),calc(-9*var(--w)) 0 rgb( var( --r3 ) )}
+  90.90% {text-shadow:
+        calc( 0*var(--w)) 0 rgb( var( --r3 ) ),calc(-1*var(--w)) 0 rgb( var( --r3 ) ),calc(-2*var(--w)) 0 rgb( var( --r3 ) ),calc(-3*var(--w)) 0 rgb( var( --r3 ) ),calc(-4*var(--w)) 0 rgb( var( --r3 ) ),
+        calc(-5*var(--w)) 0 rgb( var( --r3 ) ),calc(-6*var(--w)) 0 rgb( var( --r3 ) ),calc(-7*var(--w)) 0 rgb( var( --r3 ) ),calc(-8*var(--w)) 0 rgb( var( --r3 ) ),calc(-9*var(--w)) -10px rgb( var( --r3 ) )}
+}
+div.toview-unit-toast-box {
+    --size: 48px;
+    display: flex;
+    background-color: rgb( var( --r6 ) );
+    border: 1px solid rgb( var( --r3 ), 0.25 );
+    border-radius: var( --radius );
+    pointer-events: auto;
+    position: absolute;
+    top: 8px;
+    right: calc( var( --vw ) * -1 );
+}
+div.toview-unit-toast-box.active {
+    right: 8px;
+}
+div.toview-unit-toast-box.toview-unit-toast-box-open {
+  animation: toview-unit-toast-box-open 0.24s ease;
+}
+@keyframes toview-unit-toast-box-open {
+    0% { right: calc( var( --vw ) * -1 ); }
+    70% { right: 0px; }
+    85% { right: 14px; }
+    100% { right: 8px; }
+}
+div.toview-unit-toast-box.toview-unit-toast-box-close {
+  animation: toview-unit-toast-box-close 0.24s ease;
+}
+@keyframes toview-unit-toast-box-close {
+    0% { right: 8px; }
+    15% { right: 14px; }
+    30% { right: 0px; }
+    100% { right: calc( var( --vw ) * -1 ); }
+}
+div.toview-unit-toast-box div.toview-unit-toast-item {
+    display: flex;
+    align-items: center;
+}
+div.toview-unit-toast-box div.toview-unit-toast-item.toview-unit-toast-icon,
+div.toview-unit-toast-box div.toview-unit-toast-item.toview-unit-toast-close {
+    width: var( --size );
+    height: var( --size );
+    font-size: 16px;
+    font-weight: bold;
+}
+div.toview-unit-toast-box div.toview-unit-toast-item.toview-unit-toast-text {
+    display: block;
+    width: 300px;
+    padding: 14px 0px;
+}
+div.toview-unit-toast-box div.toview-unit-toast-item.toview-unit-toast-text div.toview-unit-toast-text-title {
+    font-weight: bold;
+}
+div.toview-unit-toast-box div.toview-unit-toast-item.toview-unit-toast-close {
+    cursor: pointer;
+}
+@media ( max-width: 580px ) {
+    div.toview-unit-toast-box div.toview-unit-toast-item.toview-unit-toast-text {
+        width: calc( var( --vw ) - ( var( --size ) * 2 ) - 2px - ( 8px * 2 ) );
+    }
+}
 /* 卡片组件 */
 section.toview-card {
     --header: 30px;
