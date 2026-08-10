@@ -160,6 +160,9 @@ class PluginInstaller {
     private function finishInstallation( string $pluginId, string $destination, ?string $backupPath = null ): array {
         $plugin = null;
         try {
+            if ( $backupPath !== null ) {
+                $this->preserveDatabaseDirectory( $backupPath, $destination );
+            }
             PluginProvider::forget( $pluginId );
             $plugin = PluginProvider::load( $pluginId );
             if ( $plugin === null ) { throw new RuntimeException( '插件移入后无法加载。' ); }
@@ -183,6 +186,25 @@ class PluginInstaller {
             $message = $throwable->getMessage();
             if ( $rollbackErrors !== [] ) { $message .= ' 回滚异常：'.implode( ' ', $rollbackErrors ); }
             throw new RuntimeException( $message, 0, $throwable );
+        }
+    }
+
+    /**
+     * 保留更新前插件 Database 目录中的文件。
+     * 旧目录内容覆盖更新包中的同名文件，更新包新增的其他文件仍会保留。
+     * @param string $backupPath 更新前的插件备份目录
+     * @param string $destination 新版本插件目录
+     * @return void
+     */
+    private function preserveDatabaseDirectory( string $backupPath, string $destination ): void {
+        $source = "{$backupPath}/Database";
+        if ( !File::isDirectory( $source ) ) { return; }
+        $target = "{$destination}/Database";
+        if ( File::exists( $target ) && !File::isDirectory( $target ) ) {
+            throw new RuntimeException( '更新包中的 Database 路径不是目录，无法保留原插件数据。' );
+        }
+        if ( !File::copyDirectory( $source, $target ) ) {
+            throw new RuntimeException( '原插件 Database 目录保留失败。' );
         }
     }
 
