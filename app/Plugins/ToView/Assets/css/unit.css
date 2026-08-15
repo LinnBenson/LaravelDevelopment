@@ -124,7 +124,7 @@ div.toview-unit-toast-box div.toview-unit-toast-item.toview-unit-toast-close {
 div.toview-unit-toast-box div.toview-unit-toast-item.toview-unit-toast-text {
     display: block;
     width: 300px;
-    padding: 14px 0px;
+    padding: 16px 0px;
 }
 div.toview-unit-toast-box div.toview-unit-toast-item.toview-unit-toast-text div.toview-unit-toast-text-title {
     font-weight: bold;

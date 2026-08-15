@@ -49,7 +49,7 @@
   - 设置 CSS 变量 `--vw` 和 `--vh`，并在窗口尺寸变化时实时更新
   - 从页面注入数据和本地存储中初始化 RID、语言及系统信息，RID 无效时自动生成 UUID，语言无效时使用 `en`
   - 将 RID 写入 localStorage 和作用路径为 `/` 的 Cookie
-  - 初始化系统信息，并每 8 秒调用一次 `Core.refreshSystemInfo()`
+  - 初始化系统信息，并每 10 秒调用一次 `Core.refreshSystemInfo()`
   - Core.js 加载完成后会自动执行，一般不需要手动调用
   - return [void]
 - 获取请求头
@@ -57,6 +57,25 @@
   - 返回包含当前 `rid` 和 `locale` 的 HTTP 请求头对象
   - localStorage 中存在非空 token 字符串时，追加 `Authorization: Bearer {token}` 请求头
   - return [object]HTTP 请求头对象
+- 创建 Web 请求
+  - `Core.web( [string]请求链接 )`
+  - 创建基于 jQuery Ajax 的链式请求构建对象，默认使用 GET 方法、`Core.headers()` 请求头并启用标准响应自动检查
+  - 支持的方法如下：
+    - `.method( [string]请求方法 )` 设置 HTTP 请求方法，方法名会自动转换为大写
+    - `.data( [object|FormData|string]请求数据 )` 设置请求数据；普通对象会与已有数据合并，其他有效数据类型会替换已有数据
+    - `.header( [object]请求头 )` 将请求头合并到默认请求头中
+    - `.timeout( [number]超时时间 )` 设置请求超时时间，单位为毫秒，`0` 表示不限制
+    - `.success( [Function]成功回调 )` 设置业务成功回调；启用自动检查时，回调参数为标准响应中的 `data`
+    - `.error( [Function]错误回调 )` 设置请求错误回调；参数与 jQuery Ajax 的 error 回调一致
+    - `.loading( [Function]加载回调 )` 设置加载状态回调，请求开始时接收 `true`，请求结束时接收 `false`
+    - `.download( [Function]下载进度回调 )` 设置下载进度回调，依次接收完成百分比、已下载字节数和总字节数
+    - `.upload( [Function]上传进度回调 )` 设置上传进度回调，依次接收完成百分比、已上传字节数和总字节数，并自动设置 `processData: false` 和 `contentType: false`
+    - `.check( [boolean]是否自动检查 )` 控制是否使用内置方法处理标准响应，默认为 `true`
+    - `.request( [object]Ajax 配置 = {} )` 合并配置并发起请求；传入的配置优先级最高
+  - 自动检查开启时，响应应使用 `echoJson()` 的标准结构；`success` 状态执行成功回调，`info`、`error` 和 `warning` 状态由全局通知处理
+  - HTTP 401 响应会清理失效的本地登录信息；存在 token 时显示登录失效通知并刷新页面
+  - 关闭自动检查后，成功和失败响应分别原样传递给 `.success()` 与 `.error()` 回调
+  - `.request()` 返回 jqXHR 对象，可继续调用 `.done()`、`.fail()`、`.always()` 或 `.abort()`
 - 刷新系统信息
   - `Core.refreshSystemInfo( [string|null]语言包名称 = null )`
   - 携带 `Core.headers()` 返回的请求头向 `/api/index` 发起 GET 请求
@@ -65,7 +84,7 @@
   - 请求成功时更新 `Core.app` 和 `Core.user`，并将系统信息和有效用户信息写入 localStorage
   - 响应包含语言包时合并到 `Core.cache.lang`
   - 用户状态失效时清除本地用户信息；存在 token 时同时删除 token 并刷新页面
-  - `Core.init()` 初始化时请求 `base|validation`，之后每 8 秒自动刷新时不重复请求语言包
+  - `Core.init()` 初始化时请求 `base|validation`，之后每 10 秒自动刷新时不重复请求语言包
   - return [void]
 - 显示通知消息
   - `Core.toast( [number|false]通知状态, [string]通知标题 = '', [string]通知内容 = '', [number]显示时长 = 8000 )`

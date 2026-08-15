@@ -78,36 +78,36 @@ window['Core'] = {
         if ( !Core.initialized ) {
             langs = `base${setting.langs && typeof setting.langs === 'string' && setting.langs !== '' ? `|${setting.langs}` : ''}`;
         }
-        $.ajax({
-            url: `/api/index${typeof langs === 'string' && langs !== '' ? `?langs=${encodeURIComponent( langs )}` : ''}`,
-            method: 'GET',
-            headers: Core.headers(),
-            dataType: 'json',
-            success: ( response ) => {
-                if ( response && typeof response === 'object' && response.status === 'success' && response.data && typeof response.data === 'object' ) {
-                    // 更新系统信息
-                    Core.app = response.data.app || {}; set( 'app', Core.app );
-                    // 更新用户信息
-                    Core.user = response.data.user || null;
-                    if ( Core.user && typeof Core.user === 'object' ) {
-                        set( 'user', Core.user );
-                    }else {
-                        // 登录状态失效
-                        Core.user = null; del( 'user' );
-                        if ( get( 'token' ) ) {
-                            del( 'token' );
-                            location.reload();
-                        }
+        Core.web( `/api/index${typeof langs === 'string' && langs !== '' ? `?langs=${encodeURIComponent( langs )}` : ''}` )
+            .success(( res ) => {
+                // 更新系统信息
+                Core.app = res.app || {}; set( 'app', Core.app );
+                // 更新用户信息
+                Core.user = res.user || null;
+                if ( Core.user && typeof Core.user === 'object' ) {
+                    set( 'user', Core.user );
+                }else {
+                    // 登录状态失效
+                    Core.user = null; del( 'user' );
+                    if ( get( 'token' ) ) {
+                        del( 'token' );
+                        location.reload();
                     }
-                    // 更新语言包
-                    if ( response.data.lang && typeof response.data.lang === 'object' ) {
-                        Core.cache.lang = { ...Core.cache.lang, ...response.data.lang };
-                    }
-                    Core.initialized = true;
                 }
-            }
-        });
+                // 更新语言包
+                if ( res.lang && typeof res.lang === 'object' ) {
+                    Core.cache.lang = { ...Core.cache.lang, ...res.lang };
+                }
+                Core.initialized = true;
+            })
+            .request();
     },
+    /**
+     * 创建 Web 构建对象
+     * @param {string} link 请求链接
+     * @returns {webBuild} Web 构建对象
+     */
+    web: function( link ) { return new webBuild( link ); },
     /**
      * 显示通知消息
      * @param {number} status 通知状态，0=成功、1=消息、2=错误、3=警告
@@ -225,6 +225,286 @@ window['Core'] = {
         }
     }
 };
+
+/**
+ * Web 请求构建器
+ * 基于 jQuery Ajax 提供链式请求配置、加载状态、进度监听及统一响应处理。
+ */
+class webBuild {
+    /**
+     * 创建 Web 构建对象
+     * @param {string} link 请求链接
+     */
+    constructor( link ) {
+        this.config = { dataType: 'json' }; // 请求配置
+        this.link = link; // 请求链接
+        this.methodValue = 'GET'; // 请求方法
+        this.dataValue = {}; // 请求数据
+        this.headerValue = Core.headers(); // 请求头
+        this.timeoutValue = 0; // 请求超时，单位毫秒，0 表示不限制
+        this.successCallback = null; // 成功回调
+        this.loadingCallback = null; // 加载回调
+        this.errorCallback = null; // 错误回调
+        this.downloadCallback = null; // 下载进度回调
+        this.downloadTotal = 0; // 下载总字节数
+        this.downloadPercent = 0; // 下载完成百分比
+        this.uploadCallback = null; // 上传进度回调
+        this.uploadTotal = 0; // 上传总字节数
+        this.uploadPercent = 0; // 上传完成百分比
+        this.autoCheck = true; // 是否自动检查
+    }
+    /**
+     * 设置请求方法
+     * 将有效的请求方法转换为大写并保存。
+     * @param {string} method HTTP 请求方法
+     * @returns {webBuild} 当前 Web 构建对象
+     */
+    method( method ) {
+        if ( typeof method === 'string' && method !== '' ) {
+            this.methodValue = method.toUpperCase();
+        }
+        return this;
+    }
+    /**
+     * 设置请求数据
+     * 普通对象与已有数据合并，FormData 等其他有效数据类型直接替换已有数据。
+     * @param {object|FormData|string} data 请求数据
+     * @returns {webBuild} 当前 Web 构建对象
+     */
+    data( data ) {
+        if ( !empty( data ) ) {
+            if ( Object.prototype.toString.call( data ) !== '[object Object]' ) {
+                this.dataValue = data;
+            }else {
+                this.dataValue = { ...this.dataValue, ...data };
+            }
+        }
+        return this;
+    }
+    /**
+     * 设置请求头
+     * 将传入的请求头合并到默认请求头中。
+     * @param {object} header 请求头对象
+     * @returns {webBuild} 当前 Web 构建对象
+     */
+    header( header ) {
+        if ( Object.prototype.toString.call( header ) === '[object Object]' ) {
+            this.headerValue = { ...this.headerValue, ...header };
+        }
+        return this;
+    }
+    /**
+     * 设置请求超时时间
+     * 设置 Ajax 请求的最大等待时间，0 表示不限制。
+     * @param {number|string} timeout 超时时间，单位毫秒
+     * @returns {webBuild} 当前 Web 构建对象
+     */
+    timeout( timeout ) {
+        timeout = parseInt( timeout );
+        if ( timeout >= 0 ) {
+            this.timeoutValue = timeout;
+        }
+        return this;
+    }
+    /**
+     * 设置成功回调
+     * 请求成功并通过自动检查后执行回调。
+     * @param {Function} callback 成功回调函数
+     * @returns {webBuild} 当前 Web 构建对象
+     */
+    success( callback ) {
+        if ( typeof callback === 'function' ) {
+            this.successCallback = callback;
+        }
+        return this;
+    }
+    /**
+     * 设置加载状态回调
+     * 请求开始时传入 true，请求结束时传入 false。
+     * @param {Function} callback 加载状态回调函数
+     * @returns {webBuild} 当前 Web 构建对象
+     */
+    loading( callback ) {
+        if ( typeof callback === 'function' ) {
+            this.loadingCallback = callback;
+        }
+        return this;
+    }
+    /**
+     * 设置错误回调
+     * 请求失败且未被统一错误处理接管时执行回调。
+     * @param {Function} callback 错误回调函数
+     * @returns {webBuild} 当前 Web 构建对象
+     */
+    error( callback ) {
+        if ( typeof callback === 'function' ) {
+            this.errorCallback = callback;
+        }
+        return this;
+    }
+    /**
+     * 设置下载进度回调
+     * 下载过程中返回完成百分比、已下载字节数和总字节数。
+     * @param {Function} callback 下载进度回调函数
+     * @returns {webBuild} 当前 Web 构建对象
+     */
+    download( callback ) {
+        if ( typeof callback === 'function' ) {
+            this.downloadCallback = callback;
+        }
+        return this;
+    }
+    /**
+     * 设置上传进度回调
+     * 上传过程中返回完成百分比、已上传字节数和总字节数，并启用 FormData 请求配置。
+     * @param {Function} callback 上传进度回调函数
+     * @returns {webBuild} 当前 Web 构建对象
+     */
+    upload( callback ) {
+        if ( typeof callback === 'function' ) {
+            this.uploadCallback = callback;
+            this.config = {
+                ...this.config,
+                processData: false,
+                contentType: false
+            };
+        }
+        return this;
+    }
+    /**
+     * 设置自动响应检查状态
+     * 控制请求完成后是否使用内置方法统一处理成功和错误响应。
+     * @param {boolean} autoCheck 是否启用自动响应检查
+     * @returns {webBuild} 当前 Web 构建对象
+     */
+    check( autoCheck ) {
+        this.autoCheck = !!autoCheck;
+        return this;
+    }
+    /**
+     * 发起 Ajax 请求
+     * 合并链式配置、上传下载监听和临时配置后执行请求。
+     * @param {object} config 本次请求额外使用或覆盖的 jQuery Ajax 配置
+     * @returns {jqXHR} jQuery Ajax 请求对象
+     */
+    request( config = {} ) {
+        // 合并请求配置
+        if ( Object.prototype.toString.call( config ) !== '[object Object]' ) {
+            config = {};
+        }
+        let request = {
+            url: this.link,
+            method: this.methodValue,
+            data: this.dataValue,
+            headers: this.headerValue,
+            timeout: this.timeoutValue,
+            xhr: () => {
+                const xhr = $.ajaxSettings.xhr();
+                if ( xhr.upload && this.uploadCallback ) {
+                    xhr.upload.addEventListener( 'progress', ( e ) => {
+                        if ( e.lengthComputable ) {
+                            const percent = Math.floor( e.loaded / e.total * 100 );
+                            this.uploadPercent = percent;
+                            this.uploadTotal = e.total;
+                            this.uploadCallback( percent, e.loaded, e.total );
+                        }
+                    } );
+                }
+                if ( this.downloadCallback ) {
+                    xhr.addEventListener( 'progress', ( e ) => {
+                        if ( e.lengthComputable ) {
+                            const percent = Math.floor( e.loaded / e.total * 100 );
+                            this.downloadPercent = percent;
+                            this.downloadTotal = e.total;
+                            this.downloadCallback( percent, e.loaded, e.total );
+                        }
+                    } );
+                }
+                return xhr;
+            },
+            success: ( response ) => {
+                if ( this.loadingCallback ) { this.loadingCallback( false ); }
+                if ( this.uploadCallback && this.uploadPercent < 100 ) { this.uploadCallback( 100, this.uploadTotal, this.uploadTotal ); }
+                if ( this.downloadCallback && this.downloadPercent < 100 ) { this.downloadCallback( 100, this.downloadTotal, this.downloadTotal ); }
+                if ( this.autoCheck ) {
+                    this.successSystem( response );
+                    return;
+                }
+                if ( this.successCallback ) { this.successCallback( response ); }
+            },
+            error: ( ...args ) => {
+                if ( this.loadingCallback ) { this.loadingCallback( false ); }
+                if ( this.autoCheck ) {
+                    this.errorSystem( ...args );
+                    return;
+                }
+                if ( this.errorCallback ) { this.errorCallback( ...args ); }
+            }
+        };
+        request = { ...request, ...this.config, ...config };
+        // 执行请求
+        if ( this.loadingCallback ) { this.loadingCallback( true ); }
+        return $.ajax( request );
+    }
+    /**
+     * 处理标准成功响应
+     * 解析标准 JSON 响应，根据业务状态执行成功回调或显示通知。
+     * @param {object|string} res 服务端响应内容
+     * @returns {*} 回调或通知方法的返回值
+     */
+    successSystem( res ) {
+        res = is_json( res ) ? JSON.parse( res ) : res;
+        let toastCode = 2;
+        if ( res && typeof res === 'object' && !empty( res.status ) ) {
+            const text = typeof res.data === 'string' && res.data !== '' ? res.data : null;
+            switch ( res.status ) {
+                case 'success':
+                    if ( this.successCallback ) { return this.successCallback( res.data ?? null ); }
+                    if ( text ) { return Core.toast( 0, 'Success', text ); }
+                    return;
+                case 'info':
+                    if ( text ) { return Core.toast( 1, 'Info', text ); }
+                    toastCode = 1; break;
+                case 'error':
+                    if ( text ) { return Core.toast( 2, 'Error', text ); }
+                    toastCode = 2; break;
+                case 'warning':
+                    if ( text ) { return Core.toast( 3, 'Warning', text ); }
+                    toastCode = 3; break;
+                default: break;
+            }
+        }
+        if ( this.errorCallback ) { this.errorCallback( res, null, null ); }
+        return Core.toast( toastCode, 'Request error', 'Unknown return content.' );
+    }
+    /**
+     * 处理 Ajax 错误响应
+     * 处理登录失效、可解析的标准 JSON 错误以及其他网络或服务器错误。
+     * @param {jqXHR} xhr jQuery Ajax 请求对象
+     * @param {string} textStatus 请求状态文本
+     * @param {string} errorThrown HTTP 错误描述
+     * @returns {*} 错误回调或通知方法的返回值
+     */
+    errorSystem( xhr, textStatus, errorThrown ) {
+        const code = xhr.status;
+        const response = xhr.responseText;
+        // 登录状态失效
+        if ( code === 401 ) {
+            Core.user = null; del( 'user' );
+            if ( get( 'token' ) ) {
+                del( 'token' );
+                Core.toast( 2, 'Login expired', 'Please log in again.' );
+                setTimeout( () => { location.reload(); }, 1000 );
+                return;
+            }
+        }
+        // 可能存在的可解析请求
+        if ( is_json( response ) ) { return this.successSystem( response ); }
+        // 其他错误
+        if ( this.errorCallback ) { this.errorCallback( xhr, textStatus, errorThrown ); }
+        return Core.toast( 2, 'Request error', `${code} | Unknown error.` );
+    }
+}
 
 /**
  * 获取翻译文本
