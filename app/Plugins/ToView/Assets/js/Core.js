@@ -19,7 +19,13 @@ window['Core'] = {
     // 用户信息
     user: null,
     // 缓存数据
-    cache: { lang: {} },
+    cache: {
+        lang: {},
+        RefreshSystemInfoInterval: null, // 刷新系统信息定时器
+        ToastTimeout: null, // 通知消息定时器
+        LoadingTimeout: null, // 全屏加载定时器
+        FormRule: {} // 表单验证规则缓存
+    },
 
     /**
      * 初始化站点
@@ -50,7 +56,7 @@ window['Core'] = {
         set( 'rid', this.rid ); cookieSet( 'rid', this.rid, { path: '/' } );
         // 初始化系统信息
         this.refreshSystemInfo();
-        this.cache['refreshSystemInfoInterval'] = setInterval( this.refreshSystemInfo, 10000 );
+        this.cache['RefreshSystemInfoInterval'] = setInterval( this.refreshSystemInfo, 10000 );
     },
 
     /**
