@@ -1,6 +1,6 @@
 @extends( 'View::Frame' )
 
-@section( 'title', 'Welcome' )
+@section( 'title', 'Test' )
 
 @section( 'body' )
 <div id="main" class="padding32 sizing">

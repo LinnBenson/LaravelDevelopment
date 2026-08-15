@@ -176,6 +176,7 @@ PHP 8.2.28 + Nginx 1.28.0 + MySQL 5.7.44 + Redis 7.4.2 + Node.js 24.4.1
         "--radius": "4px" // 圆角强度
     }
     // -- 开头的参数是主题的 CSS 变量，前端可以直接使用 var( --r0 ) 来获取主题色值。
-    // 前端也可以通过 \App\Services\ViewService::getTheme() 获取当前在使用的主题数组。
+    // 前端也可以通过 \App\Plugins\ToView\Support\FrameService::getTheme() 获取当前在使用的主题数组。
   ```
 - 使用 `View::Frame` 作为公共框架的页面，图标可以使用 Bootstrap Icons v1.11.3，我已经做好了引用。另外 CSS 开发时如果 `app/Plugins/ToView/Assets/css/rely.css` 中有可引用的样式，则不要复写，比如在此文件中声明了一些文字大小规范，你需要延用它。
+- 使用 `View::Frame` 作为公共框架的页面，它将继承 `app/Plugins/ToView` 的能力，你可以通过阅读此插件下的 `README.md` 来了解它的功能和使用方法。

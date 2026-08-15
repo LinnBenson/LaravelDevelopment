@@ -317,7 +317,6 @@ location / {
   - return [bool]定时器存在并完成删除时返回 true，否则返回 false
 
 ## 代理权限说明
-
 - 代理身份判定
   - 代理等级阈值统一配置在 `config/filament.php` 的 `agent` 中，当前值为 `1000`
   - 后台管理员 `level <= agent` 时按代理处理，`level > agent` 时按高级管理员处理
