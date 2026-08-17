@@ -37,6 +37,7 @@ return [
         'illegal' => '禁止非法操作',
         'close' => '当前通道已关闭',
         'limit' => '访问受到限制',
-        'data' => '响应数据异常'
+        'data' => '响应数据异常',
+        'required' => ':attribute 不能为空。'
     ]
 ];

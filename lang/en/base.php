@@ -39,5 +39,6 @@ return [
         'close' => 'The current channel is closed',
         'limit' => 'Access is restricted',
         'data' => 'Invalid response data',
+        'required' => 'The :attribute field is required.'
     ]
 ];

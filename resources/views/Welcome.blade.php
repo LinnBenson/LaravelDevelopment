@@ -36,6 +36,7 @@
             <x-View::Input title="文本输入" type="text" name="text" placeholder="请输入一段文本" left="auto" />
             <x-View::Input title="密码输入" type="password" name="password" placeholder="请输入一段密码" left="auto" error />
             <x-View::Input title="邮箱输入" type="email" name="email" placeholder="请输入一段邮箱" left="auto" disabled />
+            <x-View::Input title="手机号输入" type="phone" name="phone" value="" code="+1" placeholder="请输入手机号" left="auto" />
             <x-View::Input title="开关按钮" type="switch" name="switch" left="auto"  />
             <x-View::Input title="数字输入" type="number" name="number" placeholder="请输入一段数字" left="auto" step="0.01" min="0" max="100" />
             <x-View::Input title="完整日期" type="datetime-local" name="datetime-local" placeholder="请输入完整日期" value="2024.06.06 12:00:00" left="auto" />

@@ -253,6 +253,12 @@ window['Core'] = {
                 case 'select':
                     data[name] = $input.val();
                     break;
+                case 'phone': {
+                    const phoneCode = ( $input.closest( 'div.toview-input-phone' ).find( 'select[phone-code]' ).val() || '' ).replace( /\D/g, '' );
+                    const phoneNumber = $input.val().replace( /\D/g, '' );
+                    data[name] = phoneCode && phoneNumber ? `+${phoneCode} ${phoneNumber}` : null;
+                    break;
+                }
                 case 'switch':
                     data[name] = $input.prop( 'checked' );
                     break;
@@ -297,7 +303,7 @@ window['Core'] = {
             status = false;
             let title = $inputBox.find( 'div.toview-input-title span' ).text();
             title = typeof title === 'string' && title !== '' ? title.trim() : dataName;
-            Core.toast( 2, 'Error', `The field "${title}" is required.` );
+            Core.toast( 2, t( 'base.error.s2' ), t( 'base.error.required', { attribute: title } ) );
             $inputBox.attr( 'error', '' );
             clearTimeout( Core.cache[`Form-${dataName}`] );
             Core.cache[`Form-${dataName}`] = setTimeout(() => { $inputBox.removeAttr( 'error' ); }, 3000 );

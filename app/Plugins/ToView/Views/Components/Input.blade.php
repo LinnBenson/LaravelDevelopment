@@ -5,7 +5,7 @@
     $placeholder = $placeholder ?? ''; // 默认占位符为空
     $defaultLeft = '140px'; // 默认左侧距离
     // 类型相关
-    $allowedTypes = [ 'text', 'password', 'email', 'number', 'datetime-local', 'date', 'time', 'select', 'textarea', 'code', 'color', 'switch', 'radio', 'checkbox', 'button' ]; // 允许的类型
+    $allowedTypes = [ 'text', 'password', 'email', 'phone', 'number', 'datetime-local', 'date', 'time', 'select', 'textarea', 'code', 'color', 'switch', 'radio', 'checkbox', 'button' ]; // 允许的类型
     if( !in_array( $type, $allowedTypes ) ) {
         $type = 'text'; // 如果类型不在允许的类型中，则默认为文本输入框
     }
@@ -14,6 +14,7 @@
         'text' => 'bi-pen',
         'password' => 'bi-shield-check',
         'email' => 'bi-at',
+        'phone' => 'bi-telephone',
         'number' => 'bi-123',
         'datetime-local' => 'bi-calendar-date',
         'date' => 'bi-calendar-date',
@@ -35,6 +36,66 @@
     $method = $method ? explode( '|', $method ) : null; // 方法分割为数组
     // 值转换
     switch( $type ) {
+        case 'phone':
+            $phoneCodes = $options ?? [
+                '+1' => '+1',
+                '+7' => '+7',
+                '+20' => '+20',
+                '+27' => '+27',
+                '+30' => '+30',
+                '+31' => '+31',
+                '+32' => '+32',
+                '+33' => '+33',
+                '+34' => '+34',
+                '+36' => '+36',
+                '+39' => '+39',
+                '+40' => '+40',
+                '+41' => '+41',
+                '+43' => '+43',
+                '+44' => '+44',
+                '+45' => '+45',
+                '+46' => '+46',
+                '+47' => '+47',
+                '+48' => '+48',
+                '+49' => '+49',
+                '+51' => '+51',
+                '+52' => '+52',
+                '+54' => '+54',
+                '+55' => '+55',
+                '+56' => '+56',
+                '+57' => '+57',
+                '+60' => '+60',
+                '+61' => '+61',
+                '+62' => '+62',
+                '+63' => '+63',
+                '+64' => '+64',
+                '+65' => '+65',
+                '+66' => '+66',
+                '+81' => '+81',
+                '+82' => '+82',
+                '+84' => '+84',
+                '+86' => '+86',
+                '+90' => '+90',
+                '+91' => '+91',
+                '+92' => '+92',
+                '+94' => '+94',
+                '+98' => '+98',
+                '+212' => '+212',
+                '+234' => '+234',
+                '+351' => '+351',
+                '+852' => '+852',
+                '+853' => '+853',
+                '+886' => '+886',
+                '+971' => '+971',
+                '+972' => '+972',
+            ];
+            $phoneCode = $code ?? array_key_first( $phoneCodes ) ?? '+1';
+            if ( isset( $value ) && preg_match( '/^(\+\d{1,4})\s*(.*)$/', trim( (string) $value ), $phoneValue ) ) {
+                $phoneCode = $phoneValue[1];
+                $value = $phoneValue[2];
+            }
+            if ( !array_key_exists( $phoneCode, $phoneCodes ) ) { $phoneCodes = [ $phoneCode => $phoneCode ] + $phoneCodes; }
+            break;
         case 'datetime-local':
         case 'date':
             if( isset( $value ) && !empty( $value ) ) {
@@ -59,7 +120,7 @@
         'type' => $type,
         'style' => "--left: ".( isset( $left ) && $left === 'auto' ? $defaultLeft : ( $left ?? $defaultLeft ) ).";",
     ])
-    ->except([ 'title', 'icon', 'name', 'placeholder', 'value', 'left', 'method', 'step', 'min', 'max', 'tips', 'options' ])
+    ->except([ 'title', 'icon', 'name', 'placeholder', 'value', 'left', 'method', 'step', 'min', 'max', 'tips', 'options', 'code' ])
 ->class([
     'toview-input',
     "toview-input-hasIcon" => $icon ?? false,
@@ -94,6 +155,25 @@
                             <option value="{{$key}}" {{$key == $value ? 'selected' : ''}}>{{$option}}</option>
                         @endforeach
                     </select>
+                    @break
+                @case( 'phone' )
+                    <div class="toview-input-phone">
+                        <select phone-code aria-label="手机号区号" autocomplete="tel-country-code">
+                            @foreach( $phoneCodes as $key => $option )
+                                <option value="{{$key}}" {{$key == $phoneCode ? 'selected' : ''}}>{{$option}}</option>
+                            @endforeach
+                        </select>
+                        <input
+                            rid="{{$rid}}"
+                            type="tel"
+                            name="{{$name}}"
+                            value="{{$value ?? ''}}"
+                            placeholder="{{$placeholder}}"
+                            autocomplete="tel-national"
+                            inputmode="tel"
+                            input
+                        />
+                    </div>
                     @break
                 @case( 'textarea' )
                 @case( 'code' )

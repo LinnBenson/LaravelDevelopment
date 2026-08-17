@@ -351,6 +351,39 @@ div.toview-input[type="time"] div.toview-input-content div.toview-input-box [inp
 div.toview-input[type="select"] div.toview-input-content div.toview-input-box [input] {
     cursor: pointer;
 }
+/* 手机号输入 */
+div.toview-input[type="phone"] div.toview-input-content div.toview-input-box div.toview-input-phone {
+    display: flex;
+    width: 100%;
+    min-width: 0;
+}
+div.toview-input[type="phone"] div.toview-input-content div.toview-input-box div.toview-input-phone select[phone-code] {
+    width: min( 42%, 90px );
+    height: var( --height );
+    padding: 0px 8px;
+    background-color: rgb( var( --r6 ) );
+    border: 1px solid rgb( var( --background ), 0.5 );
+    border-radius: var( --radius ) 0px 0px var( --radius );
+    box-sizing: border-box;
+    font-size: calc( var( --fontSize ) - 1px );
+    color: rgb( var( --r1 ) );
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+}
+div.toview-input.toview-input-hasIcon[type="phone"] div.toview-input-content div.toview-input-box div.toview-input-phone select[phone-code] {
+    padding-left: calc( var( --height ) + 8px );
+}
+div.toview-input[type="phone"] div.toview-input-content div.toview-input-box div.toview-input-phone input[input] {
+    min-width: 0;
+    padding-left: 8px;
+    border-left: 0px;
+    border-radius: 0px var( --radius ) var( --radius ) 0px;
+}
+div.toview-input[type="phone"] div.toview-input-content div.toview-input-box div.toview-input-phone select[phone-code]:hover,
+div.toview-input[type="phone"] div.toview-input-content div.toview-input-box div.toview-input-phone select[phone-code]:focus {
+    border-color: rgb( var( --background ) );
+}
 div.toview-input[type="textarea"] div.toview-input-content div.toview-input-box [input],
 div.toview-input[type="code"] div.toview-input-content div.toview-input-box [input] {
     min-width: 100%;
