@@ -70,7 +70,6 @@
         </x-View::Input>
     </form>
   ```
-  - `phone` 使用 `options` 设置可选区号；`value` 支持完整号码或配合 `code="+86"` 传入本地号码，`Core.submit()` 返回 `+86 13800138000` 格式，号码为空时返回 `null`
 
 ## 核心对象 [Assets/js/Core.js]
 - 站点是否已初始化: Boolean `Core.initialized`
