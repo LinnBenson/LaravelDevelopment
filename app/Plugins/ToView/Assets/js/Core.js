@@ -23,8 +23,7 @@ window['Core'] = {
         lang: {},
         RefreshSystemInfoInterval: null, // 刷新系统信息定时器
         ToastTimeout: null, // 通知消息定时器
-        LoadingTimeout: null, // 全屏加载定时器
-        FormRule: {} // 表单验证规则缓存
+        LoadingTimeout: null // 全屏加载定时器
     },
 
     /**

@@ -272,3 +272,119 @@ div.toview-button-layout[list] {
     grid-template-columns: repeat( auto-fill, minmax( var( --min ), 1fr ) );
     justify-content: space-between;
 }
+/* 表单组件 */
+div.toview-input {
+    --height: 34px;
+    --color: var( --r3c );
+    --background: var( --r3 );
+    display: block;
+    margin-bottom: 16px;
+}
+div.toview-input div.toview-input-title span {
+    display: block;
+    margin: 0px 0px 2px 4px;
+    font-size: 12px;
+}
+div.toview-input div.toview-input-content {
+    position: relative;
+}
+div.toview-input div.toview-input-content i.toview-input-icon,
+div.toview-input div.toview-input-content i.toview-input-method {
+    --size: var( --height );
+    background-color: rgb( var( --background ) );
+    font-weight: bold;
+    color: rgb( var( --color ) );
+    border-radius: var( --radius ) 0px 0px var( --radius );
+    position: absolute;
+    top: 0px;
+    left: 0px;
+}
+div.toview-input div.toview-input-content i.toview-input-method {
+    border-radius: 0px var( --radius ) var( --radius ) 0px;
+    cursor: pointer;
+    left: auto;
+    right: 0px;
+}
+div.toview-input div.toview-input-content div.toview-input-box {
+    width: 100%;
+}
+div.toview-input div.toview-input-content div.toview-input-box [input] {
+    width: 100%;
+    height: var( --height );
+    padding: 0px 8px;
+    background-color: rgb( var( --r6 ) );
+    border: 1px solid rgb( var( --background ), 0.5 );
+    border-radius: var( --radius );
+    box-sizing: border-box;
+}
+div.toview-input div.toview-input-content div.toview-input-box [input]:hover {
+    border-color: rgb( var( --background ) );
+}
+div.toview-input div.toview-input-content div.toview-input-box [input],
+div.toview-input div.toview-input-content div.toview-input-box [input]::placeholder {
+    font-size: calc( var( --fontSize ) - 1px ) !important;
+}
+div.toview-input.toview-input-hasIcon div.toview-input-content div.toview-input-box [input]  {
+    padding-left: calc( var( --height ) + 8px );
+}
+div.toview-input.toview-input-hasMethod div.toview-input-content div.toview-input-box [input]  {
+    padding-right: calc( var( --height ) + 8px );
+}
+div.toview-input[type="datetime-local"] div.toview-input-content div.toview-input-box [input],
+div.toview-input[type="date"] div.toview-input-content div.toview-input-box [input],
+div.toview-input[type="time"] div.toview-input-content div.toview-input-box [input] {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+    appearance: none;
+    -webkit-appearance: none;
+}
+div.toview-input[type="select"] div.toview-input-content div.toview-input-box [input] {
+    cursor: pointer;
+}
+div.toview-input[type="textarea"] div.toview-input-content div.toview-input-box [input],
+div.toview-input[type="code"] div.toview-input-content div.toview-input-box [input] {
+    min-width: 100%;
+    min-height: calc( var( --height ) * 3 );
+    background-color: rgb( '40, 44, 52' );
+    padding: 8px;
+}
+div.toview-input[type="code"] div.toview-input-content div.toview-input-box [input] {
+    min-height: calc( var( --height ) * 6 );
+    background: rgb( 40, 44, 52 );
+    font-size: 13px !important;
+    font-family: 'code', Courier, monospace;
+    color: rgb( 167, 174, 187 );
+}
+div.toview-input[type="color"] div.toview-input-content div.toview-input-box [input] {
+    cursor: pointer;
+    width: 200px;
+}
+div.toview-input div.toview-input-content ul.toview-input-tips {
+    padding-left: 16px;
+    margin-top: 4px;
+}
+div.toview-input div.toview-input-content ul.toview-input-tips li {
+    font-size: 12px;
+    color: rgb( var( --r1 ), 0.75 );
+}
+@media ( min-width: 580px ) {
+    div.toview-input.toview-input-hasLeft {
+        display: flex;
+        align-items: top;
+        gap: 8px;
+    }
+    div.toview-input.toview-input-hasLeft div.toview-input-title {
+        width: var( --left );
+        line-height: var( --height );
+        text-align: right;
+    }
+    div.toview-input.toview-input-hasLeft div.toview-input-title span {
+        margin: 0px 0px 0px 0px;
+        font-size: var( --fontSize );
+    }
+    div.toview-input.toview-input-hasLeft div.toview-input-content {
+        width: calc( 100% - var( --left ) - 8px );
+    }
+}
