@@ -5,6 +5,7 @@
     'onClick' => null,
     'href' => null,
     'target' => '_self',
+    'type' => 'button',
 ])
 
 <div {{$attributes
@@ -16,7 +17,7 @@
     @if( $href )
         <a class="toview-button-content" href="{{$href}}" target="{{$target}}">
     @else
-        <button class="toview-button-content" type="button" onclick="{{$onClick}}">
+        <button class="toview-button-content" type="{{$type ?? 'button'}}" onclick="{{$onClick}}">
     @endif
 
         @if( $icon )

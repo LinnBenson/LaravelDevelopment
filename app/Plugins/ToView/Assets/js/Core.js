@@ -228,6 +228,83 @@ window['Core'] = {
         }else {
             closeBoxLoading();
         }
+    },
+    /**
+     * 获取表单数据
+     * 获取表单内所有 ToView 输入组件的值，并按输入类型转换数据。
+     * @param {HTMLFormElement} form 表单元素
+     * @returns {object} 表单数据
+     */
+    submit: function( form ) {
+        if ( !form || form.tagName !== 'FORM' ) { return false; }
+        const data = {}; let status = true;
+        const $form = $( form );
+        const formatTime = ( value ) => {
+            if ( !value ) { return null; }
+            const time = value.split( ':' );
+            return `${time[0]}:${time[1] ?? '00'}:${( time[2] ?? '00' ).slice( 0, 2 )}`;
+        };
+        $form.find( '[input]' ).each(( index, input ) => {
+            const $input = $( input );
+            const name = $input.attr( 'name' );
+            const type = $input.closest( 'div.toview-input' ).attr( 'type' );
+            if ( !name || !type || $input.prop( 'disabled' ) ) { return; }
+            switch ( type ) {
+                case 'select':
+                    data[name] = $input.val();
+                    break;
+                case 'switch':
+                    data[name] = $input.prop( 'checked' );
+                    break;
+                case 'radio':
+                    if ( !Object.prototype.hasOwnProperty.call( data, name ) ) { data[name] = null; }
+                    if ( $input.prop( 'checked' ) ) { data[name] = $input.val(); }
+                    break;
+                case 'checkbox': {
+                    const checkboxName = name.endsWith( '[]' ) ? name.slice( 0, -2 ) : name;
+                    if ( !Object.prototype.hasOwnProperty.call( data, checkboxName ) ) { data[checkboxName] = []; }
+                    if ( $input.prop( 'checked' ) ) { data[checkboxName].push( $input.val() ); }
+                    break;
+                }
+                case 'datetime-local': {
+                    const value = $input.val();
+                    const datetime = value ? value.split( 'T' ) : [];
+                    data[name] = value && datetime[1] ? `${datetime[0].replace( /-/g, '.' )} ${formatTime( datetime[1] )}` : null;
+                    break;
+                }
+                case 'date':
+                    data[name] = $input.val() ? $input.val().replace( /-/g, '.' ) : null;
+                    break;
+                case 'time':
+                    data[name] = formatTime( $input.val() );
+                    break;
+                default:
+                    data[name] = $input.val();
+                    break;
+            }
+        });
+        // 验证必填项
+        $form.find( 'div.toview-input[required]' ).each(( index, inputBox ) => {
+            if ( !status ) { return false; }
+            const $inputBox = $( inputBox );
+            const $input = $inputBox.find( '[input]' ).first();
+            const type = $inputBox.attr( 'type' );
+            const name = $input.attr( 'name' );
+            if ( !$input.length || $input.prop( 'disabled' ) ) { return; }
+            const dataName = type === 'checkbox' && name.endsWith( '[]' ) ? name.slice( 0, -2 ) : name;
+            const value = data[dataName];
+            if ( value !== undefined && value !== null && value !== '' && ( !Array.isArray( value ) || value.length > 0 ) ) { return; }
+            status = false;
+            let title = $inputBox.find( 'div.toview-input-title span' ).text();
+            title = typeof title === 'string' && title !== '' ? title.trim() : dataName;
+            Core.toast( 2, 'Error', `The field "${title}" is required.` );
+            $inputBox.attr( 'error', '' );
+            clearTimeout( Core.cache[`Form-${dataName}`] );
+            Core.cache[`Form-${dataName}`] = setTimeout(() => { $inputBox.removeAttr( 'error' ); }, 3000 );
+            return false;
+        });
+        if ( !status ) { return false; }
+        return data;
     }
 };
 

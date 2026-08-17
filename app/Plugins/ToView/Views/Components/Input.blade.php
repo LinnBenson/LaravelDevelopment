@@ -5,7 +5,7 @@
     $placeholder = $placeholder ?? ''; // 默认占位符为空
     $defaultLeft = '140px'; // 默认左侧距离
     // 类型相关
-    $allowedTypes = [ 'text', 'password', 'email', 'number', 'datetime-local', 'date', 'time', 'select', 'textarea', 'code', 'color', 'switch' ]; // 允许的类型
+    $allowedTypes = [ 'text', 'password', 'email', 'number', 'datetime-local', 'date', 'time', 'select', 'textarea', 'code', 'color', 'switch', 'radio', 'checkbox', 'button' ]; // 允许的类型
     if( !in_array( $type, $allowedTypes ) ) {
         $type = 'text'; // 如果类型不在允许的类型中，则默认为文本输入框
     }
@@ -21,7 +21,7 @@
         'select' => 'bi-list-task',
         'color' => 'bi-palette',
     ];
-    $disableIconTypes = [ 'textarea', 'code', 'switch' ]; // 禁用图标的类型
+    $disableIconTypes = [ 'textarea', 'code', 'switch', 'radio', 'checkbox', 'button' ]; // 禁用图标的类型
     $icon = $icon ?? $defaultIcon[$type] ?? null; // 默认图标为空
     $icon = in_array( $type, $disableIconTypes ) ? null : $icon; // 如果类型在禁用图标的类型中，则图标为空
     // 功能相关
@@ -29,7 +29,7 @@
     $defaultMethod = [
         'password' => "bi-eye|$( this ).siblings( '.toview-input-box' ).find( 'input' ).attr( 'type', $( this ).hasClass( 'bi-eye' ) ? 'text' : 'password' );$( this ).toggleClass( 'bi-eye bi-eye-slash' );"
     ];
-    $disableMethodTypes = [ 'textarea', 'code', 'switch' ]; // 禁用方法的类型
+    $disableMethodTypes = [ 'textarea', 'code', 'switch', 'radio', 'checkbox', 'button' ]; // 禁用方法的类型
     $method = $method ?? $defaultMethod[$type] ?? null; // 默认方法为空
     $method = in_array( $type, $disableMethodTypes ) ? null : $method; // 如果类型在禁用方法的类型中，则方法为空
     $method = $method ? explode( '|', $method ) : null; // 方法分割为数组
@@ -44,6 +44,10 @@
             break;
         case 'switch':
             $value = isset( $value ) && !in_array( $value, [ '', 0, '0', false, 'false', 'off' ], true );
+            break;
+        case 'checkbox':
+            $value = !isset( $value ) || $value === '' ? [] : ( is_array( $value ) ? $value : explode( '|', (string) $value ) );
+            $checkboxName = str_ends_with( $name, '[]' ) ? $name : "{$name}[]";
             break;
     }
     $value = !isset( $value ) ? '' : $value; // 默认值为空
@@ -64,7 +68,7 @@
     "toview-input-hasLeft" => isset( $left ) || ( isset( $left ) && $left === 'auto' )
 ])}}>
     <div class="toview-input-title">
-        @if( $title ?? false )
+        @if( $type !== 'button' && $title ?? false )
             <span class="more">{{$title}}</span>
         @endif
     </div>
@@ -106,6 +110,46 @@
                     >{{$value ?? ''}}</textarea>
                     @break
                 @case( 'switch' )
+                    <label class="toview-input-switch">
+                        <input type="hidden" name="{{$name}}" value="0" />
+                        <input
+                            rid="{{$rid}}"
+                            type="checkbox"
+                            name="{{$name}}"
+                            value="1"
+                            autocomplete="off"
+                            {{$value ? 'checked' : ''}}
+                            input
+                        />
+                        <span class="toview-input-switch-track">
+                            <span class="toview-input-switch-handle"></span>
+                        </span>
+                    </label>
+                    @break
+                @case( 'radio' )
+                    <div class="toview-input-choice-list">
+                        @foreach( $options ?? [] as $key => $option )
+                            <label class="toview-input-choice">
+                                <input rid="{{$rid}}" type="radio" name="{{$name}}" value="{{$key}}" {{$key == $value ? 'checked' : ''}} input />
+                                <span class="toview-input-choice-mark"></span>
+                                <span>{{$option}}</span>
+                            </label>
+                        @endforeach
+                    </div>
+                    @break
+                @case( 'checkbox' )
+                    <div class="toview-input-choice-list">
+                        @foreach( $options ?? [] as $key => $option )
+                            <label class="toview-input-choice">
+                                <input rid="{{$rid}}" type="checkbox" name="{{$checkboxName}}" value="{{$key}}" {{in_array( $key, $value ) ? 'checked' : ''}} input />
+                                <span class="toview-input-choice-mark"></span>
+                                <span>{{$option}}</span>
+                            </label>
+                        @endforeach
+                    </div>
+                    @break
+                @case( 'button' )
+                    {{$title ?? ''}}
                     @break
                 @default
                     <input

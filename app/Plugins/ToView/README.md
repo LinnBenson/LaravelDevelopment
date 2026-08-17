@@ -25,6 +25,47 @@
         布局内容
     </x-View::Layout>
   ```
+- 输入组件 [Views/Components/Input.blade.php]
+  ```
+    <form onsubmit="Core.submit( this ); return false;">
+        <x-View::Input icon="bi-person" value="test" placeholder="请输入用户名" title="用户名" />
+        <x-View::Input title="文本输入" type="text" name="text" placeholder="请输入一段文本" left="auto" />
+        <x-View::Input title="密码输入" type="password" name="password" placeholder="请输入一段密码" left="auto" error />
+        <x-View::Input title="邮箱输入" type="email" name="email" placeholder="请输入一段邮箱" left="auto" disabled />
+        <x-View::Input title="开关按钮" type="switch" name="switch" left="auto"  />
+        <x-View::Input title="数字输入" type="number" name="number" placeholder="请输入一段数字" left="auto" step="0.01" min="0" max="100" />
+        <x-View::Input title="完整日期" type="datetime-local" name="datetime-local" placeholder="请输入完整日期" value="2024.06.06 12:00:00" left="auto" />
+        <x-View::Input title="日期输入" type="date" name="date" placeholder="请输入日期" left="auto" />
+        <x-View::Input title="时间输入" type="time" name="time" placeholder="请输入时间" :tips="[
+            '这是第一个提示',
+            '这是第二个提示',
+        ]" left="auto" />
+        <x-View::Input title="单选输入" type="radio" name="radio" left="auto" :options="[
+            'option1' => '选项 1',
+            'option2' => '选项 2'
+        ]" required />
+        <x-View::Input title="多选输入" type="checkbox" name="checkbox" left="auto" value="option1|option4" :options="[
+            'option1' => '选项 1',
+            'option2' => '选项 2'
+        ]" required />
+        <x-View::Input title="选择输入" type="select" name="select" left="auto" value="option2" :options="[
+            'option1' => '选项 1',
+            'option2' => '选项 2'
+        ]" />
+        <x-View::Input title="长文本输入" type="textarea" name="textarea" placeholder="请输入一段文本" left="auto" />
+        <x-View::Input title="代码输入" type="code" name="code" placeholder="请输入一段代码" :tips="[
+            '这是第一个提示',
+            '这是第二个提示',
+        ]" left="auto" />
+        <x-View::Input title="颜色输入" type="color" name="color" value="#ff0000" :tips="[
+            '这是第一个提示',
+            '这是第二个提示',
+        ]" left="auto" />
+        <x-View::Input type="button" left="auto">
+            <x-View::Button icon="bi-star" type="submit">提交</x-View::Button>
+        </x-View::Input>
+    </form>
+  ```
 
 ## 核心对象 [Assets/js/Core.js]
 - 站点是否已初始化: Boolean `Core.initialized`

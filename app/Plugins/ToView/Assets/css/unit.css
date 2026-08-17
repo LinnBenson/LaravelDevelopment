@@ -280,6 +280,14 @@ div.toview-input {
     display: block;
     margin-bottom: 16px;
 }
+div.toview-input[error] {
+    --color: var( --r5c );
+    --background: var( --r5 );
+}
+div.toview-input[disabled] {
+    pointer-events: none;
+    opacity: 0.75;
+}
 div.toview-input div.toview-input-title span {
     display: block;
     margin: 0px 0px 2px 4px;
@@ -360,6 +368,148 @@ div.toview-input[type="code"] div.toview-input-content div.toview-input-box [inp
 div.toview-input[type="color"] div.toview-input-content div.toview-input-box [input] {
     cursor: pointer;
     width: 200px;
+}
+/* 开关输入 */
+div.toview-input[type="switch"] div.toview-input-content div.toview-input-box label.toview-input-switch {
+    display: inline-flex;
+    width: 64px;
+    height: 26px;
+    margin: calc( ( var( --height ) - 26px ) / 2 ) 0px;
+    align-items: center;
+    cursor: pointer;
+    box-sizing: border-box;
+    position: relative;
+}
+div.toview-input[type="switch"] div.toview-input-content div.toview-input-box label.toview-input-switch input[input] {
+    width: 1px;
+    height: 1px;
+    padding: 0px;
+    margin: 0px;
+    opacity: 0;
+    position: absolute;
+}
+div.toview-input[type="switch"] div.toview-input-content div.toview-input-box label.toview-input-switch span.toview-input-switch-track {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background-color: rgb( var( --r6 ) );
+    border: 1px solid rgb( var( --r1 ), 0.5 );
+    border-radius: var( --radius );
+    box-sizing: border-box;
+    transition: all 0.24s ease;
+    position: relative;
+}
+div.toview-input[type="switch"] div.toview-input-content div.toview-input-box label.toview-input-switch span.toview-input-switch-handle {
+    display: block;
+    width: 20px;
+    height: 20px;
+    background-color: rgb( var( --background ) );
+    border-radius: var( --radius );
+    transition: transform 0.24s ease;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+}
+div.toview-input[type="switch"] div.toview-input-content div.toview-input-box label.toview-input-switch input[input]:checked + span.toview-input-switch-track {
+    background-color: rgb( var( --background ) );
+    border-color: rgb( var( --background ) );
+}
+div.toview-input[type="switch"] div.toview-input-content div.toview-input-box label.toview-input-switch input[input]:checked + span.toview-input-switch-track span.toview-input-switch-handle {
+    background-color: rgb( var( --r6 ) );
+    transform: translateX( 38px );
+}
+div.toview-input[type="switch"] div.toview-input-content div.toview-input-box label.toview-input-switch input[input]:focus-visible + span.toview-input-switch-track {
+    outline: 2px solid rgb( var( --background ), 0.35 );
+    outline-offset: 2px;
+}
+/* 单选和多选输入 */
+div.toview-input[type="radio"] div.toview-input-content div.toview-input-box div.toview-input-choice-list,
+div.toview-input[type="checkbox"] div.toview-input-content div.toview-input-box div.toview-input-choice-list {
+    display: flex;
+    min-height: var( --height );
+    flex-wrap: wrap;
+    gap: 4px;
+    align-items: center;
+}
+div.toview-input[type="radio"] div.toview-input-content div.toview-input-box label.toview-input-choice,
+div.toview-input[type="checkbox"] div.toview-input-content div.toview-input-box label.toview-input-choice {
+    display: inline-flex;
+    min-height: var( --height );
+    padding: 0px 8px;
+    gap: 6px;
+    align-items: center;
+    font-size: calc( var( --fontSize ) - 1px ) !important;
+    color: rgb( var( --r1 ) );
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    border: 1px solid rgb( var( --background ), 0.5 );
+    border-radius: var( --radius );
+    box-sizing: border-box;
+    position: relative;
+}
+div.toview-input[type="radio"] div.toview-input-content div.toview-input-box label.toview-input-choice input[input],
+div.toview-input[type="checkbox"] div.toview-input-content div.toview-input-box label.toview-input-choice input[input] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 1px;
+    height: 1px;
+    padding: 0px;
+    margin: 0px;
+    border: 0px;
+    opacity: 0;
+    position: absolute;
+}
+div.toview-input[type="radio"] div.toview-input-content div.toview-input-box label.toview-input-choice span.toview-input-choice-mark,
+div.toview-input[type="checkbox"] div.toview-input-content div.toview-input-box label.toview-input-choice span.toview-input-choice-mark {
+    display: block;
+    width: 18px;
+    height: 18px;
+    flex: 0 0 18px;
+    background-color: rgb( var( --r6 ) );
+    border: 1px solid rgb( var( --r1 ), 0.5 );
+    border-radius: var( --radius );
+    box-sizing: border-box;
+    position: relative;
+}
+div.toview-input[type="radio"] div.toview-input-content div.toview-input-box label.toview-input-choice span.toview-input-choice-mark {
+    border-radius: 50%;
+}
+div.toview-input[type="radio"] div.toview-input-content div.toview-input-box label.toview-input-choice input[input]:checked + span.toview-input-choice-mark,
+div.toview-input[type="checkbox"] div.toview-input-content div.toview-input-box label.toview-input-choice input[input]:checked + span.toview-input-choice-mark {
+    background-color: rgb( var( --background ) );
+    border-color: rgb( var( --background ) );
+}
+div.toview-input[type="radio"] div.toview-input-content div.toview-input-box label.toview-input-choice input[input]:checked + span.toview-input-choice-mark::after {
+    content: '';
+    width: 6px;
+    height: 6px;
+    background-color: rgb( var( --r6 ) );
+    border-radius: 50%;
+    position: absolute;
+    top: 5px;
+    left: 5px;
+}
+div.toview-input[type="checkbox"] div.toview-input-content div.toview-input-box label.toview-input-choice input[input]:checked + span.toview-input-choice-mark::after {
+    content: '';
+    width: 4px;
+    height: 8px;
+    border-right: 2px solid rgb( var( --r6 ) );
+    border-bottom: 2px solid rgb( var( --r6 ) );
+    transform: rotate( 45deg );
+    position: absolute;
+    top: 2px;
+    left: 6px;
+}
+div.toview-input[type="radio"] div.toview-input-content div.toview-input-box label.toview-input-choice input[input]:focus-visible + span.toview-input-choice-mark,
+div.toview-input[type="checkbox"] div.toview-input-content div.toview-input-box label.toview-input-choice input[input]:focus-visible + span.toview-input-choice-mark {
+    outline: 2px solid rgb( var( --background ), 0.35 );
+    outline-offset: 2px;
+}
+div.toview-input[type="button"] {
+    margin-top: 32px;
+    margin-bottom: 0px;
 }
 div.toview-input div.toview-input-content ul.toview-input-tips {
     padding-left: 16px;
