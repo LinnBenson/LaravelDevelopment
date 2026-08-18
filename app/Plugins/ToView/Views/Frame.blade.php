@@ -24,6 +24,7 @@
         <meta name="browsermode" content="application">
         <meta name="x5-fullscreen" content="true">
         <meta name="x5-page-mode" content="app">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
         <link rel="stylesheet" href="{{route( 'plugins.to-view.asset', [ 'path' => 'css/rely.css' ])}}">
         <link rel="stylesheet" href="{{route( 'plugins.to-view.asset', [ 'path' => 'css/unit.css' ])}}">
         <link rel="stylesheet" href="{{route( 'plugins.to-view.asset', [ 'path' => 'css/BootstrapIcons.css' ])}}">

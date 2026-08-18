@@ -68,6 +68,8 @@ window['Core'] = {
             'rid': this.rid,
             'locale': this.locale
         };
+        const csrfToken = document.querySelector( 'meta[name="csrf-token"]' )?.content;
+        if ( csrfToken ) { headers['X-CSRF-TOKEN'] = csrfToken; }
         const token = get( 'token' );
         if ( typeof token === 'string' && token !== '' ) { headers['Authorization'] = `Bearer ${token}`; }
         return headers;

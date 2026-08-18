@@ -60,7 +60,7 @@
             <x-View::Input title="代码输入" type="code" name="code" placeholder="请输入一段代码" left="auto" />
             <x-View::Input title="颜色输入" type="color" name="color" value="#2b2b2b" left="auto" required />
             <x-View::Input title="Markdown" type="markdown" name="markdown" left="auto" value="Markdown" required />
-            <x-View::Input title="上传文件" type="upload" name="upload" max="2" exts="jpg,png" left="auto" value="" required />
+            <x-View::Input title="上传文件" type="upload" name="upload" max="2" exts="jpg,png" left="auto" value="" />
             <x-View::Input type="button" left="auto">
                 <x-View::Button icon="bi-star" type="submit">提交</x-View::Button>
             </x-View::Input>

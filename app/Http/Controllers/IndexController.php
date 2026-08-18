@@ -53,8 +53,10 @@ class IndexController extends Controller {
      * @return any
      */
     public function debug() {
-        print_r( plugin( 'Test' ) );
-        exit();
-        return '';
+        return echoJson( 0, [
+            'message' => 'Debug endpoint reached successfully.',
+            'timestamp' => now()->toDateTimeString(),
+            'environment' => app()->environment(),
+        ]);
     }
 }

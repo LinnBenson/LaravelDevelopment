@@ -213,6 +213,19 @@
   - Cookie 不存在时也视为删除成功
   - return [bool]删除成功返回 true，参数无效或删除失败返回 false
 
+## 提交服务 [Support/PostService.php]
+- 移动临时文件
+  - `PostService::moveTmp( [string]临时文件链接, [string]目标目录 )`
+  - 可通过 `\App\Plugins\ToView\Support\PostService::moveTmp()` 调用
+  - 将 ToView 上传组件返回的临时文件移动到 `storage/app/public` 下的正式目录，移动后保留上传时生成的 UUID 文件名
+  - 临时文件链接支持站内相对链接，也支持路径与当前临时文件路由一致的完整链接
+  - 目标目录必须是相对于 `storage/app/public` 的目录，例如 `avatars` 对应 `storage/app/public/avatars`，不存在时会自动创建
+  - 仅允许移动当前上传配置支持、且仍存在于临时上传目录中的 UUID 文件
+  - 非临时文件链接、绝对路径、目录穿越、目标超出 `storage/app/public` 或目标文件已存在时返回 false
+  - 例如 `PostService::moveTmp( '/internal-plugins-to-view/tmp/550e8400-e29b-41d4-a716-446655440000.png', 'avatars' )`
+  - 上述示例成功时返回 `/storage/avatars/550e8400-e29b-41d4-a716-446655440000.png`
+  - return [string|false]移动成功返回不含 Host 的公开访问链接，链接、路径或文件无效以及移动失败时返回 false
+
 ## 视图服务 [Support/FrameService.php]
 - 获取框架视图数据
   - `ViewService::renderFrame()`
