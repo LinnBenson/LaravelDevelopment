@@ -154,6 +154,18 @@
   - 例如 `Core.boxLoading( $( '#card' ), true, 3000 )` 显示遮罩并在 3 秒后自动关闭
   - 例如 `Core.boxLoading( $( '#card' ), false )` 手动关闭指定元素的加载遮罩
   - return [void]
+- 获取表单数据
+  - `Core.submit( [HTMLFormElement]表单元素, [Function|null]成功回调 = null )`
+  - 读取表单内所有带有 `input` 属性的 ToView 输入组件；没有 `name`、没有组件 `type` 或已禁用的输入不会写入结果
+  - 普通输入、选择框和长文本按原值返回；开关返回 Boolean，单选返回选中值或 null，多选返回 Array
+  - 手机号会移除区号和号码中的非数字字符，并格式化为 `+区号 号码`；区号或号码不完整时返回 null
+  - `datetime-local` 返回 `YYYY.MM.DD HH:mm:ss`，`date` 返回 `YYYY.MM.DD`，`time` 返回 `HH:mm:ss`；没有填写时返回 null
+  - 多选框名称支持 `name="字段名[]"`，返回对象中的键名会自动移除末尾的 `[]`
+  - 自动校验带有 `required` 属性的 ToView 输入组件；校验失败时显示错误通知、临时标记错误组件并返回 false
+  - 校验成功时返回表单数据对象；传入回调函数后，会先将表单数据传给回调，再返回同一个数据对象
+  - 建议在表单的 `onsubmit` 中调用并返回 false，避免浏览器执行原生提交和刷新页面
+  - 例如 `onsubmit="Core.submit( this, ( data ) => { console.table( data ); } ); return false;"`
+  - return [object|false]表单数据对象，表单无效或必填校验失败时返回 false
 - 获取翻译文本
   - `t( [string]翻译键名, [object]占位符替换参数 = {} )`
   - 使用点号键从 `Core.cache.lang` 读取翻译，例如 `base.save` 或 `validation.required`

@@ -233,9 +233,10 @@ window['Core'] = {
      * 获取表单数据
      * 获取表单内所有 ToView 输入组件的值，并按输入类型转换数据。
      * @param {HTMLFormElement} form 表单元素
+     * @param {Function|null} method 回调函数，接收表单数据作为参数
      * @returns {object} 表单数据
      */
-    submit: function( form ) {
+    submit: function( form, method = null ) {
         if ( !form || form.tagName !== 'FORM' ) { return false; }
         const data = {}; let status = true;
         const $form = $( form );
@@ -259,6 +260,12 @@ window['Core'] = {
                     data[name] = phoneCode && phoneNumber ? `+${phoneCode} ${phoneNumber}` : null;
                     break;
                 }
+                case 'number':
+                    data[name] = $input.val();
+                    if ( data[name] !== null && data[name] !== '' ) {
+                        data[name] = parseFloat( data[name] );
+                    }
+                    break;
                 case 'switch':
                     data[name] = $input.prop( 'checked' );
                     break;
@@ -310,6 +317,7 @@ window['Core'] = {
             return false;
         });
         if ( !status ) { return false; }
+        if ( method && typeof method === 'function' ) { method( data ); }
         return data;
     }
 };

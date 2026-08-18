@@ -65,8 +65,6 @@
             </div>
         </div>
         @yield( 'body' )
-        <script>
-            @stack( 'script', '' )
-        </script>
+        @stack( 'footer', '' )
     </body>
 </html>
