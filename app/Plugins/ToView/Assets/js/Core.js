@@ -20,7 +20,7 @@ window['Core'] = {
     user: null,
     // 缓存数据
     cache: {
-        lang: {},
+        lang: get( 'langs' ) || {}, // 语言包缓存
         RefreshSystemInfoInterval: null, // 刷新系统信息定时器
         ToastTimeout: null, // 通知消息定时器
         LoadingTimeout: null // 全屏加载定时器
@@ -101,6 +101,9 @@ window['Core'] = {
                 }
                 // 更新语言包
                 if ( res.lang && typeof res.lang === 'object' ) {
+                    let saveLangs = {};
+                    if ( !empty( res.lang.base ) ) { saveLangs['base'] = res.lang.base; }
+                    set( 'langs', saveLangs );
                     Core.cache.lang = { ...Core.cache.lang, ...res.lang };
                 }
                 Core.initialized = true;
@@ -559,19 +562,19 @@ class webBuild {
                     if ( text ) { return Core.toast( 0, 'Success', text ); }
                     return;
                 case 'info':
-                    if ( text ) { return Core.toast( 1, 'Info', text ); }
+                    if ( text ) { return Core.toast( 1, t( 'base.error.s1' ), text ); }
                     toastCode = 1; break;
                 case 'error':
-                    if ( text ) { return Core.toast( 2, 'Error', text ); }
+                    if ( text ) { return Core.toast( 2, t( 'base.error.s2' ), text ); }
                     toastCode = 2; break;
                 case 'warning':
-                    if ( text ) { return Core.toast( 3, 'Warning', text ); }
+                    if ( text ) { return Core.toast( 3, t( 'base.error.s3' ), text ); }
                     toastCode = 3; break;
                 default: break;
             }
         }
         if ( this.errorCallback ) { this.errorCallback( res, null, null ); }
-        return Core.toast( toastCode, 'Request error', 'Unknown return content.' );
+        return Core.toast( toastCode, t( 'base.error.s2' ), t( 'base.error.data' ) );
     }
     /**
      * 处理 Ajax 错误响应
@@ -589,7 +592,7 @@ class webBuild {
             Core.user = null; del( 'user' );
             if ( get( 'token' ) ) {
                 del( 'token' );
-                Core.toast( 2, 'Login expired', 'Please log in again.' );
+                Core.toast( 2, t( 'base.error.s2' ), t( 'base.error.401' ) );
                 setTimeout( () => { location.reload(); }, 1000 );
                 return;
             }
@@ -598,7 +601,7 @@ class webBuild {
         if ( is_json( response ) ) { return this.successSystem( response ); }
         // 其他错误
         if ( this.errorCallback ) { this.errorCallback( xhr, textStatus, errorThrown ); }
-        return Core.toast( 2, 'Request error', `${code} | Unknown error.` );
+        return Core.toast( 2, t( 'base.error.s2' ), `${code}|${t( 'base.error.unknown' )}` );
     }
 }
 

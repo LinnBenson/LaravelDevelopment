@@ -3,6 +3,7 @@
 use App\Providers\PluginProvider;
 use App\Plugins\ToView\Support\BootstrapIcons;
 use App\Plugins\ToView\Controllers\AssetController;
+use App\Plugins\ToView\Controllers\UploadController;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
 
@@ -44,6 +45,14 @@ return new class extends PluginProvider {
                 Route::get( '/assets/{path}', [AssetController::class, 'show'] )
                     ->where( 'path', '.*' )
                     ->name( 'asset' );
+                Route::get( '/tmp/{file}', [ UploadController::class, 'tmp' ] )->name( 'upload.tmp' );
+            } );
+        Route::middleware( ['api'] )
+            ->prefix( 'api/plugins-to-view' )
+            ->name( 'plugins.to-view.' )
+            ->group( function(): void {
+                Route::get( '/upload/config', [ UploadController::class, 'uploadConfig' ] )->name( 'upload.config' );
+                Route::post( '/upload', [ UploadController::class, 'upload' ] )->name( 'upload' );
             } );
     }
     /**

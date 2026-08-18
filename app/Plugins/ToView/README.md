@@ -27,44 +27,36 @@
   ```
 - 输入组件 [Views/Components/Input.blade.php]
   ```
-    <form onsubmit="Core.submit( this ); return false;">
-        <x-View::Input icon="bi-person" value="test" placeholder="请输入用户名" title="用户名" />
-        <x-View::Input title="文本输入" type="text" name="text" placeholder="请输入一段文本" left="auto" />
-        <x-View::Input title="密码输入" type="password" name="password" placeholder="请输入一段密码" left="auto" error />
-        <x-View::Input title="邮箱输入" type="email" name="email" placeholder="请输入一段邮箱" left="auto" disabled />
-        <x-View::Input title="手机号输入" type="phone" name="phone" value="+86 13800138000" placeholder="请输入手机号" code="+1" :options="[
-            '+1' => '+1',
-            '+86' => '+86',
-        ]" left="auto" />
-        <x-View::Input title="开关按钮" type="switch" name="switch" left="auto"  />
-        <x-View::Input title="数字输入" type="number" name="number" placeholder="请输入一段数字" left="auto" step="0.01" min="0" max="100" />
-        <x-View::Input title="完整日期" type="datetime-local" name="datetime-local" placeholder="请输入完整日期" value="2024.06.06 12:00:00" left="auto" />
-        <x-View::Input title="日期输入" type="date" name="date" placeholder="请输入日期" left="auto" />
-        <x-View::Input title="时间输入" type="time" name="time" placeholder="请输入时间" :tips="[
+    <form onsubmit="Core.submit( this, successMethod ); return false;">
+        <x-View::Input title="普通文本" type="text" name="text" placeholder="请输入一段文本" left="auto" :tips="[
             '这是第一个提示',
             '这是第二个提示',
-        ]" left="auto" />
+        ]" value="text" required />
+        <x-View::Input title="密码框" type="password" name="password" placeholder="请输入一段密码" left="auto" value="123456" required error />
+        <x-View::Input title="邮箱输入" type="email" name="email" placeholder="请输入一段邮箱" left="auto" value="abc@adb.com" required />
+        <x-View::Input title="手机号" type="phone" name="phone" placeholder="请输入手机号" left="auto" value="+1 123456" required />
+        <x-View::Input title="开关按钮" type="switch" name="switch" left="auto" value="1" required />
+        <x-View::Input title="数字输入" type="number" name="number" placeholder="请输入一段数字" left="auto" step="0.01" min="0" max="100" value="24" required />
+        <x-View::Input title="完整日期" type="datetime-local" name="datetime-local" placeholder="请输入完整日期" left="auto" value="2024.06.06 12:00:00" required />
+        <x-View::Input title="日期输入" type="date" name="date" placeholder="请输入日期" left="auto" value="2024.06.06" required />
+        <x-View::Input title="时间输入" type="time" name="time" placeholder="请输入时间" left="auto" value="12:00:00" required />
         <x-View::Input title="单选输入" type="radio" name="radio" left="auto" :options="[
             'option1' => '选项 1',
             'option2' => '选项 2'
-        ]" required />
-        <x-View::Input title="多选输入" type="checkbox" name="checkbox" left="auto" value="option1|option4" :options="[
+        ]" value="option2" required />
+        <x-View::Input title="多选输入" type="checkbox" name="checkbox" left="auto" :options="[
             'option1' => '选项 1',
             'option2' => '选项 2'
-        ]" required />
-        <x-View::Input title="选择输入" type="select" name="select" left="auto" value="option2" :options="[
+        ]" value="option1|option2" required />
+        <x-View::Input title="选择输入" type="select" name="select" left="auto" :options="[
             'option1' => '选项 1',
             'option2' => '选项 2'
-        ]" />
+        ]" value="option2" required />
         <x-View::Input title="长文本输入" type="textarea" name="textarea" placeholder="请输入一段文本" left="auto" />
-        <x-View::Input title="代码输入" type="code" name="code" placeholder="请输入一段代码" :tips="[
-            '这是第一个提示',
-            '这是第二个提示',
-        ]" left="auto" />
-        <x-View::Input title="颜色输入" type="color" name="color" value="#ff0000" :tips="[
-            '这是第一个提示',
-            '这是第二个提示',
-        ]" left="auto" />
+        <x-View::Input title="代码输入" type="code" name="code" placeholder="请输入一段代码" left="auto" />
+        <x-View::Input title="颜色输入" type="color" name="color" value="#2b2b2b" left="auto" required />
+        <x-View::Input title="Markdown" type="markdown" name="markdown" left="auto" value="Markdown"  required />
+        <x-View::Input title="上传文件" type="upload" name="upload" min="1" max="2" exts="jpg,png" left="auto" value="" />
         <x-View::Input type="button" left="auto">
             <x-View::Button icon="bi-star" type="submit">提交</x-View::Button>
         </x-View::Input>

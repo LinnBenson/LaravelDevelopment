@@ -5,7 +5,7 @@
     $placeholder = $placeholder ?? ''; // 默认占位符为空
     $defaultLeft = '140px'; // 默认左侧距离
     // 类型相关
-    $allowedTypes = [ 'text', 'password', 'email', 'phone', 'number', 'datetime-local', 'date', 'time', 'select', 'textarea', 'code', 'color', 'switch', 'radio', 'checkbox', 'button' ]; // 允许的类型
+    $allowedTypes = [ 'text', 'password', 'email', 'phone', 'number', 'datetime-local', 'date', 'time', 'select', 'textarea', 'code', 'color', 'switch', 'radio', 'checkbox', 'markdown', 'upload', 'button' ]; // 允许的类型
     if( !in_array( $type, $allowedTypes ) ) {
         $type = 'text'; // 如果类型不在允许的类型中，则默认为文本输入框
     }
@@ -22,7 +22,7 @@
         'select' => 'bi-list-task',
         'color' => 'bi-palette',
     ];
-    $disableIconTypes = [ 'textarea', 'code', 'switch', 'radio', 'checkbox', 'button' ]; // 禁用图标的类型
+    $disableIconTypes = [ 'textarea', 'code', 'switch', 'radio', 'checkbox', 'markdown', 'upload', 'button' ]; // 禁用图标的类型
     $icon = $icon ?? $defaultIcon[$type] ?? null; // 默认图标为空
     $icon = in_array( $type, $disableIconTypes ) ? null : $icon; // 如果类型在禁用图标的类型中，则图标为空
     // 功能相关
@@ -30,7 +30,7 @@
     $defaultMethod = [
         'password' => "bi-eye|$( this ).siblings( '.toview-input-box' ).find( 'input' ).attr( 'type', $( this ).hasClass( 'bi-eye' ) ? 'text' : 'password' );$( this ).toggleClass( 'bi-eye bi-eye-slash' );"
     ];
-    $disableMethodTypes = [ 'textarea', 'code', 'switch', 'radio', 'checkbox', 'button' ]; // 禁用方法的类型
+    $disableMethodTypes = [ 'textarea', 'code', 'switch', 'radio', 'checkbox', 'markdown', 'upload', 'button' ]; // 禁用方法的类型
     $method = $method ?? $defaultMethod[$type] ?? null; // 默认方法为空
     $method = in_array( $type, $disableMethodTypes ) ? null : $method; // 如果类型在禁用方法的类型中，则方法为空
     $method = $method ? explode( '|', $method ) : null; // 方法分割为数组
@@ -120,7 +120,7 @@
         'type' => $type,
         'style' => "--left: ".( isset( $left ) && $left === 'auto' ? $defaultLeft : ( $left ?? $defaultLeft ) ).";",
     ])
-    ->except([ 'title', 'icon', 'name', 'placeholder', 'value', 'left', 'method', 'step', 'min', 'max', 'tips', 'options', 'code' ])
+    ->except([ 'title', 'icon', 'name', 'placeholder', 'value', 'left', 'method', 'step', 'min', 'max', 'exts', 'tips', 'options', 'code' ])
 ->class([
     'toview-input',
     "toview-input-hasIcon" => $icon ?? false,
@@ -227,6 +227,20 @@
                             </label>
                         @endforeach
                     </div>
+                    @break
+                @case( 'markdown' )
+                    <x-View::Markdown rid="{{$rid}}" name="{{$name}}" :value="$value ?? ''" placeholder="{{$placeholder}}" />
+                    @break
+                @case( 'upload' )
+                    <x-View::Upload
+                        rid="{{$rid}}"
+                        name="{{$name}}"
+                        :value="$value ?? ''"
+                        placeholder="{{$placeholder}}"
+                        :min="$min ?? null"
+                        :max="$max ?? null"
+                        :exts="$exts ?? ''"
+                    />
                     @break
                 @case( 'button' )
                     {{$title ?? ''}}
