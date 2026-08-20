@@ -10,6 +10,9 @@
         $type = 'text'; // 如果类型不在允许的类型中，则默认为文本输入框
     }
     $verifyLink = $type === 'verify' ? ( $link ?? route( 'plugins.to-view.verify' ) ) : null; // 验证码请求地址
+    $sendLink = $type === 'send' ? ( $link ?? null ) : null; // 发送代码请求地址
+    $sendBind = $type === 'send' ? ( $bind ?? '' ) : null; // 发送代码绑定字段
+    $sendMax = $type === 'send' ? (int) ( $max ?? 60 ) : 0; // 发送代码倒计时
     // 图标相关
     $defaultIcon = [ // 默认图标
         'text' => 'bi-pen',
@@ -261,6 +264,21 @@
                         :exts="$exts ?? ''"
                     />
                     @break
+                @case( 'send' )
+                    <div class="toview-input-send" data-send="{{$rid}}">
+                        <input
+                            rid="{{$rid}}"
+                            type="text"
+                            name="{{$name}}"
+                            value="{{$value ?? ''}}"
+                            placeholder="{{$placeholder}}"
+                            autocomplete="one-time-code"
+                            inputmode="numeric"
+                            input
+                        />
+                        <button type="button" data-send-button @disabled( $sendLink === null || $sendLink === '' )>{{__( 'base.send' )}}</button>
+                    </div>
+                    @break
                 @case( 'verify' )
                     <div class="toview-input-verify">
                         <input
@@ -314,3 +332,62 @@
         @endif
     </div>
 </div>
+
+@if( $type === 'send' )
+<script>
+/* Send code input interactions */
+(() => {
+    const sendId = @json((string) $rid);
+    const root = Array.from( document.querySelectorAll( '[data-send]' ) ).find( ( element ) => element.dataset.send === sendId );
+    if ( !root || root.dataset.ready === 'true' ) { return; }
+    root.dataset.ready = 'true';
+    const button = root.querySelector( '[data-send-button]' );
+    const form = root.closest( 'form' );
+    const link = @json((string) $sendLink);
+    const bindName = @json((string) $sendBind);
+    const maxSeconds = @json($sendMax);
+    const sendText = @json(__( 'base.send' ));
+    let sending = false; let countdown = null;
+
+    const boundField = () => Array.from( form?.querySelectorAll( '[name]' ) ?? [] ).find( ( field ) => field.name === bindName );
+    const boundValue = ( field ) => {
+        const inputBox = field.closest( 'div.toview-input' );
+        if ( inputBox?.getAttribute( 'type' ) !== 'phone' ) { return field.value.trim(); }
+        const code = inputBox.querySelector( '[phone-code]' )?.value.replace( /\D/g, '' ) ?? '';
+        const number = field.value.replace( /\D/g, '' );
+        return code && number ? `+${code} ${number}` : '';
+    };
+    const showRequired = ( field ) => {
+        const inputBox = field?.closest( 'div.toview-input' );
+        const title = inputBox?.querySelector( 'div.toview-input-title span' )?.textContent.trim() || bindName;
+        Core.toast( 2, t( 'base.error.s2' ), t( 'base.error.required', { attribute: title } ) );
+        inputBox?.setAttribute( 'error', '' );
+        setTimeout(() => inputBox?.removeAttribute( 'error' ), 3000 );
+    };
+    const startCountdown = () => {
+        let seconds = maxSeconds;
+        if ( seconds <= 0 ) { sending = false; button.disabled = false; return; }
+        button.textContent = `${seconds}s`;
+        countdown = setInterval(() => {
+            seconds--;
+            if ( seconds > 0 ) { button.textContent = `${seconds}s`; return; }
+            clearInterval( countdown ); countdown = null; sending = false; button.disabled = false; button.textContent = sendText;
+        }, 1000 );
+    };
+    button.addEventListener( 'click', () => {
+        if ( sending || countdown !== null ) { return; }
+        const field = boundField();
+        const value = field ? boundValue( field ) : '';
+        if ( !field || value === '' ) { showRequired( field ); return; }
+        sending = true; button.disabled = true;
+        Core.web( link ).method( 'POST' ).data( { [bindName]: value } )
+            .success( startCountdown )
+            .request()
+            .always(() => {
+                if ( countdown !== null ) { return; }
+                sending = false; button.disabled = false; button.textContent = sendText;
+            });
+    });
+})();
+</script>
+@endif
