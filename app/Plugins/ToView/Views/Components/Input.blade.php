@@ -9,6 +9,7 @@
     if( !in_array( $type, $allowedTypes ) ) {
         $type = 'text'; // 如果类型不在允许的类型中，则默认为文本输入框
     }
+    $verifyLink = $type === 'verify' ? ( $link ?? route( 'plugins.to-view.verify' ) ) : null; // 验证码请求地址
     // 图标相关
     $defaultIcon = [ // 默认图标
         'text' => 'bi-pen',
@@ -21,8 +22,10 @@
         'time' => 'bi-clock',
         'select' => 'bi-list-task',
         'color' => 'bi-palette',
+        'send' => 'bi-clock-history',
+        'verify' => 'bi-exclamation-circle',
     ];
-    $disableIconTypes = [ 'textarea', 'code', 'switch', 'radio', 'checkbox', 'markdown', 'send', 'verify', 'agree', 'upload', 'button' ]; // 禁用图标的类型
+    $disableIconTypes = [ 'textarea', 'code', 'switch', 'radio', 'checkbox', 'markdown', 'agree', 'upload', 'button' ]; // 禁用图标的类型
     $icon = $icon ?? $defaultIcon[$type] ?? null; // 默认图标为空
     $icon = in_array( $type, $disableIconTypes ) ? null : $icon; // 如果类型在禁用图标的类型中，则图标为空
     // 功能相关
@@ -120,7 +123,7 @@
         'type' => $type,
         'style' => "--left: ".( isset( $left ) && $left === 'auto' ? $defaultLeft : ( $left ?? $defaultLeft ) ).";",
     ])
-    ->except([ 'title', 'icon', 'name', 'placeholder', 'value', 'left', 'method', 'step', 'min', 'max', 'exts', 'tips', 'options', 'code' ])
+    ->except([ 'title', 'icon', 'name', 'placeholder', 'value', 'left', 'method', 'step', 'min', 'max', 'exts', 'tips', 'options', 'code', 'bind', 'link' ])
 ->class([
     'toview-input',
     "toview-input-hasIcon" => $icon ?? false,
@@ -241,6 +244,29 @@
                         :max="$max ?? null"
                         :exts="$exts ?? ''"
                     />
+                    @break
+                @case( 'verify' )
+                    <div class="toview-input-verify">
+                        <input
+                            rid="{{$rid}}"
+                            type="text"
+                            name="{{$name}}"
+                            value="{{$value ?? ''}}"
+                            placeholder="{{$placeholder}}"
+                            autocomplete="off"
+                            inputmode="text"
+                            input
+                        />
+                        <button
+                            type="button"
+                            class="toview-input-verify-image"
+                            aria-label="{{__( 'base.refresh' )}}"
+                            title="{{__( 'base.refresh' )}}"
+                            onclick="const image = this.querySelector( 'img' ); image.src = image.dataset.link + ( image.dataset.link.includes( '?' ) ? '&' : '?' ) + '_=' + Date.now();"
+                        >
+                            <img src="{{$verifyLink}}" data-link="{{$verifyLink}}" alt="" draggable="false" />
+                        </button>
+                    </div>
                     @break
                 @case( 'button' )
                     {{$title ?? ''}}

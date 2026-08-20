@@ -56,12 +56,16 @@
         <x-View::Input title="代码输入" type="code" name="code" placeholder="请输入一段代码" left="auto" />
         <x-View::Input title="颜色输入" type="color" name="color" value="#2b2b2b" left="auto" required />
         <x-View::Input title="Markdown" type="markdown" name="markdown" left="auto" value="Markdown"  required />
+        <x-View::Input title="验证码" type="verify" name="verify" placeholder="请输入验证码" left="auto" required />
+        <x-View::Input title="自定义验证码" type="verify" name="custom_verify" link="/custom/verify" placeholder="请输入验证码" left="auto" required />
         <x-View::Input title="上传文件" type="upload" name="upload" min="1" max="2" exts="jpg,png" left="auto" value="" />
         <x-View::Input type="button" left="auto">
             <x-View::Button icon="bi-star" type="submit">提交</x-View::Button>
         </x-View::Input>
     </form>
   ```
+  - `verify` 类型右侧显示验证码图片，点击图片可刷新验证码
+  - `link` 用于指定验证码图片请求地址，未传入时默认使用 `route( 'plugins.to-view.verify' )`
 
 ## 核心对象 [Assets/js/Core.js]
 - 站点是否已初始化: Boolean `Core.initialized`
