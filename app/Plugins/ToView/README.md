@@ -66,12 +66,6 @@
         </x-View::Input>
     </form>
   ```
-  - `verify` 类型右侧显示验证码图片，点击图片可刷新验证码
-  - `link` 用于指定验证码图片请求地址，未传入时默认使用 `route( 'plugins.to-view.verify' )`
-  - `send` 类型用于发送邮箱或手机验证码；`bind` 指定同一表单内绑定字段的 `name`，`link` 指定发送接口且没有默认值，`max` 指定请求成功后的防重复倒计时秒数
-  - `send` 类型未传入 `link` 时发送按钮保持禁用，不会向当前页面或默认路由发送请求
-  - 发送接口接收以绑定字段名为键的参数，例如 `bind="email"` 会提交 `{ email: "当前邮箱" }`；请求成功前按钮保持禁用，请求成功后显示倒计时
-  - `agree` 类型使用 `placeholder` 显示协议说明，`Core.submit()` 会将勾选状态转换为 Boolean；设置 `required` 后必须勾选才能提交
 
 ## 核心对象 [Assets/js/Core.js]
 - 站点是否已初始化: Boolean `Core.initialized`
