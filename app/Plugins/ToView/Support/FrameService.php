@@ -19,6 +19,9 @@ class FrameService {
         return new class {
 
             /** @var array<string, mixed> 当前主题配置 */
+            public string $version;
+
+            /** @var array<array, mixed> 当前主题配置 */
             public array $theme;
 
             /** @var string 当前语言环境 */
@@ -29,6 +32,8 @@ class FrameService {
              * 根据 Cookie 中的主题名称选择主题，无效时使用 Default 主题。
              */
             public function __construct() {
+                // 获取应用版本号
+                $this->version = plugin( 'ToView' )->version;
                 // 获取应用主题配置
                 $this->theme = FrameService::getTheme();
                 // 获取当前语言环境

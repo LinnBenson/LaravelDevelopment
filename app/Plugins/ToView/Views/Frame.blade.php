@@ -25,14 +25,14 @@
         <meta name="x5-fullscreen" content="true">
         <meta name="x5-page-mode" content="app">
         <meta name="csrf-token" content="{{ csrf_token() }}">
-        <link rel="stylesheet" href="{{route( 'plugins.to-view.asset', [ 'path' => 'css/rely.css' ])}}">
-        <link rel="stylesheet" href="{{route( 'plugins.to-view.asset', [ 'path' => 'css/unit.css' ])}}">
-        <link rel="stylesheet" href="{{route( 'plugins.to-view.asset', [ 'path' => 'css/BootstrapIcons.css' ])}}">
+        <link rel="stylesheet" href="{{route( 'plugins.to-view.asset', [ 'path' => 'css/rely.css' ])}}?v={{$frame->version}}">
+        <link rel="stylesheet" href="{{route( 'plugins.to-view.asset', [ 'path' => 'css/unit.css' ])}}?v={{$frame->version}}">
+        <link rel="stylesheet" href="{{route( 'plugins.to-view.asset', [ 'path' => 'css/BootstrapIcons.css' ])}}?v={{$frame->version}}">
         @if( isset( $frame->theme['css'] ) && is_string( $frame->theme['css'] ) )
             <link rel="stylesheet" href="{{$frame->theme['css']}}">
         @endif
-        <script src="{{route( 'plugins.to-view.asset', [ 'path' => 'js/jquery-4.0.0.min.js' ])}}"></script>
-        <script src="{{route( 'plugins.to-view.asset', [ 'path' => 'js/jquery.cookie.js' ])}}"></script>
+        <script src="{{route( 'plugins.to-view.asset', [ 'path' => 'js/jquery-4.0.0.min.js' ])}}?v={{$frame->version}}"></script>
+        <script src="{{route( 'plugins.to-view.asset', [ 'path' => 'js/jquery.cookie.js' ])}}?v={{$frame->version}}"></script>
         <title>@hasSection( 'title' )@yield( 'title' ) - @endif{{ setting( 'app.title' ) }}</title>
         <style>
             :root { {{$themeStyle}} }
@@ -40,7 +40,7 @@
         <script>
             window['setting'] = { 'rid': `{{request()->attributes->get('rid')}}`, 'locale': `{{str_replace( '_', '-', $frame->locale )}}`, 'langs': `@yield( 'langs', '' )` };
         </script>
-        <script src="{{route( 'plugins.to-view.asset', [ 'path' => 'js/Core.js' ])}}"></script>
+        <script src="{{route( 'plugins.to-view.asset', [ 'path' => 'js/Core.js' ])}}?v={{$frame->version}}"></script>
         @stack( 'head' )
     </head>
     <body>
