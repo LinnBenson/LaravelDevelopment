@@ -99,8 +99,8 @@
             <x-View::Input title="Markdown" type="markdown" name="markdown" left="auto" value="Markdown" required />
             <x-View::Input title="发送代码" type="send" name="send" placeholder="请输入发送代码" bind="email" left="auto" required />
             <x-View::Input title="验证码" type="verify" name="verify" placeholder="请输入发送验证码" left="auto" required />
-            <x-View::Input title="同意协议" type="agree" name="agree" placeholder="以上内容本人已同意保存" left="auto" />
             <x-View::Input title="上传文件" type="upload" name="upload" max="2" exts="jpg,png" left="auto" value="" />
+            <x-View::Input type="agree" name="agree" placeholder="以上内容本人已同意保存" left="auto" />
             <x-View::Input type="button" left="auto">
                 <x-View::Button icon="bi-star" type="submit">提交</x-View::Button>
             </x-View::Input>

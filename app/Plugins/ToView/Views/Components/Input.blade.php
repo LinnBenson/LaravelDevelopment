@@ -107,6 +107,7 @@
             }
             break;
         case 'switch':
+        case 'agree':
             $value = isset( $value ) && !in_array( $value, [ '', 0, '0', false, 'false', 'off' ], true );
             break;
         case 'checkbox':
@@ -230,6 +231,21 @@
                             </label>
                         @endforeach
                     </div>
+                    @break
+                @case( 'agree' )
+                    <label class="toview-input-agree">
+                        <input
+                            rid="{{$rid}}"
+                            type="checkbox"
+                            name="{{$name}}"
+                            value="1"
+                            autocomplete="off"
+                            {{$value ? 'checked' : ''}}
+                            input
+                        />
+                        <span class="toview-input-agree-mark"></span>
+                        <span class="toview-input-agree-text">{{$placeholder}}</span>
+                    </label>
                     @break
                 @case( 'markdown' )
                     <x-View::Markdown rid="{{$rid}}" name="{{$name}}" :value="$value ?? ''" placeholder="{{$placeholder}}" />

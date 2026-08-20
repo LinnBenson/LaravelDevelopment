@@ -272,6 +272,7 @@ window['Core'] = {
                     }
                     break;
                 case 'switch':
+                case 'agree':
                     data[name] = $input.prop( 'checked' );
                     break;
                 case 'radio':
@@ -311,7 +312,7 @@ window['Core'] = {
             if ( !$input.length || $input.prop( 'disabled' ) ) { return; }
             const dataName = type === 'checkbox' && name.endsWith( '[]' ) ? name.slice( 0, -2 ) : name;
             const value = data[dataName];
-            if ( value !== undefined && value !== null && value !== '' && ( !Array.isArray( value ) || value.length > 0 ) ) { return; }
+            if ( value !== undefined && value !== null && value !== '' && value !== false && ( !Array.isArray( value ) || value.length > 0 ) ) { return; }
             status = false;
             let title = $inputBox.find( 'div.toview-input-title span' ).text();
             title = typeof title === 'string' && title !== '' ? title.trim() : dataName;

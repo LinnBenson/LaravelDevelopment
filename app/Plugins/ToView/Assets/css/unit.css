@@ -574,6 +574,55 @@ div.toview-input[type="checkbox"] div.toview-input-content div.toview-input-box 
     outline: 2px solid rgb( var( --background ), 0.35 );
     outline-offset: 2px;
 }
+/* 协议确认输入 */
+div.toview-input[type="agree"] div.toview-input-content div.toview-input-box label.toview-input-agree {
+    display: inline-flex;
+    min-height: var( --height );
+    gap: 10px;
+    align-items: center;
+    color: rgb( var( --r1 ) );
+    cursor: pointer;
+}
+div.toview-input[type="agree"] div.toview-input-content div.toview-input-box label.toview-input-agree input[input] {
+    width: 0px;
+    height: 0px;
+    padding: 0px;
+    border: 0px;
+    opacity: 0;
+    position: absolute;
+}
+div.toview-input[type="agree"] div.toview-input-content div.toview-input-box label.toview-input-agree span.toview-input-agree-mark {
+    display: inline-block;
+    flex: 0 0 24px;
+    width: 24px;
+    height: 24px;
+    background-color: rgb( var( --r6 ) );
+    border: 2px solid rgb( var( --background ) );
+    border-radius: calc( var( --radius ) + 2px );
+    box-sizing: border-box;
+    position: relative;
+}
+div.toview-input[type="agree"] div.toview-input-content div.toview-input-box label.toview-input-agree input[input]:checked + span.toview-input-agree-mark {
+    background-color: rgb( var( --background ) );
+}
+div.toview-input[type="agree"] div.toview-input-content div.toview-input-box label.toview-input-agree input[input]:checked + span.toview-input-agree-mark::after {
+    width: 6px;
+    height: 11px;
+    border: solid rgb( var( --color ) );
+    border-width: 0px 2px 2px 0px;
+    content: '';
+    transform: rotate( 45deg );
+    position: absolute;
+    top: 3px;
+    left: 7px;
+}
+div.toview-input[type="agree"] div.toview-input-content div.toview-input-box label.toview-input-agree input[input]:focus-visible + span.toview-input-agree-mark {
+    outline: 2px solid rgb( var( --background ), 0.35 );
+    outline-offset: 2px;
+}
+div.toview-input[type="agree"] div.toview-input-content div.toview-input-box label.toview-input-agree span.toview-input-agree-text {
+    line-height: 1.5;
+}
 div.toview-input[type="button"] {
     margin-top: 32px;
     margin-bottom: 0px;

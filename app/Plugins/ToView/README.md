@@ -58,6 +58,7 @@
         <x-View::Input title="Markdown" type="markdown" name="markdown" left="auto" value="Markdown"  required />
         <x-View::Input title="验证码" type="verify" name="verify" placeholder="请输入验证码" left="auto" required />
         <x-View::Input title="自定义验证码" type="verify" name="custom_verify" link="/custom/verify" placeholder="请输入验证码" left="auto" required />
+        <x-View::Input title="同意协议" type="agree" name="agree" placeholder="以上内容本人已同意保存" left="auto" required />
         <x-View::Input title="上传文件" type="upload" name="upload" min="1" max="2" exts="jpg,png" left="auto" value="" />
         <x-View::Input type="button" left="auto">
             <x-View::Button icon="bi-star" type="submit">提交</x-View::Button>
@@ -66,6 +67,7 @@
   ```
   - `verify` 类型右侧显示验证码图片，点击图片可刷新验证码
   - `link` 用于指定验证码图片请求地址，未传入时默认使用 `route( 'plugins.to-view.verify' )`
+  - `agree` 类型使用 `placeholder` 显示协议说明，`Core.submit()` 会将勾选状态转换为 Boolean；设置 `required` 后必须勾选才能提交
 
 ## 核心对象 [Assets/js/Core.js]
 - 站点是否已初始化: Boolean `Core.initialized`
