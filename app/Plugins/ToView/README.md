@@ -214,6 +214,15 @@
   - return [bool]删除成功返回 true，参数无效或删除失败返回 false
 
 ## 提交服务 [Support/PostService.php]
+- 验证图片验证码
+  - `PostService::verifyCode( [Request]请求对象, [string]用户输入的验证码 )`
+  - 可通过 `\App\Plugins\ToView\Support\PostService::verifyCode( $request, $request->string( 'verify' )->toString() )` 调用
+  - 验证码图片可通过 `route( 'plugins.to-view.verify' )` 获取，生成时会根据 `verify` 配置将验证码和过期时间保存到当前 Session
+  - 验证接口必须使用 `web` 中间件，并与验证码图片请求使用同一个 Session
+  - 验证时不区分字母大小写；验证码错误、缺失或过期时返回 false，正确时返回 true
+  - 每个验证码只能验证一次，无论验证结果是否正确，调用后都会从 Session 中删除
+  - 例如 `if ( !PostService::verifyCode( $request, $request->string( 'verify' )->toString() ) ) { return echoJson( 2, ['validation.verify'], 422 ); }`
+  - return [bool]验证码有效且匹配时返回 true，否则返回 false
 - 移动临时文件
   - `PostService::moveTmp( [string]临时文件链接, [string]目标目录 )`
   - 可通过 `\App\Plugins\ToView\Support\PostService::moveTmp()` 调用

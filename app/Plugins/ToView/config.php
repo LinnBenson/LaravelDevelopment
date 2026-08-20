@@ -1,5 +1,19 @@
 <?php
     return [
+        'verify' => [
+            'session_key' => 'verify',
+            'length' => 5,
+            'characters' => '23456789ABCDEFGHJKLMNPQRSTUVWXYZ',
+            'width' => 140,
+            'height' => 46,
+            'font' => 'Assets/fonts/Consolas-Regular.ttf',
+            'font_size' => [20, 24],
+            'angle' => [-15, 15],
+            'lines' => 6,
+            'noise' => 120,
+            'background' => [ 247, 248, 250 ],
+            'expire' => 300,
+        ],
         'upload' => [
             // 上传文件存放路径
             'path' => 'private/uploads',

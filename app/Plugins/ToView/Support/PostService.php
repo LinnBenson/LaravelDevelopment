@@ -2,6 +2,8 @@
 
 namespace App\Plugins\ToView\Support;
 
+use Illuminate\Http\Request;
+
 /**
  * PostService
  * 表单提交相关业务服务。
@@ -70,5 +72,20 @@ class PostService {
      */
     private static function pathInside( string $path, string $directory ): bool {
         return str_starts_with( $path, rtrim( $directory, DIRECTORY_SEPARATOR ).DIRECTORY_SEPARATOR );
+    }
+
+    /**
+     * 验证验证码
+     * @param Request $request 请求对象
+     * @param string $code 用户输入的验证码
+     * @return bool 验证结果
+     */
+    public static function verifyCode( Request $request, string $code ): bool {
+        $config = plugin( 'ToView' )->config( 'verify' );
+        $sessionKey = $config['session_key'];
+        $sessionCode = $request->session()->pull( $sessionKey );
+        $expiresAt = $request->session()->pull( "{$sessionKey}_expires_at" );
+        if ( !is_string( $sessionCode ) || !is_int( $expiresAt ) || time() > $expiresAt ) { return false; }
+        return hash_equals( $sessionCode, strtolower( trim( $code ) ) );
     }
 }

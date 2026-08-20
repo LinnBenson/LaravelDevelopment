@@ -45,6 +45,7 @@ return new class extends PluginProvider {
                 Route::get( '/assets/{path}', [AssetController::class, 'show'] )
                     ->where( 'path', '.*' )
                     ->name( 'asset' );
+                Route::get( '/verify', [ AssetController::class, 'verify' ] )->name( 'verify' );
                 Route::get( '/tmp/{file}', [ UploadController::class, 'tmp' ] )->name( 'upload.tmp' );
             } );
         Route::middleware( ['api'] )
