@@ -16,11 +16,6 @@
                 <button type="button" data-heading-toggle title="Select heading level" aria-label="Select heading level" aria-haspopup="true" aria-expanded="false">
                     <span>H1</span><i class="bi bi-chevron-down"></i>
                 </button>
-                <div class="toview-markdown-heading-menu" role="menu">
-                    @for( $level = 1; $level <= 6; $level++ )
-                        <button type="button" data-heading-level="{{$level}}" role="menuitem">H{{$level}}</button>
-                    @endfor
-                </div>
             </div>
         </div>
         <div class="toview-markdown-tools">
@@ -41,6 +36,11 @@
             <button type="button" data-action="preview" title="Preview (Ctrl+Shift+P)" aria-label="Preview" aria-pressed="false"><i class="bi bi-eye"></i></button>
             <button type="button" data-action="fullscreen" title="Fullscreen" aria-label="Fullscreen" aria-pressed="false"><i class="bi bi-arrows-fullscreen"></i></button>
         </div>
+    </div>
+    <div class="toview-markdown-heading-menu" role="menu">
+        @for( $level = 1; $level <= 6; $level++ )
+            <button type="button" data-heading-level="{{$level}}" role="menuitem">H{{$level}}</button>
+        @endfor
     </div>
     <div class="toview-markdown-workspace">
         <textarea rid="{{$rid}}" name="{{$name}}" placeholder="{{$placeholder}}" autocomplete="off" spellcheck="true" aria-label="Markdown content" input>{{$value}}</textarea>
@@ -65,8 +65,10 @@
     const wordStatus = root.querySelector( '[data-status="words"]' );
     const previewButton = root.querySelector( '[data-action="preview"]' );
     const fullscreenButton = root.querySelector( '[data-action="fullscreen"]' );
+    const toolbar = root.querySelector( '.toview-markdown-toolbar' );
     const heading = root.querySelector( '.toview-markdown-heading' );
     const headingToggle = root.querySelector( '[data-heading-toggle]' );
+    const headingMenu = root.querySelector( '.toview-markdown-heading-menu' );
     const fullscreenPlaceholder = document.createComment( `markdown-editor-${editorId}` );
     let fullscreenScrollY = 0;
     const escapeHtml = ( value ) => String( value ).replaceAll( '&', '&amp;' ).replaceAll( '<', '&lt;' ).replaceAll( '>', '&gt;' ).replaceAll( '"', '&quot;' ).replaceAll( "'", '&#039;' );
@@ -143,7 +145,15 @@
         if ( end < 0 ) { end = textarea.value.length; }
         const content = textarea.value.slice( start, end ).split( '\n' ).map( ( line ) => `${prefix}${line.replace( /^#{1,6}\s+/, '' )}` ).join( '\n' );
         textarea.setRangeText( content, start, end, 'select' ); textarea.focus(); textarea.dispatchEvent( new Event( 'input', { bubbles: true } ) );
-        heading.classList.remove( 'active' ); headingToggle.setAttribute( 'aria-expanded', 'false' ); headingToggle.querySelector( 'span' ).textContent = `H${level}`;
+        closeHeading(); headingToggle.querySelector( 'span' ).textContent = `H${level}`;
+    };
+    const closeHeading = () => {
+        heading.classList.remove( 'active' ); headingMenu.classList.remove( 'active' ); headingToggle.setAttribute( 'aria-expanded', 'false' );
+    };
+    const positionHeading = () => {
+        const rootBox = root.getBoundingClientRect(); const toggleBox = headingToggle.getBoundingClientRect();
+        const left = Math.min( Math.max( 4, toggleBox.left - rootBox.left ), root.clientWidth - headingMenu.offsetWidth - 4 );
+        headingMenu.style.top = `${toolbar.offsetHeight + 6}px`; headingMenu.style.left = `${left}px`;
     };
     const actions = {
         bold: () => replaceSelection( '**', '**', 'bold text' ), italic: () => replaceSelection( '*', '*', 'italic text' ), strike: () => replaceSelection( '~~', '~~', 'strikethrough text' ),
@@ -178,11 +188,13 @@
     };
     root.querySelectorAll( '[data-action]' ).forEach( ( button ) => button.addEventListener( 'click', () => actions[button.dataset.action]?.() ) );
     headingToggle.addEventListener( 'click', () => {
-        heading.classList.toggle( 'active' ); headingToggle.setAttribute( 'aria-expanded', String( heading.classList.contains( 'active' ) ) );
+        const active = !heading.classList.contains( 'active' ); closeHeading();
+        if ( active ) { heading.classList.add( 'active' ); headingMenu.classList.add( 'active' ); positionHeading(); headingToggle.setAttribute( 'aria-expanded', 'true' ); }
     });
     root.querySelectorAll( '[data-heading-level]' ).forEach( ( button ) => button.addEventListener( 'click', () => setHeading( Number( button.dataset.headingLevel ) ) ) );
+    toolbar.addEventListener( 'scroll', () => { if ( heading.classList.contains( 'active' ) ) { positionHeading(); } } );
     document.addEventListener( 'click', ( event ) => {
-        if ( heading.contains( event.target ) ) { return; } heading.classList.remove( 'active' ); headingToggle.setAttribute( 'aria-expanded', 'false' );
+        if ( heading.contains( event.target ) || headingMenu.contains( event.target ) ) { return; } closeHeading();
     });
     textarea.addEventListener( 'input', update );
     textarea.addEventListener( 'keydown', ( event ) => {

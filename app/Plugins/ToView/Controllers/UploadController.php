@@ -20,6 +20,7 @@ class UploadController extends Controller {
      */
     public function uploadConfig(): JsonResponse {
         $config = plugin( 'ToView' )->config( 'upload' );
+        unset( $config['path'] );
         return echoJson( 0, $config );
     }
     /**
