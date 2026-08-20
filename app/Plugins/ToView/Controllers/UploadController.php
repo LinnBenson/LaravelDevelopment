@@ -80,6 +80,11 @@ class UploadController extends Controller {
         $path = storage_path( 'app/'.trim( $uploadConfig['path'], '/' )."/{$file}" );
         if ( !is_file( $path ) ) { return echoJson( 2, ['base.error.404'], 404 ); }
         $mime = mime_content_type( $path ) ?: 'application/octet-stream';
+        $extension = strtolower( pathinfo( $file, PATHINFO_EXTENSION ) );
+        $allowedMimes = $uploadConfig['ext'][$extension] ?? [];
+        if ( $allowedMimes === [] || !in_array( strtolower( $mime ), $allowedMimes, true ) ) {
+            return echoJson( 3, ['base.error.illegal'], 404 );
+        }
         $inline = ( str_starts_with( $mime, 'image/' ) && $mime !== 'image/svg+xml' ) || str_starts_with( $mime, 'audio/' ) || str_starts_with( $mime, 'video/' );
         return response()->file( $path, [
             'Content-Disposition' => ( $inline ? 'inline' : 'attachment' ).'; filename="'.addcslashes( $file, '"\\' ).'"',

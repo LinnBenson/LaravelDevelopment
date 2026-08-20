@@ -152,7 +152,7 @@ PHP 8.2.28 + Nginx 1.28.0 + MySQL 5.7.44 + Redis 7.4.2 + Node.js 24.4.1
 
 ### Laravel 约定
 - Laravel 的路由、控制器、服务类、模型、迁移文件等都需要遵循 Laravel 的约定和最佳实践，尽量使用 Laravel 提供的功能和特性来实现功能，避免重复造轮子。并使用驼峰命名法和 Pascal 命名法，避免使用下划线命名法和其他不规范的命名方式。
-- Laravel 接口都需要使用内置的 `echoJson()` 方法返回 JSON 数据，以便统一处理 JSON 输出格式和错误码。
+- Laravel 接口都需要使用内置的 `echoJson()` 方法返回 JSON 数据（ status: 0 => success, 1 => fail, 2 => error, 3 => warning ），以便统一处理 JSON 输出格式和错误码。
 
 ### Blade 模板要求 ( 后台系统不受此限制，不会使用 Frame.blade.php 作为公共框架 )
 - Blade 模板一般通过插件 ToView 的 `app/Plugins/ToView/Views/Frame.blade.php` 作为公共框架，其他页面通过 `@extends('View::Frame')` 继承。
